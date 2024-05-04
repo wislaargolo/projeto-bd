@@ -14,7 +14,7 @@ public class CaixaService {
     @Autowired
     private CaixaDAO caixaDAO;
 
-    public List<Funcionario> buscarTodos() {
+    public List<Caixa> buscarTodos() {
         return caixaDAO.buscarTodos();
     }
 
