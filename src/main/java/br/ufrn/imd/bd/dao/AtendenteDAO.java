@@ -13,14 +13,14 @@ import java.sql.SQLException;
 public class AtendenteDAO extends FuncionarioDAO {
 
     @Override
-    protected Funcionario mapResult(ResultSet rs) throws SQLException {
+    protected Funcionario mapearResultado(ResultSet rs) throws SQLException {
         Atendente atendente = new Atendente();
         atendente.setTipo(TipoAtendente.valueOf(rs.getString("tipo")));
-        return super.mapResult(rs);
+        return super.mapearResultado(rs);
     }
 
     @Override
-    public String getTableName() {
+    public String getNomeTabela() {
         return "atendentes";
     }
 }

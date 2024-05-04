@@ -3,10 +3,10 @@ package br.ufrn.imd.bd.dao;
 import java.util.List;
 
 public interface AbstractDAO<T, ID> {
-    T findById(ID id);
-    List<T> findAll();
-    T save(T entity);
-    void update(T entity);
-    void deleteById(ID id);
+    T buscarPorId(ID id);
+    List<T> buscarTudo();
+    T salvar(T entity);
+    void atualizar(T entity);
+    void deletarPorId(ID id);
 }
 

@@ -13,19 +13,19 @@ public abstract class AbstractDAOImpl<T, ID> implements AbstractDAO<T, ID> {
     protected Connection getConnection() throws SQLException {
         return DatabaseConfig.getConnection();
     }
-    protected abstract T mapResult(ResultSet rs) throws SQLException;
+    protected abstract T mapearResultado(ResultSet rs) throws SQLException;
 
-    public abstract String getTableName();
+    public abstract String getNomeTabela();
 
     @Override
-    public List<T> findAll() {
+    public List<T> buscarTudo() {
         List<T> resultados = new ArrayList<>();
-        String sql = String.format("SELECT * FROM %s", getTableName());
+        String sql = String.format("SELECT * FROM %s", getNomeTabela());
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                resultados.add(mapResult(rs));
+                resultados.add(mapearResultado(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -34,14 +34,14 @@ public abstract class AbstractDAOImpl<T, ID> implements AbstractDAO<T, ID> {
     }
 
     @Override
-    public T findById(ID id) {
-        String sql = String.format("SELECT * FROM %s WHERE id = ?", getTableName());
+    public T buscarPorId(ID id) {
+        String sql = String.format("SELECT * FROM %s WHERE id = ?", getNomeTabela());
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setObject(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return mapResult(rs);
+                return mapearResultado(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -50,8 +50,8 @@ public abstract class AbstractDAOImpl<T, ID> implements AbstractDAO<T, ID> {
     }
 
     @Override
-    public void deleteById(ID id) {
-        String sql = String.format("DELETE FROM %s WHERE id = ?", getTableName());
+    public void deletarPorId(ID id) {
+        String sql = String.format("DELETE FROM %s WHERE id = ?", getNomeTabela());
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setObject(1, id);

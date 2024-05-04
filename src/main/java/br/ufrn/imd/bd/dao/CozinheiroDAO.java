@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 public class CozinheiroDAO extends FuncionarioDAO {
 
     @Override
-    public String getTableName() {
+    public String getNomeTabela() {
         return "cozinheiros";
     }
 }

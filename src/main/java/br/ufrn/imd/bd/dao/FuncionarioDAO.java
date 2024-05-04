@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 @Repository
 public class FuncionarioDAO extends AbstractDAOImpl<Funcionario, Long> {
     @Override
-    protected Funcionario mapResult(ResultSet rs) throws SQLException {
+    protected Funcionario mapearResultado(ResultSet rs) throws SQLException {
         Funcionario funcionario = new Funcionario();
         funcionario.setId(rs.getLong("id"));
         funcionario.setNome(rs.getString("nome"));
@@ -24,13 +24,13 @@ public class FuncionarioDAO extends AbstractDAOImpl<Funcionario, Long> {
     }
 
     @Override
-    public String getTableName() {
+    public String getNomeTabela() {
         return "funcionarios";
     }
 
 
     @Override
-    public Funcionario save(Funcionario funcionario) {
+    public Funcionario salvar(Funcionario funcionario) {
         String sql = "INSERT INTO funcionarios (nome, login, senha, email) VALUES (?, ?, ?, ?) RETURNING id, data_cadastro";
         try (Connection connection = getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -51,9 +51,9 @@ public class FuncionarioDAO extends AbstractDAOImpl<Funcionario, Long> {
     }
 
     @Override
-    public void update(Funcionario funcionario) {
+    public void atualizar(Funcionario funcionario) {
 
-        String sql = "UPDATE " + getTableName() +
+        String sql = "UPDATE " + getNomeTabela() +
                 " SET nome = ?, login = ?, senha = ?, email = ? WHERE id = ?";
         try (Connection connection = getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -63,8 +63,8 @@ public class FuncionarioDAO extends AbstractDAOImpl<Funcionario, Long> {
             stmt.setString(4, funcionario.getEmail());
             stmt.setLong(5, funcionario.getId());
 
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected == 0) {
+            int linhasAfetadas = stmt.executeUpdate();
+            if (linhasAfetadas == 0) {
                 throw new SQLException("ERRO >> Atualização falhou.");
             }
         } catch (SQLException e) {
