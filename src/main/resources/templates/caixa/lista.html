@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Caixas</title>
+</head>
+<body>
+<h1>Lista de Caixas</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Login</th>
+        <th>Email</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="caixa : ${caixas}">
+        <td th:text="${caixa.id}"></td>
+        <td th:text="${caixa.nome}"></td>
+        <td th:text="${caixa.login}"></td>
+        <td th:text="${caixa.email}"></td>
+
+    </tr>
+    </tbody>
+</table>
+
+<br>
+<a href="/caixas/novo">Adicionar Novo Caixa</a>
+</body>
+</html>
