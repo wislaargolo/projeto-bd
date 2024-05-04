@@ -1,6 +1,8 @@
 package br.ufrn.imd.bd.model;
 
-import java.time.ZonedDateTime;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalDate;
 
 public class Funcionario {
 
@@ -9,7 +11,7 @@ public class Funcionario {
     private String login;
     private String senha;
     private String email;
-    private ZonedDateTime dataCadastro;
+    private LocalDate dataCadastro;
 
     public Long getId() {
         return id;
@@ -51,11 +53,11 @@ public class Funcionario {
         this.email = email;
     }
 
-    public ZonedDateTime getDataCadastro() {
+    public LocalDate getDataCadastro() {
         return dataCadastro;
     }
 
-    public void setDataCadastro(ZonedDateTime dataCadastro) {
+    public void setDataCadastro(LocalDate dataCadastro) {
         this.dataCadastro = dataCadastro;
     }
 }

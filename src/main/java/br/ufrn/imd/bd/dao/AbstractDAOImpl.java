@@ -1,6 +1,5 @@
 package br.ufrn.imd.bd.dao;
 import br.ufrn.imd.bd.connection.DatabaseConfig;
-import br.ufrn.imd.bd.model.Caixa;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +17,7 @@ public abstract class AbstractDAOImpl<T, ID> implements AbstractDAO<T, ID> {
     public abstract String getNomeTabela();
 
     @Override
-    public List<T> buscarTudo() {
+    public List<T> buscarTodos() {
         List<T> resultados = new ArrayList<>();
         String sql = String.format("SELECT * FROM %s", getNomeTabela());
         try (Connection conn = getConnection();

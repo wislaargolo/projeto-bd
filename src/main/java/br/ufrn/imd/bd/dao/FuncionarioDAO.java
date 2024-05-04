@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 
 @Repository
 public class FuncionarioDAO extends AbstractDAOImpl<Funcionario, Long> {
@@ -19,7 +19,7 @@ public class FuncionarioDAO extends AbstractDAOImpl<Funcionario, Long> {
         funcionario.setLogin(rs.getString("login"));
         funcionario.setSenha(rs.getString("senha"));
         funcionario.setEmail(rs.getString("email"));
-        funcionario.setDataCadastro(rs.getObject("data_cadastro", ZonedDateTime.class));
+        funcionario.setDataCadastro(rs.getObject("data_cadastro", LocalDate.class));
         return funcionario;
     }
 
@@ -27,7 +27,6 @@ public class FuncionarioDAO extends AbstractDAOImpl<Funcionario, Long> {
     public String getNomeTabela() {
         return "funcionarios";
     }
-
 
     @Override
     public Funcionario salvar(Funcionario funcionario) {
@@ -42,7 +41,7 @@ public class FuncionarioDAO extends AbstractDAOImpl<Funcionario, Long> {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 funcionario.setId(rs.getLong("id"));
-                funcionario.setDataCadastro(rs.getObject("data_cadastro", ZonedDateTime.class));
+                funcionario.setDataCadastro(rs.getObject("data_cadastro", LocalDate.class));
             }
         } catch (SQLException e) {
             e.printStackTrace();
