@@ -22,7 +22,7 @@ public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
 
     @Override
     protected Caixa mapearResultado(ResultSet rs) throws SQLException {
-        return new Caixa (funcionarioDAO.mapearResultado(rs));
+        return new Caixa(funcionarioDAO.mapearResultado(rs));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
 
     @Override
     public Caixa salvar(Caixa caixa) {
-        Caixa caixaSalvo = (Caixa) funcionarioDAO.salvar(caixa);
+        Caixa caixaSalvo = new Caixa(funcionarioDAO.salvar(caixa));
 
         String sql = "INSERT INTO caixas (id) VALUES (?)";
         try (Connection conn = funcionarioDAO.getConnection();
@@ -69,6 +69,6 @@ public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
 
     @Override
     public Caixa buscarPorId(Long id) {
-        return (Caixa) funcionarioDAO.buscarPorId(id);
+        return new Caixa(funcionarioDAO.buscarPorId(id));
     }
 }
