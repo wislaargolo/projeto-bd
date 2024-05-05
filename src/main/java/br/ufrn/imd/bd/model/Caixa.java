@@ -2,6 +2,7 @@ package br.ufrn.imd.bd.model;
 
 public class Caixa extends Funcionario {
 
+
     public Caixa(Funcionario funcionario) {
         super();
         this.setId(funcionario.getId());
@@ -13,4 +14,5 @@ public class Caixa extends Funcionario {
     }
 
     public Caixa() {}
+
 }

@@ -15,29 +15,25 @@ public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
     @Override
     public Telefone salvar(Telefone telefone) {
         String sql = String.format(
-                "INSERT INTO %s (telefone, funcionario_id) VALUES (?, ?) RETURNING *",
+                "INSERT INTO %s (telefone, funcionario_id) VALUES (?, ?)",
                 getNomeTabela()
         );
-        try (Connection connection = getConnection()) {
-            connection.setAutoCommit(false); // Inicia uma transação
 
-            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                stmt.setString(1, telefone.getTelefone());
-                stmt.setLong(2, telefone.getFuncionario().getId());
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-                ResultSet rs = stmt.executeQuery();
-                if (rs.next()) {
-                    telefone = mapearResultado(rs); // Mapeia o ResultSet para um objeto Telefone
-                }
-                connection.commit(); // Confirma a transação
-            } catch (SQLException e) {
-                connection.rollback(); // Reverte a transação em caso de erro
-                e.printStackTrace();
+            stmt.setString(1, telefone.getTelefone());
+            stmt.setLong(2, telefone.getIdFuncionario());
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("ERRO >> A inserção do telefone falhou, nenhuma linha afetada.");
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return telefone;
     }
 
@@ -55,23 +51,16 @@ public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
                 "UPDATE %s SET telefone = ? WHERE telefone = ? AND funcionario_id = ?",
                 getNomeTabela()
         );
-        try (Connection connection = getConnection()) {
-            connection.setAutoCommit(false); // Inicia uma transação
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                stmt.setString(1, telefoneNovo.getTelefone());
-                stmt.setString(2, telefoneAntigo.getTelefone());
-                stmt.setLong(3, telefoneAntigo.getFuncionario().getId());
+            stmt.setString(1, telefoneNovo.getTelefone());
+            stmt.setString(2, telefoneAntigo.getTelefone());
+            stmt.setLong(3, telefoneAntigo.getIdFuncionario());
 
-                int linhasAfetadas = stmt.executeUpdate();
-                if (linhasAfetadas == 0) {
-                    throw new SQLException("ERRO >> Atualização falhou.");
-                }
-
-                connection.commit(); // Confirma a transação
-            } catch (SQLException e) {
-                connection.rollback(); // Reverte a transação em caso de erro
-                e.printStackTrace();
+            int linhasAfetadas = stmt.executeUpdate();
+            if (linhasAfetadas == 0) {
+                throw new SQLException("ERRO >> Atualização falhou.");
             }
 
         } catch (SQLException e) {
@@ -83,10 +72,7 @@ public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
     protected Telefone mapearResultado(ResultSet rs) throws SQLException {
         Telefone telefone = new Telefone();
         telefone.setTelefone(rs.getString("telefone"));
-
-        Funcionario funcionario = new Funcionario();
-        funcionario.setId(rs.getLong("funcionario_id"));
-        telefone.setFuncionario(funcionario);
+        telefone.setIdFuncionario(rs.getLong("id_funcionario"));
 
         return telefone;
     }

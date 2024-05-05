@@ -3,7 +3,7 @@ package br.ufrn.imd.bd.model;
 public class Telefone {
     private String telefone;
 
-    private Funcionario funcionario;
+    private Long idFuncionario;
 
     public String getTelefone() {
         return telefone;
@@ -13,11 +13,11 @@ public class Telefone {
         this.telefone = telefone;
     }
 
-    public Funcionario getFuncionario() {
-        return funcionario;
+    public Long getIdFuncionario() {
+        return idFuncionario;
     }
 
-    public void setFuncionario(Funcionario funcionario) {
-        this.funcionario = funcionario;
+    public void setIdFuncionario(Long idFuncionario) {
+        this.idFuncionario = idFuncionario;
     }
 }

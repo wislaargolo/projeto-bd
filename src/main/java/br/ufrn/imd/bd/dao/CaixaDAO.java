@@ -3,7 +3,6 @@ package br.ufrn.imd.bd.dao;
 import br.ufrn.imd.bd.model.Caixa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -46,32 +45,31 @@ public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
     }
     @Override
     public Caixa salvar(Caixa caixa) {
-        Caixa caixaSalvo = new Caixa(funcionarioDAO.salvar(caixa));
         String sql = String.format("INSERT INTO %s (id) VALUES (?)", getNomeTabela());
 
-        try (Connection conn = funcionarioDAO.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, caixaSalvo.getId());
-            stmt.executeUpdate();
+            stmt.setLong(1, caixa.getId());
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("ERRO >> A inserção do caixa falhou, nenhuma linha afetada.");
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return caixaSalvo;
+        return caixa;
     }
 
     @Override
     public void atualizar(Caixa... caixas) {
-        if (caixas.length != 1) {
-            throw new IllegalArgumentException("ERRO >> Apenas um caixa para atualização.");
-        }
-
-        Caixa caixa = caixas[0];
-        funcionarioDAO.atualizar(caixa);
+        funcionarioDAO.atualizar(caixas);
     }
 
     @Override
     public Caixa buscarPorId(Long id) {
-        return new Caixa(funcionarioDAO.buscarPorId(id));
+       return new Caixa(funcionarioDAO.buscarPorId(id));
     }
 }

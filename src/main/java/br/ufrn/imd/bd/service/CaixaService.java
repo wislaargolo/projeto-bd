@@ -1,6 +1,8 @@
 package br.ufrn.imd.bd.service;
 
 import br.ufrn.imd.bd.dao.CaixaDAO;
+import br.ufrn.imd.bd.dao.FuncionarioDAO;
+import br.ufrn.imd.bd.dao.TelefoneDAO;
 import br.ufrn.imd.bd.model.Caixa;
 import br.ufrn.imd.bd.model.Funcionario;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ public class CaixaService {
 
     @Autowired
     private CaixaDAO caixaDAO;
+
 
     public List<Caixa> buscarTodos() {
         return caixaDAO.buscarTodos();

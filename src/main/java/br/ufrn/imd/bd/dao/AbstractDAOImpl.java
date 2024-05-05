@@ -27,7 +27,7 @@ public abstract class AbstractDAOImpl<T, ID> implements AbstractDAO<T, ID> {
                 resultados.add(mapearResultado(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return resultados;
     }
@@ -51,22 +51,15 @@ public abstract class AbstractDAOImpl<T, ID> implements AbstractDAO<T, ID> {
     @Override
     public void deletarPorId(ID id) {
         String sql = String.format("DELETE FROM %s WHERE id = ?", getNomeTabela());
-        try (Connection conn = getConnection()) {
-            conn.setAutoCommit(false); // Inicia uma transação
-
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setObject(1, id);
-                stmt.executeUpdate();
-                conn.commit(); // Confirma a transação
-            } catch (SQLException e) {
-                conn.rollback(); // Reverte a transação em caso de erro
-                e.printStackTrace();
-            }
-
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setObject(1, id);
+            stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
 }
 
