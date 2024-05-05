@@ -2,12 +2,15 @@ package br.ufrn.imd.bd.dao;
 
 import br.ufrn.imd.bd.model.Funcionario;
 import br.ufrn.imd.bd.model.Telefone;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
     @Override
     public Telefone salvar(Telefone telefone) {

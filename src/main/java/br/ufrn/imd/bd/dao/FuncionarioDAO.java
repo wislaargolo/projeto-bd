@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 
-@Repository
+@Component
 public class FuncionarioDAO extends AbstractDAOImpl<Funcionario, Long> {
 
     @Override
