@@ -14,11 +14,8 @@ import java.util.List;
 @Repository
 public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
 
-    private final FuncionarioDAO funcionarioDAO;
-
-    public CaixaDAO(FuncionarioDAO funcionarioDAO) {
-        this.funcionarioDAO = funcionarioDAO;
-    }
+    @Autowired
+    private FuncionarioDAO funcionarioDAO;
 
     @Override
     protected Caixa mapearResultado(ResultSet rs) throws SQLException {
@@ -34,6 +31,7 @@ public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
     public List<Caixa> buscarTodos() {
         List<Caixa> resultados = new ArrayList<>();
         String sql = "SELECT f.* FROM caixas c JOIN funcionarios f ON c.id = f.id";
+
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -45,12 +43,11 @@ public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
         }
         return resultados;
     }
-
     @Override
     public Caixa salvar(Caixa caixa) {
         Caixa caixaSalvo = new Caixa(funcionarioDAO.salvar(caixa));
+        String sql = String.format("INSERT INTO %s (id) VALUES (?)", getNomeTabela());
 
-        String sql = "INSERT INTO caixas (id) VALUES (?)";
         try (Connection conn = funcionarioDAO.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, caixaSalvo.getId());
@@ -63,8 +60,13 @@ public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
     }
 
     @Override
-    public void atualizar(Caixa entidade) {
+    public void atualizar(Caixa... caixas) {
+        if (caixas.length != 1) {
+            throw new IllegalArgumentException("ERRO >> Apenas um caixa para atualização.");
+        }
 
+        Caixa caixa = caixas[0];
+        funcionarioDAO.atualizar(caixa);
     }
 
     @Override
