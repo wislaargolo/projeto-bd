@@ -13,36 +13,27 @@ import java.sql.SQLException;
 @Component
 public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
     @Override
-    public Telefone salvar(Telefone telefone) {
+    public Telefone salvar(Connection conn, Telefone telefone) throws SQLException {
         String sql = String.format(
                 "INSERT INTO %s (telefone, funcionario_id) VALUES (?, ?) RETURNING *",
                 getNomeTabela()
         );
-        try (Connection connection = getConnection()) {
-            connection.setAutoCommit(false); // Inicia uma transação
 
-            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                stmt.setString(1, telefone.getTelefone());
-                stmt.setLong(2, telefone.getFuncionario().getId());
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, telefone.getTelefone());
+            stmt.setLong(2, telefone.getFuncionario().getId());
 
-                ResultSet rs = stmt.executeQuery();
-                if (rs.next()) {
-                    telefone = mapearResultado(rs); // Mapeia o ResultSet para um objeto Telefone
-                }
-                connection.commit(); // Confirma a transação
-            } catch (SQLException e) {
-                connection.rollback(); // Reverte a transação em caso de erro
-                e.printStackTrace();
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                telefone = mapearResultado(rs); // Mapeia o ResultSet para um objeto Telefone
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+
         return telefone;
     }
 
     @Override
-    public void atualizar(Telefone... telefones) {
+    public void atualizar(Connection conn, Telefone... telefones) throws SQLException {
 
         if (telefones.length != 2) {
             throw new IllegalArgumentException("ERRO >> São necessários exatamente dois telefones para realizar a atualização.");
@@ -55,27 +46,16 @@ public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
                 "UPDATE %s SET telefone = ? WHERE telefone = ? AND funcionario_id = ?",
                 getNomeTabela()
         );
-        try (Connection connection = getConnection()) {
-            connection.setAutoCommit(false); // Inicia uma transação
 
-            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                stmt.setString(1, telefoneNovo.getTelefone());
-                stmt.setString(2, telefoneAntigo.getTelefone());
-                stmt.setLong(3, telefoneAntigo.getFuncionario().getId());
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, telefoneNovo.getTelefone());
+            stmt.setString(2, telefoneAntigo.getTelefone());
+            stmt.setLong(3, telefoneAntigo.getFuncionario().getId());
 
-                int linhasAfetadas = stmt.executeUpdate();
-                if (linhasAfetadas == 0) {
-                    throw new SQLException("ERRO >> Atualização falhou.");
-                }
-
-                connection.commit(); // Confirma a transação
-            } catch (SQLException e) {
-                connection.rollback(); // Reverte a transação em caso de erro
-                e.printStackTrace();
+            int linhasAfetadas = stmt.executeUpdate();
+            if (linhasAfetadas == 0) {
+                throw new SQLException("ERRO >> Atualização falhou.");
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 

@@ -45,29 +45,26 @@ public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
         return resultados;
     }
     @Override
-    public Caixa salvar(Caixa caixa) {
-        Caixa caixaSalvo = new Caixa(funcionarioDAO.salvar(caixa));
+    public Caixa salvar(Connection conn, Caixa caixa) throws SQLException {
+        Caixa caixaSalvo = new Caixa(funcionarioDAO.salvar(conn, caixa));
         String sql = String.format("INSERT INTO %s (id) VALUES (?)", getNomeTabela());
 
-        try (Connection conn = funcionarioDAO.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, caixaSalvo.getId());
             stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
 
         return caixaSalvo;
     }
 
     @Override
-    public void atualizar(Caixa... caixas) {
+    public void atualizar(Connection conn, Caixa... caixas) throws SQLException {
         if (caixas.length != 1) {
             throw new IllegalArgumentException("ERRO >> Apenas um caixa para atualização.");
         }
 
         Caixa caixa = caixas[0];
-        funcionarioDAO.atualizar(caixa);
+        funcionarioDAO.atualizar(conn, caixa);
     }
 
     @Override
