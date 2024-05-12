@@ -29,7 +29,7 @@ public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
     }
 
     @Override
-    public List<Caixa> buscarTodos() {
+    public List<Caixa> buscarTodos() throws SQLException {
         List<Caixa> resultados = new ArrayList<>();
         String sql = "SELECT f.* FROM caixas c JOIN funcionarios f ON c.id = f.id";
 
@@ -39,8 +39,6 @@ public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
             while (rs.next()) {
                 resultados.add(mapearResultado(rs));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return resultados;
     }
@@ -68,7 +66,7 @@ public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
     }
 
     @Override
-    public Caixa buscarPorId(Long id) {
+    public Caixa buscarPorId(Long id) throws SQLException {
         return new Caixa(funcionarioDAO.buscarPorId(id));
     }
 }
