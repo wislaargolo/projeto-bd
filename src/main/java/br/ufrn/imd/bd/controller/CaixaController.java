@@ -51,4 +51,10 @@ public class CaixaController {
         }
         return "redirect:/caixas";
     }
+
+    @GetMapping("/excluir/{id}")
+    public String excluirCaixa(@PathVariable Long id) throws SQLException {
+        caixaService.deletarPorId(id);
+        return "redirect:/caixas";
+    }
 }

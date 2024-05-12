@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Cozinheiros</title>
+</head>
+<body>
+<h1>Lista de Cozinheiros</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Login</th>
+        <th>Email</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cozinheiro : ${cozinheiros}">
+        <td th:text="${cozinheiro.id}"></td>
+        <td th:text="${cozinheiro.nome}"></td>
+        <td th:text="${cozinheiro.login}"></td>
+        <td th:text="${cozinheiro.email}"></td>
+        <td>
+            <a th:href="@{'cozinheiros/editar/' + ${cozinheiro.id}}">Editar</a>
+            <span>|</span>
+            <a th:href="@{'cozinheiros/excluir/' + ${cozinheiro.id}}" onclick="return confirm('Tem certeza que deseja excluir este cozinheiro?')">Excluir</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<br>
+<a href="/cozinheiros/novo">Adicionar Novo Cozinheiro</a>
+</body>
+</html>
