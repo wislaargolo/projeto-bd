@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Atendentes</title>
+</head>
+<body>
+
+<div th:replace="menu :: menu"></div>
+
+<h1>Lista de Atendentes</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Login</th>
+        <th>Email</th>
+        <th>Tipo</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="atendente : ${atendentes}">
+        <td th:text="${atendente.id}"></td>
+        <td th:text="${atendente.nome}"></td>
+        <td th:text="${atendente.login}"></td>
+        <td th:text="${atendente.email}"></td>
+        <td th:text="${atendente.tipo}"></td>
+        <td>
+            <a th:href="@{'atendentes/editar/' + ${atendente.id}}">Editar</a>
+            <span>|</span>
+            <a th:href="@{'atendentes/excluir/' + ${atendente.id}}" onclick="return confirm('Tem certeza que deseja excluir este atendente?')">Excluir</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<br>
+<a href="/atendentes/novo">Adicionar Novo Atendente</a>
+</body>
+</html>
