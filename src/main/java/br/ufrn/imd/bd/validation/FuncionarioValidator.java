@@ -17,11 +17,11 @@ public class FuncionarioValidator {
 
     public void validar(Connection conn, Funcionario funcionario) throws SQLException, FuncionarioJaExisteException {
 
-        if(funcionarioDAO.existeFuncionarioComParametro(conn, "email", funcionario.getEmail())) {
+        if(funcionarioDAO.existeFuncionarioComParametroEId(conn, "email", funcionario.getEmail(), funcionario.getId())) {
             throw new FuncionarioJaExisteException("Já existe um funcionário com esse email!");
         }
 
-        if(funcionarioDAO.existeFuncionarioComParametro(conn, "login", funcionario.getLogin())) {
+        if(funcionarioDAO.existeFuncionarioComParametroEId(conn, "login", funcionario.getLogin(), funcionario.getId())) {
             throw new FuncionarioJaExisteException("Já existe um funcionário com esse login!");
         }
     }

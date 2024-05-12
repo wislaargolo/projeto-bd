@@ -21,7 +21,9 @@
         <td th:text="${caixa.nome}"></td>
         <td th:text="${caixa.login}"></td>
         <td th:text="${caixa.email}"></td>
-
+        <td>
+            <a th:href="@{'caixas/editar/' + ${caixa.id}}">Editar</a>
+        </td>
     </tr>
     </tbody>
 </table>

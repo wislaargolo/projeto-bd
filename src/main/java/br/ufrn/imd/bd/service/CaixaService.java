@@ -26,7 +26,7 @@ public class CaixaService {
         return caixaDAO.buscarTodos();
     }
 
-    public Funcionario buscarPorId(Long id) throws SQLException {
+    public Caixa buscarPorId(Long id) throws SQLException {
         return caixaDAO.buscarPorId(id);
     }
 
@@ -48,22 +48,23 @@ public class CaixaService {
         return caixa;
     }
 
-    public void atualizar(Caixa caixa) {
+    public void atualizar(Caixa caixa) throws FuncionarioJaExisteException, SQLException {
         Connection conn = null;
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
+            funcionarioValidator.validar(conn, caixa);
             caixaDAO.atualizar(conn, caixa);
             conn.commit();
         } catch (SQLException e) {
             DatabaseConfig.rollback(conn);
-            e.printStackTrace();
+            throw e;
         } finally {
             DatabaseConfig.close(conn);
         }
     }
 
-    public void deletarPorId(Long id) {
+    public void deletarPorId(Long id) throws SQLException {
         Connection conn = null;
         try {
             conn = DatabaseConfig.getConnection();
@@ -72,7 +73,7 @@ public class CaixaService {
             conn.commit();
         } catch (SQLException e) {
             DatabaseConfig.rollback(conn);
-            e.printStackTrace();
+            throw e;
         } finally {
             DatabaseConfig.close(conn);
         }

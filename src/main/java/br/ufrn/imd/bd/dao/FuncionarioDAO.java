@@ -86,8 +86,12 @@ public class FuncionarioDAO extends AbstractDAOImpl<Funcionario, Long> {
         }
     }
 
-    public boolean existeFuncionarioComParametro(Connection conn, String parametro,  String valor) throws SQLException {
+    public boolean existeFuncionarioComParametroEId(Connection conn, String parametro, String valor, Long id) throws SQLException {
         String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s = ?", getNomeTabela(), parametro);
+
+        if(id != null) {
+            sql += " AND id != " + id;
+        }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, valor);

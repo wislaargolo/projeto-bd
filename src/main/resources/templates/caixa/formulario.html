@@ -10,11 +10,13 @@
     </style>
 </head>
 <body>
-<h2>Create Funcionario</h2>
+<h2 th:text="${caixa.id == null ? 'Cadastrar Caixa' : 'Editar Caixa'}"></h2>
 <div th:if="${error}">
     <p th:text="${error}"></p>
 </div>
-<form action="#" th:action="@{/caixas}" th:object="${caixa}" method="post">
+<form th:action="@{/caixas}" th:object="${caixa}" method="post">
+    <input type="hidden" th:field="*{id}" />
+
     <div th:if="${#fields.hasErrors('nome')}" class="error-message">
         <p th:errors="*{nome}"></p>
     </div>
