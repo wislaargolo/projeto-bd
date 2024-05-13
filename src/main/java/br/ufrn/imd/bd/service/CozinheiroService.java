@@ -1,10 +1,9 @@
 package br.ufrn.imd.bd.service;
 
 import br.ufrn.imd.bd.connection.DatabaseConfig;
-import br.ufrn.imd.bd.dao.CaixaDAO;
+import br.ufrn.imd.bd.dao.CozinheiroDAO;
 import br.ufrn.imd.bd.exceptions.FuncionarioJaExisteException;
-import br.ufrn.imd.bd.model.Caixa;
-import br.ufrn.imd.bd.model.Funcionario;
+import br.ufrn.imd.bd.model.Cozinheiro;
 import br.ufrn.imd.bd.validation.FuncionarioValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,29 +13,29 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class CaixaService {
+public class CozinheiroService {
 
     @Autowired
-    private CaixaDAO caixaDAO;
+    private CozinheiroDAO cozinheiroDAO;
 
     @Autowired
     private FuncionarioValidator funcionarioValidator;
 
-    public List<Caixa> buscarTodos() throws SQLException {
-        return caixaDAO.buscarTodos();
+    public List<Cozinheiro> buscarTodos() throws SQLException {
+        return cozinheiroDAO.buscarTodos();
     }
 
-    public Caixa buscarPorId(Long id) throws SQLException {
-        return caixaDAO.buscarPorId(id);
+    public Cozinheiro buscarPorId(Long id) throws SQLException {
+        return cozinheiroDAO.buscarPorId(id);
     }
 
-    public Funcionario salvar(Caixa caixa) throws SQLException, FuncionarioJaExisteException {
+    public Cozinheiro salvar(Cozinheiro cozinheiro) throws SQLException, FuncionarioJaExisteException {
         Connection conn = null;
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
-            funcionarioValidator.validar(conn, caixa);
-            caixa = caixaDAO.salvar(conn, caixa);
+            funcionarioValidator.validar(conn, cozinheiro);
+            cozinheiro = cozinheiroDAO.salvar(conn, cozinheiro);
             conn.commit();
         } catch (SQLException e) {
             DatabaseConfig.rollback(conn);
@@ -45,16 +44,16 @@ public class CaixaService {
             DatabaseConfig.close(conn);
         }
 
-        return caixa;
+        return cozinheiro;
     }
 
-    public void atualizar(Caixa caixa) throws FuncionarioJaExisteException, SQLException {
+    public void atualizar(Cozinheiro cozinheiro) throws FuncionarioJaExisteException, SQLException {
         Connection conn = null;
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
-            funcionarioValidator.validar(conn, caixa);
-            caixaDAO.atualizar(conn, caixa);
+            funcionarioValidator.validar(conn, cozinheiro);
+            cozinheiroDAO.atualizar(conn, cozinheiro);
             conn.commit();
         } catch (SQLException e) {
             DatabaseConfig.rollback(conn);
@@ -69,7 +68,7 @@ public class CaixaService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
-            caixaDAO.deletarPorId(conn, id);
+            cozinheiroDAO.deletarPorId(conn, id);
             conn.commit();
         } catch (SQLException e) {
             DatabaseConfig.rollback(conn);

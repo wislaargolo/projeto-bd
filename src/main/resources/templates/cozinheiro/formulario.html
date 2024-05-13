@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Cozinheiro</title>
+    <style>
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h2 th:text="${cozinheiro.id == null ? 'Cadastrar Cozinheiro' : 'Editar Cozinheiro'}"></h2>
+<div th:if="${error}">
+    <p th:text="${error}"></p>
+</div>
+<form th:action="@{/cozinheiros}" th:object="${cozinheiro}" method="post">
+    <input type="hidden" th:field="*{id}" />
+
+    <div th:if="${#fields.hasErrors('nome')}" class="error-message">
+        <p th:errors="*{nome}"></p>
+    </div>
+    <label for="nome">Nome:</label>
+    <input type="text" th:field="*{nome}" id="nome" />
+    <br/>
+
+    <div th:if="${#fields.hasErrors('login')}" class="error-message">
+        <p th:errors="*{login}"></p>
+    </div>
+    <label for="login">Login:</label>
+    <input type="text" th:field="*{login}" id="login" />
+    <br/>
+
+    <div th:if="${#fields.hasErrors('senha')}" class="error-message">
+        <p th:errors="*{senha}"></p>
+    </div>
+    <label for="senha">Senha:</label>
+    <input type="password" th:field="*{senha}" id="senha" />
+    <br/>
+
+    <div th:if="${#fields.hasErrors('email')}" class="error-message">
+        <p th:errors="*{email}"></p>
+    </div>
+    <label for="email">Email:</label>
+    <input type="email" th:field="*{email}" id="email" />
+    <br/>
+
+    <input type="submit" value="Submit" />
+</form>
+</body>
+</html>

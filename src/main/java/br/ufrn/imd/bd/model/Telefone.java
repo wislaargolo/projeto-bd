@@ -1,6 +1,10 @@
 package br.ufrn.imd.bd.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class Telefone {
+
     private String telefone;
 
     private Funcionario funcionario;

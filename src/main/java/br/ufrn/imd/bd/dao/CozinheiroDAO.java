@@ -1,9 +1,8 @@
 package br.ufrn.imd.bd.dao;
 
-import br.ufrn.imd.bd.model.Caixa;
+import br.ufrn.imd.bd.model.Cozinheiro;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,25 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
+public class CozinheiroDAO extends AbstractDAOImpl<Cozinheiro, Long> {
 
     @Autowired
     private FuncionarioDAO funcionarioDAO;
 
     @Override
-    protected Caixa mapearResultado(ResultSet rs) throws SQLException {
-        return new Caixa(funcionarioDAO.mapearResultado(rs));
+    protected Cozinheiro mapearResultado(ResultSet rs) throws SQLException {
+        return new Cozinheiro(funcionarioDAO.mapearResultado(rs));
     }
 
     @Override
     public String getNomeTabela() {
-        return "caixas";
+        return "cozinheiros";
     }
 
     @Override
-    public List<Caixa> buscarTodos() throws SQLException {
-        List<Caixa> resultados = new ArrayList<>();
-        String sql = "SELECT f.* FROM caixas c JOIN funcionarios f ON c.id = f.id";
+    public List<Cozinheiro> buscarTodos() throws SQLException {
+        List<Cozinheiro> resultados = new ArrayList<>();
+        String sql = "SELECT f.* FROM cozinheiros c JOIN funcionarios f ON c.id = f.id";
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -42,32 +41,33 @@ public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
         }
         return resultados;
     }
+
     @Override
-    public Caixa salvar(Connection conn, Caixa caixa) throws SQLException {
-        Caixa caixaSalvo = new Caixa(funcionarioDAO.salvar(conn, caixa));
+    public Cozinheiro salvar(Connection conn, Cozinheiro cozinheiro) throws SQLException {
+        Cozinheiro cozinheiroSalvo = new Cozinheiro(funcionarioDAO.salvar(conn, cozinheiro));
         String sql = String.format("INSERT INTO %s (id) VALUES (?)", getNomeTabela());
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, caixaSalvo.getId());
+            stmt.setLong(1, cozinheiroSalvo.getId());
             stmt.executeUpdate();
         }
 
-        return caixaSalvo;
+        return cozinheiroSalvo;
     }
 
     @Override
-    public void atualizar(Connection conn, Caixa... caixas) throws SQLException {
-        if (caixas.length != 1) {
-            throw new IllegalArgumentException("ERRO >> Apenas um caixa para atualização.");
+    public void atualizar(Connection conn, Cozinheiro... cozinheiros) throws SQLException {
+        if (cozinheiros.length != 1) {
+            throw new IllegalArgumentException("ERRO >> Apenas um cozinheiro para atualização.");
         }
 
-        Caixa caixa = caixas[0];
-        funcionarioDAO.atualizar(conn, caixa);
+        Cozinheiro cozinheiro = cozinheiros[0];
+        funcionarioDAO.atualizar(conn, cozinheiro);
     }
 
     @Override
-    public Caixa buscarPorId(Long id) throws SQLException {
-        return new Caixa(funcionarioDAO.buscarPorId(id));
+    public Cozinheiro buscarPorId(Long id) throws SQLException {
+        return new Cozinheiro(funcionarioDAO.buscarPorId(id));
     }
 
     @Override

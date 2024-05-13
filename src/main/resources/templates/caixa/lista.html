@@ -4,6 +4,9 @@
     <title>Lista de Caixas</title>
 </head>
 <body>
+
+<div th:replace="menu :: menu"></div>
+
 <h1>Lista de Caixas</h1>
 
 <table border="1">
@@ -13,6 +16,7 @@
         <th>Nome</th>
         <th>Login</th>
         <th>Email</th>
+        <th>Ações</th>
     </tr>
     </thead>
     <tbody>
@@ -21,7 +25,11 @@
         <td th:text="${caixa.nome}"></td>
         <td th:text="${caixa.login}"></td>
         <td th:text="${caixa.email}"></td>
-
+        <td>
+            <a th:href="@{'caixas/editar/' + ${caixa.id}}">Editar</a>
+            <span>|</span>
+            <a th:href="@{'caixas/excluir/' + ${caixa.id}}" onclick="return confirm('Tem certeza que deseja excluir este caixa?')">Excluir</a>
+        </td>
     </tr>
     </tbody>
 </table>

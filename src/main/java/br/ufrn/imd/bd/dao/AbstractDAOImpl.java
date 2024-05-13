@@ -17,7 +17,7 @@ public abstract class AbstractDAOImpl<T, ID> implements AbstractDAO<T, ID> {
     public abstract String getNomeTabela();
 
     @Override
-    public List<T> buscarTodos() {
+    public List<T> buscarTodos() throws SQLException {
         List<T> resultados = new ArrayList<>();
         String sql = String.format("SELECT * FROM %s", getNomeTabela());
         try (Connection conn = getConnection();
@@ -26,14 +26,12 @@ public abstract class AbstractDAOImpl<T, ID> implements AbstractDAO<T, ID> {
             while (rs.next()) {
                 resultados.add(mapearResultado(rs));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return resultados;
     }
 
     @Override
-    public T buscarPorId(ID id) {
+    public T buscarPorId(ID id) throws SQLException {
         String sql = String.format("SELECT * FROM %s WHERE id = ?", getNomeTabela());
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -42,8 +40,6 @@ public abstract class AbstractDAOImpl<T, ID> implements AbstractDAO<T, ID> {
             if (rs.next()) {
                 return mapearResultado(rs);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
