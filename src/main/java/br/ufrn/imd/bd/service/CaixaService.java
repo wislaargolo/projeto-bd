@@ -2,7 +2,7 @@ package br.ufrn.imd.bd.service;
 
 import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.CaixaDAO;
-import br.ufrn.imd.bd.exceptions.FuncionarioJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.model.Caixa;
 import br.ufrn.imd.bd.model.Funcionario;
 import br.ufrn.imd.bd.validation.FuncionarioValidator;
@@ -30,7 +30,7 @@ public class CaixaService {
         return caixaDAO.buscarPorId(id);
     }
 
-    public Funcionario salvar(Caixa caixa) throws SQLException, FuncionarioJaExisteException {
+    public Funcionario salvar(Caixa caixa) throws SQLException, EntidadeJaExisteException {
         Connection conn = null;
         try {
             conn = DatabaseConfig.getConnection();
@@ -48,7 +48,7 @@ public class CaixaService {
         return caixa;
     }
 
-    public void atualizar(Caixa caixa) throws FuncionarioJaExisteException, SQLException {
+    public void atualizar(Caixa caixa) throws EntidadeJaExisteException, SQLException {
         Connection conn = null;
         try {
             conn = DatabaseConfig.getConnection();

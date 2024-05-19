@@ -3,7 +3,6 @@ package br.ufrn.imd.bd.dao;
 import br.ufrn.imd.bd.model.Funcionario;
 import br.ufrn.imd.bd.model.Telefone;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,18 +14,14 @@ public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
     @Override
     public Telefone salvar(Connection conn, Telefone telefone) throws SQLException {
         String sql = String.format(
-                "INSERT INTO %s (telefone, funcionario_id) VALUES (?, ?) RETURNING *",
+                "INSERT INTO %s (telefone_funcionario, id_funcionario) VALUES (?, ?)",
                 getNomeTabela()
         );
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, telefone.getTelefone());
             stmt.setLong(2, telefone.getFuncionario().getId());
-
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                telefone = mapearResultado(rs); // Mapeia o ResultSet para um objeto Telefone
-            }
+            stmt.executeUpdate();
         }
 
         return telefone;
@@ -43,7 +38,7 @@ public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
         Telefone telefoneNovo = telefones[1];
 
         String sql = String.format(
-                "UPDATE %s SET telefone = ? WHERE telefone = ? AND funcionario_id = ?",
+                "UPDATE %s SET telefone_funcionario = ? WHERE telefone_funcionario = ? AND id_funcionario = ?",
                 getNomeTabela()
         );
 
@@ -62,10 +57,10 @@ public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
     @Override
     protected Telefone mapearResultado(ResultSet rs) throws SQLException {
         Telefone telefone = new Telefone();
-        telefone.setTelefone(rs.getString("telefone"));
+        telefone.setTelefone(rs.getString("telefone_funcionario"));
 
         Funcionario funcionario = new Funcionario();
-        funcionario.setId(rs.getLong("funcionario_id"));
+        funcionario.setId(rs.getLong("id_funcionario"));
         telefone.setFuncionario(funcionario);
 
         return telefone;
@@ -74,5 +69,27 @@ public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
     @Override
     public String getNomeTabela() {
         return "telefones";
+    }
+
+    public boolean existeTelefone(Connection conn, Telefone telefone) throws SQLException {
+        String sql = String.format("SELECT * FROM %s WHERE id_funcionario = ? AND telefone_funcionario = ?", getNomeTabela());
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setObject(1, telefone.getFuncionario().getId());
+            stmt.setObject(2, telefone.getTelefone());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void deletar(Connection conn, String telefone, Long funcionarioId) throws SQLException {
+        String sql = String.format("DELETE FROM %s WHERE id_funcionario = ? AND telefone_funcionario = ?", getNomeTabela());
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, funcionarioId);
+            stmt.setString(2, telefone);
+            stmt.executeUpdate();
+        }
     }
 }

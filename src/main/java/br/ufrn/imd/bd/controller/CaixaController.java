@@ -1,6 +1,6 @@
 package br.ufrn.imd.bd.controller;
 
-import br.ufrn.imd.bd.exceptions.FuncionarioJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.model.Caixa;
 import br.ufrn.imd.bd.service.CaixaService;
 import jakarta.validation.Valid;
@@ -40,7 +40,7 @@ public class CaixaController {
     }
 
     @PostMapping
-    public String salvarCaixa(@ModelAttribute @Valid Caixa caixa, BindingResult bindingResult) throws SQLException, FuncionarioJaExisteException {
+    public String salvarCaixa(@ModelAttribute @Valid Caixa caixa, BindingResult bindingResult) throws SQLException, EntidadeJaExisteException {
         if (bindingResult.hasErrors()) {
             return "caixa/formulario";
         }

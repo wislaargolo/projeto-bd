@@ -1,6 +1,6 @@
 package br.ufrn.imd.bd.controller;
 
-import br.ufrn.imd.bd.exceptions.FuncionarioJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.model.Cozinheiro;
 import br.ufrn.imd.bd.service.CozinheiroService;
 import jakarta.validation.Valid;
@@ -40,7 +40,7 @@ public class CozinheiroController {
     }
 
     @PostMapping
-    public String salvarCozinheiro(@ModelAttribute @Valid Cozinheiro cozinheiro, BindingResult bindingResult) throws SQLException, FuncionarioJaExisteException {
+    public String salvarCozinheiro(@ModelAttribute @Valid Cozinheiro cozinheiro, BindingResult bindingResult) throws SQLException, EntidadeJaExisteException {
         if (bindingResult.hasErrors()) {
             return "cozinheiro/formulario";
         }

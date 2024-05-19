@@ -9,8 +9,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @ControllerAdvice
 public class MvcControllerAdvice {
 
-    @ExceptionHandler(FuncionarioJaExisteException.class)
-    public String handleFuncionarioJaExisteException(FuncionarioJaExisteException e, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    @ExceptionHandler(EntidadeJaExisteException.class)
+    public String handleFuncionarioJaExisteException(EntidadeJaExisteException e, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("error", e.getMessage());
         String referer = request.getHeader("referer");
         return "redirect:" + referer;

@@ -2,7 +2,7 @@ package br.ufrn.imd.bd.service;
 
 import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.CozinheiroDAO;
-import br.ufrn.imd.bd.exceptions.FuncionarioJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.model.Cozinheiro;
 import br.ufrn.imd.bd.validation.FuncionarioValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class CozinheiroService {
         return cozinheiroDAO.buscarPorId(id);
     }
 
-    public Cozinheiro salvar(Cozinheiro cozinheiro) throws SQLException, FuncionarioJaExisteException {
+    public Cozinheiro salvar(Cozinheiro cozinheiro) throws SQLException, EntidadeJaExisteException {
         Connection conn = null;
         try {
             conn = DatabaseConfig.getConnection();
@@ -47,7 +47,7 @@ public class CozinheiroService {
         return cozinheiro;
     }
 
-    public void atualizar(Cozinheiro cozinheiro) throws FuncionarioJaExisteException, SQLException {
+    public void atualizar(Cozinheiro cozinheiro) throws EntidadeJaExisteException, SQLException {
         Connection conn = null;
         try {
             conn = DatabaseConfig.getConnection();

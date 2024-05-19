@@ -1,6 +1,6 @@
 package br.ufrn.imd.bd.controller;
 
-import br.ufrn.imd.bd.exceptions.FuncionarioJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.model.Atendente;
 import br.ufrn.imd.bd.service.AtendenteService;
 import jakarta.validation.Valid;
@@ -40,7 +40,7 @@ public class AtendenteController {
     }
 
     @PostMapping
-    public String salvarAtendente(@ModelAttribute @Valid Atendente atendente, BindingResult bindingResult) throws SQLException, FuncionarioJaExisteException {
+    public String salvarAtendente(@ModelAttribute @Valid Atendente atendente, BindingResult bindingResult) throws SQLException, EntidadeJaExisteException {
         if (bindingResult.hasErrors()) {
             return "atendente/formulario";
         }

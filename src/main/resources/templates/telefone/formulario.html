@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Telefone</title>
+    <style>
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h2>Cadastrar Telefone</h2>
+<div th:if="${error}">
+    <p th:text="${error}"></p>
+</div>
+<form th:action="@{/telefones}" th:object="${telefoneDTO}" method="post">
+    <input type="hidden" th:field="*{telefoneHidden.telefone}" />
+    <input type="hidden" th:field="*{telefoneHidden.funcionario.id}" />
+    <!-- Hidden input field for telefoneHidden -->
+
+    <label for="telefoneNovo.telefone">Telefone:</label>
+    <input type="text" th:field="*{telefoneNovo.telefone}" id="telefone" />
+    <br/>
+
+    <label for="telefoneNovo.funcionario.id">Funcionário:</label>
+    <select th:field="*{telefoneNovo.funcionario.id}" id="funcionario">
+        <option th:each="func : ${funcionarios}"
+                th:value="${func.id}" th:text="${func.nome}">Funcionário</option>
+    </select>
+    <br/>
+
+    <input type="submit" value="Submit" />
+</form>
+</body>
+</html>

@@ -5,9 +5,17 @@ import jakarta.validation.constraints.NotNull;
 
 public class Telefone {
 
+    @NotBlank
     private String telefone;
 
     private Funcionario funcionario;
+
+    public Telefone() {}
+
+    public Telefone(String telefone, Funcionario funcionario) {
+        this.telefone = telefone;
+        this.funcionario = funcionario;
+    }
 
     public String getTelefone() {
         return telefone;
