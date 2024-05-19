@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Mesa</title>
+    <style>
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h2 th:text="${mesa.id == null ? 'Cadastrar Mesa' : 'Editar Mesa'}"></h2>
+<div th:if="${error}">
+    <p th:text="${error}"></p>
+</div>
+<form th:action="@{/mesas}" th:object="${mesa}" method="post">
+    <input type="hidden" th:field="*{id}" />
+
+    <div th:if="${#fields.hasErrors('descricao')}" class="error-message">
+        <p th:errors="*{descricao}"></p>
+    </div>
+    <label for="descricao">Descrição:</label>
+    <input type="text" th:field="*{descricao}" id="descricao" />
+    <br/>
+
+    <input type="submit" value="Enviar" />
+</form>
+</body>
+</html>
