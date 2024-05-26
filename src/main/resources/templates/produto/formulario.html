@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Produto</title>
+    <style>
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h2 th:text="${produtoDTO.instanciaProduto.id == null ? 'Cadastrar Produto' : 'Editar Produto'}"></h2>
+<div th:if="${error}">
+    <p th:text="${error}"></p>
+</div>
+<form th:action="@{/produtos}" th:object="${produtoDTO}" method="post">
+    <input type="hidden" th:field="*{instanciaProduto.id}" />
+    <input type="hidden" th:field="*{produto.id}" />
+
+    <div th:if="${#fields.hasErrors('instanciaProduto.valor')}" class="error-message">
+        <p th:errors="*{instanciaProduto.valor}"></p>
+    </div>
+    <label for="valor">Valor:</label>
+    <input type="text" th:field="*{instanciaProduto.valor}" id="valor" />
+    <br/>
+
+    <div th:if="${#fields.hasErrors('produto.nome')}" class="error-message">
+        <p th:errors="*{produto.nome}"></p>
+    </div>
+    <label for="nome">Nome:</label>
+    <input type="text" th:field="*{produto.nome}" id="nome" />
+    <br/>
+
+    <div>
+        <label>
+            <input type="radio" th:field="*{instanciaProduto.disponivel}" value="true" checked="checked"/>
+            <span>DISPONIVEL</span>
+        </label>
+        <label>
+            <input type="radio" th:field="*{instanciaProduto.disponivel}" value="false"/>
+            <span>INDISPONIVEL</span>
+        </label>
+    </div>
+
+    <input type="submit" value="Enviar" />
+</form>
+</body>
+</html>

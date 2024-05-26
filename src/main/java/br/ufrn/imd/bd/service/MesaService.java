@@ -26,49 +26,23 @@ public class MesaService {
     }
 
     public Mesa salvar(Mesa mesa) throws SQLException, EntidadeJaExisteException {
-        Connection conn = null;
-        try {
-            conn = DatabaseConfig.getConnection();
-            conn.setAutoCommit(false);
+
+        try (Connection conn = DatabaseConfig.getConnection()){
             mesa = mesaDAO.salvar(conn, mesa);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
-        } finally {
-            DatabaseConfig.close(conn);
         }
 
         return mesa;
     }
 
     public void atualizar(Mesa mesa) throws EntidadeJaExisteException, SQLException {
-        Connection conn = null;
-        try {
-            conn = DatabaseConfig.getConnection();
-            conn.setAutoCommit(false);
+        try (Connection conn = DatabaseConfig.getConnection()){
             mesaDAO.atualizar(conn, mesa);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
-        } finally {
-            DatabaseConfig.close(conn);
         }
     }
 
     public void deletarPorId(Long id) throws SQLException {
-        Connection conn = null;
-        try {
-            conn = DatabaseConfig.getConnection();
-            conn.setAutoCommit(false);
+        try (Connection conn = DatabaseConfig.getConnection()){
             mesaDAO.deletarPorId(conn, id);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
-        } finally {
-            DatabaseConfig.close(conn);
         }
     }
 }

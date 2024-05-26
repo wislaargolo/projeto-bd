@@ -38,50 +38,23 @@ public class TelefoneService {
         return  telefoneList;
     }
     public Telefone salvar(Telefone telefone) throws SQLException, EntidadeJaExisteException {
-        Connection conn = null;
-        try {
-            conn = DatabaseConfig.getConnection();
-            conn.setAutoCommit(false);
+        try (Connection conn = DatabaseConfig.getConnection()){
             telefoneValidator.validar(conn, telefone);
             telefone = telefoneDAO.salvar(conn, telefone);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
-        } finally {
-            DatabaseConfig.close(conn);
         }
 
         return telefone;
     }
 
     public void deletar(String telefone, Long funcionarioId) throws SQLException {
-        Connection conn = null;
-        try {
-            conn = DatabaseConfig.getConnection();
-            conn.setAutoCommit(false);
+        try (Connection conn = DatabaseConfig.getConnection()){
             telefoneDAO.deletar(conn, telefone, funcionarioId);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
-        } finally {
-            DatabaseConfig.close(conn);
         }
     }
 
     public void atualizar(Telefone telefoneAntigo, Telefone telefoneNovo) throws SQLException {
-        Connection conn = null;
-        try {
-            conn = DatabaseConfig.getConnection();
-            conn.setAutoCommit(false);
+        try (Connection conn = DatabaseConfig.getConnection()){
             telefoneDAO.atualizar(conn, telefoneAntigo, telefoneNovo);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
-        } finally {
-            DatabaseConfig.close(conn);
         }
     }
 
