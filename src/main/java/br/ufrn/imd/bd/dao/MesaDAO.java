@@ -30,14 +30,14 @@ public class MesaDAO extends AbstractDAOImpl<Mesa, Long>{
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new SQLException("ERRO >> A inserção do funcionário falhou, nenhuma linha afetada.");
+                throw new SQLException("ERRO >> A inserção de mesa falhou, nenhuma linha afetada.");
             }
 
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     mesa.setId(generatedKeys.getLong(1));
                 } else {
-                    throw new SQLException("ERRO >> A inserção do funcionário falhou, nenhum ID gerado.");
+                    throw new SQLException("ERRO >> A inserção de mesa falhou, nenhum ID gerado.");
                 }
             }
         }
@@ -48,7 +48,7 @@ public class MesaDAO extends AbstractDAOImpl<Mesa, Long>{
     @Override
     public void atualizar(Connection conn, Mesa... mesas) throws SQLException {
         if (mesas.length != 1) {
-            throw new IllegalArgumentException("ERRO >> Apenas um funcionário para atualização.");
+            throw new IllegalArgumentException("ERRO >> Apenas uma mesa para atualização.");
         }
 
         Mesa novo = mesas[0];
