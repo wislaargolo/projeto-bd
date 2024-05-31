@@ -44,11 +44,16 @@ public class AtendenteController {
         if (bindingResult.hasErrors()) {
             return "atendente/formulario";
         }
-        if(atendente.getId() == null) {
-            atendenteService.salvar(atendente);
-        } else {
-            atendenteService.atualizar(atendente);
+        atendenteService.salvar(atendente);
+        return "redirect:/atendentes";
+    }
+
+    @PostMapping("/editar")
+    public String editarAtendente(@ModelAttribute @Valid Atendente atendente, BindingResult bindingResult) throws SQLException, EntidadeJaExisteException {
+        if (bindingResult.hasErrors()) {
+            return "atendente/formulario";
         }
+        atendenteService.atualizar(atendente);
         return "redirect:/atendentes";
     }
 

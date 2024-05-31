@@ -21,7 +21,7 @@ public class MesaController {
     private MesaService mesaService;
 
     @GetMapping
-    public String listarTodosOsCaixas(Model model) throws SQLException {
+    public String listarTodosAsMesas(Model model) throws SQLException {
         List<Mesa> mesas = mesaService.buscarTodos();
         model.addAttribute("mesas", mesas);
         return "mesa/lista";
@@ -34,7 +34,7 @@ public class MesaController {
     }
 
     @GetMapping("/editar/{id}")
-    public String editarFormmesa(Model model, @PathVariable Long id) throws SQLException {
+    public String editarFormMesa(Model model, @PathVariable Long id) throws SQLException {
         model.addAttribute("mesa", mesaService.buscarPorId(id));
         return "mesa/formulario";
     }
@@ -44,11 +44,16 @@ public class MesaController {
         if (bindingResult.hasErrors()) {
             return "mesa/formulario";
         }
-        if(mesa.getId() == null) {
-            mesaService.salvar(mesa);
-        } else {
-            mesaService.atualizar(mesa);
+        mesaService.salvar(mesa);
+        return "redirect:/mesas";
+    }
+
+    @PostMapping("/editar")
+    public String editarMesa(@ModelAttribute @Valid Mesa mesa, BindingResult bindingResult) throws SQLException, EntidadeJaExisteException {
+        if (bindingResult.hasErrors()) {
+            return "mesa/formulario";
         }
+        mesaService.atualizar(mesa);
         return "redirect:/mesas";
     }
 

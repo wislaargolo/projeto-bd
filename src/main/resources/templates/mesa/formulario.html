@@ -14,7 +14,9 @@
 <div th:if="${error}">
     <p th:text="${error}"></p>
 </div>
-<form th:action="@{/mesas}" th:object="${mesa}" method="post">
+<form th:action="${mesa.id } == null ?
+                    @{/mesas} :
+                    @{/mesas/editar}" th:object="${mesa}" method="post">
     <input type="hidden" th:field="*{id}" />
 
     <div th:if="${#fields.hasErrors('descricao')}" class="error-message">

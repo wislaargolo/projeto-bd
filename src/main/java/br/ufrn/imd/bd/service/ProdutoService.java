@@ -6,6 +6,7 @@ import br.ufrn.imd.bd.dao.ProdutoDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.model.InstanciaProduto;
 import br.ufrn.imd.bd.model.Produto;
+import br.ufrn.imd.bd.validation.ProdutoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,9 @@ public class ProdutoService {
 
     @Autowired
     private ProdutoDAO produtoDAO;
+
+    @Autowired
+    private ProdutoValidator produtoValidator;
 
     public List<InstanciaProduto> buscarTodos() throws SQLException {
         return instanciaProdutoDAO.buscarTodos();
@@ -43,6 +47,7 @@ public class ProdutoService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
+            produtoValidator.validar(conn, instanciaProduto);
             instanciaProduto.setProduto(this.salvarProduto(conn, instanciaProduto.getProduto()));
             instanciaProduto = this.salvarInstanciaProduto(conn, instanciaProduto);
             conn.commit();
@@ -66,7 +71,7 @@ public class ProdutoService {
         if (antiga.getValor().compareTo(instanciaProduto.getValor()) != 0) {
             instanciaProdutoDAO.salvar(conn, instanciaProduto);
             antiga.setAtivo(false);
-            instanciaProdutoDAO.salvar(conn, antiga);
+            instanciaProdutoDAO.atualizar(conn, antiga);
         } else {
             instanciaProdutoDAO.atualizar(conn, instanciaProduto);
         }

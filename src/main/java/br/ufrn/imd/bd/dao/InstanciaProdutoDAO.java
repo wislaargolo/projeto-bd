@@ -96,4 +96,31 @@ public class InstanciaProdutoDAO extends AbstractDAOImpl<InstanciaProduto, Long>
     public String getNomeTabela() {
         return "produto_instancias";
     }
+
+    public boolean existeProdutoNome(Connection conn, InstanciaProduto instanciaProduto) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM produto_instancias pi " +
+                "JOIN produtos p ON p.id = pi.id_produto " +
+                "WHERE pi.is_ativo = true ";
+
+        if (instanciaProduto.getId() != null) {
+            sql += "AND pi.id != ? ";
+        }
+
+        sql += "AND p.nome = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            int parameterIndex = 1;
+            if (instanciaProduto.getId() != null) {
+                stmt.setObject(parameterIndex++, instanciaProduto.getId());
+            }
+            stmt.setString(parameterIndex, instanciaProduto.getProduto().getNome());
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        }
+        return false;
+    }
 }

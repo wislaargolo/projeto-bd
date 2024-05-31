@@ -47,7 +47,7 @@ public class TelefoneController {
     }
 
     @GetMapping("/{id}/telefones/{telefone}/editar")
-    public String criarEdicaoTelefone(Model model, @PathVariable Long id, @PathVariable String telefone) throws SQLException {
+    public String editarFormTelefone(Model model, @PathVariable Long id, @PathVariable String telefone) throws SQLException {
         model.addAttribute("telefone", new Telefone(id, telefone));
         return "telefone/formulario";
     }

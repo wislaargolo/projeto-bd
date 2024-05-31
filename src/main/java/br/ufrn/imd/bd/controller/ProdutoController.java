@@ -52,6 +52,6 @@ public class ProdutoController {
     @GetMapping("/{id}/excluir")
     public String excluirProduto(@PathVariable Long id) throws SQLException {
         produtoService.deletar(id);
-        return "produto/lista";
+        return "redirect:/produtos";
     }
 }
