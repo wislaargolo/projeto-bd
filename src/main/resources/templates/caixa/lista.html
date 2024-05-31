@@ -26,6 +26,8 @@
         <td th:text="${caixa.login}"></td>
         <td th:text="${caixa.email}"></td>
         <td>
+            <a th:href="@{'funcionarios/' + ${caixa.id} + '/telefones'}">Telefones</a>
+            <span>|</span>
             <a th:href="@{'caixas/editar/' + ${caixa.id}}">Editar</a>
             <span>|</span>
             <a th:href="@{'caixas/excluir/' + ${caixa.id}}" onclick="return confirm('Tem certeza que deseja excluir este caixa?')">Excluir</a>

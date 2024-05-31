@@ -44,11 +44,16 @@ public class CozinheiroController {
         if (bindingResult.hasErrors()) {
             return "cozinheiro/formulario";
         }
-        if (cozinheiro.getId() == null) {
-            cozinheiroService.salvar(cozinheiro);
-        } else {
-            cozinheiroService.atualizar(cozinheiro);
+        cozinheiroService.salvar(cozinheiro);
+        return "redirect:/cozinheiros";
+    }
+
+    @PostMapping("/editar")
+    public String editarCozinheiro(@ModelAttribute @Valid Cozinheiro cozinheiro, BindingResult bindingResult) throws SQLException, EntidadeJaExisteException {
+        if (bindingResult.hasErrors()) {
+            return "cozinheiro/formulario";
         }
+        cozinheiroService.atualizar(cozinheiro);
         return "redirect:/cozinheiros";
     }
 

@@ -1,6 +1,5 @@
 package br.ufrn.imd.bd.model;
 
-import br.ufrn.imd.bd.dao.ProdutoDAO;
 import jakarta.validation.constraints.NotBlank;
 
 public class Produto {
@@ -10,13 +9,13 @@ public class Produto {
     @NotBlank
     private String nome;
 
-    private Boolean isAtivo;
+    private Boolean isDisponivel;
 
     public Produto() {}
 
-    public Produto(String nome, Boolean isAtivo) {
+    public Produto(String nome, Boolean isDisponivel) {
         this.nome = nome;
-        this.isAtivo = isAtivo;
+        this.isDisponivel = isDisponivel;
     }
 
     public Long getId() {
@@ -35,11 +34,11 @@ public class Produto {
         this.nome = nome;
     }
 
-    public Boolean getAtivo() {
-        return isAtivo;
+    public Boolean getDisponivel() {
+        return isDisponivel;
     }
 
-    public void setAtivo(Boolean ativo) {
-        isAtivo = ativo;
+    public void setDisponivel(Boolean disponivel) {
+        isDisponivel = disponivel;
     }
 }

@@ -44,11 +44,16 @@ public class CaixaController {
         if (bindingResult.hasErrors()) {
             return "caixa/formulario";
         }
-        if(caixa.getId() == null) {
-            caixaService.salvar(caixa);
-        } else {
-            caixaService.atualizar(caixa);
+        caixaService.salvar(caixa);
+        return "redirect:/caixas";
+    }
+
+    @PostMapping("/editar")
+    public String editarCaixa(@ModelAttribute @Valid Caixa caixa, BindingResult bindingResult) throws SQLException, EntidadeJaExisteException {
+        if (bindingResult.hasErrors()) {
+            return "caixa/formulario";
         }
+        caixaService.atualizar(caixa);
         return "redirect:/caixas";
     }
 

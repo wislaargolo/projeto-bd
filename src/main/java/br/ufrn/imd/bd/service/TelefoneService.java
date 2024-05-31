@@ -1,7 +1,6 @@
 package br.ufrn.imd.bd.service;
 
 import br.ufrn.imd.bd.connection.DatabaseConfig;
-import br.ufrn.imd.bd.controller.dto.TelefoneDTO;
 import br.ufrn.imd.bd.dao.FuncionarioDAO;
 import br.ufrn.imd.bd.dao.TelefoneDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
@@ -22,21 +21,16 @@ public class TelefoneService {
     private TelefoneDAO telefoneDAO;
 
     @Autowired
-    private TelefoneValidator telefoneValidator;
-
-    @Autowired
     private FuncionarioDAO funcionarioDAO;
 
-    public List<Telefone> buscarTodos() throws SQLException {
-        List<Telefone> telefoneList = telefoneDAO.buscarTodos();
+    @Autowired
+    private TelefoneValidator telefoneValidator;
 
-        for(Telefone telefone: telefoneList) {
-            Long id_funcionario = telefone.getFuncionario().getId();
-            telefone.setFuncionario(funcionarioDAO.buscarPorId(id_funcionario));
-        }
-
-        return  telefoneList;
+    public List<Telefone> buscarTelefonesPorFuncionarioId(Long id) throws SQLException {
+        List<Telefone> telefones = telefoneDAO.buscarPorFuncionarioId(id);
+        return telefones;
     }
+
     public Telefone salvar(Telefone telefone) throws SQLException, EntidadeJaExisteException {
         try (Connection conn = DatabaseConfig.getConnection()){
             telefoneValidator.validar(conn, telefone);
@@ -46,25 +40,15 @@ public class TelefoneService {
         return telefone;
     }
 
-    public void deletar(String telefone, Long funcionarioId) throws SQLException {
-        try (Connection conn = DatabaseConfig.getConnection()){
-            telefoneDAO.deletar(conn, telefone, funcionarioId);
-        }
-    }
-
     public void atualizar(Telefone telefoneAntigo, Telefone telefoneNovo) throws SQLException {
         try (Connection conn = DatabaseConfig.getConnection()){
             telefoneDAO.atualizar(conn, telefoneAntigo, telefoneNovo);
         }
     }
 
-    public TelefoneDTO getTelefoneDTO(String telefone, Long funcionarioId) {
-        Funcionario funcionario = new Funcionario();
-        funcionario.setId(funcionarioId);
-        Telefone telefoneObj = new Telefone(telefone, funcionario);
-        TelefoneDTO telefoneDTO = new TelefoneDTO();
-        telefoneDTO.setTelefoneHidden(telefoneObj);
-        telefoneDTO.setTelefoneNovo(telefoneObj);
-        return telefoneDTO;
+    public void deletar(String telefone, Long funcionarioId) throws SQLException {
+        try (Connection conn = DatabaseConfig.getConnection()){
+            telefoneDAO.deletar(conn, telefone, funcionarioId);
+        }
     }
 }

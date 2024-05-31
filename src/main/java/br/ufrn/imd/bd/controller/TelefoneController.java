@@ -1,7 +1,8 @@
 package br.ufrn.imd.bd.controller;
 
-import br.ufrn.imd.bd.controller.dto.TelefoneDTO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.model.Funcionario;
+import br.ufrn.imd.bd.model.Telefone;
 import br.ufrn.imd.bd.service.FuncionarioService;
 import br.ufrn.imd.bd.service.TelefoneService;
 import jakarta.validation.Valid;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.SQLException;
 
 @Controller
-@RequestMapping("/telefones")
+@RequestMapping("/funcionarios")
 public class TelefoneController {
 
     @Autowired
@@ -23,42 +24,43 @@ public class TelefoneController {
     @Autowired
     private TelefoneService telefoneService;
 
-    @GetMapping
-    public String listarTodosOsTelefones(Model model) throws SQLException {;
-        model.addAttribute("telefones", telefoneService.buscarTodos());
+    @GetMapping("/{id}/telefones")
+    public String listarTelefonesFuncionario(Model model, @PathVariable Long id) throws SQLException {
+        model.addAttribute("funcionario", funcionarioService.buscarPorId(id));
+        model.addAttribute("telefones", telefoneService.buscarTelefonesPorFuncionarioId(id));
         return "telefone/lista";
     }
 
-    @GetMapping("/novo")
-    public String criarFormTelefone(Model model) throws SQLException {
-        model.addAttribute("telefoneDTO", new TelefoneDTO());
-        model.addAttribute("funcionarios", funcionarioService.buscarTodos());
+    @GetMapping("/{id}/telefones/novo")
+    public String criarFormTelefone(Model model, @PathVariable Long id) throws SQLException {
+        model.addAttribute("telefone", new Telefone(id));
         return "telefone/formulario";
     }
 
-    @PostMapping
-    public String salvarCaixa(@ModelAttribute @Valid TelefoneDTO telefoneDTO, BindingResult bindingResult) throws SQLException, EntidadeJaExisteException {
+    @PostMapping("/{id}/telefones")
+    public String salvarTelefone(@ModelAttribute @Valid Telefone telefone, BindingResult bindingResult, @PathVariable Long id) throws SQLException, EntidadeJaExisteException, EntidadeJaExisteException {
         if (bindingResult.hasErrors()) {
             return "telefone/formulario";
         }
-        if(telefoneDTO.getTelefoneHidden() == null) {
-            telefoneService.salvar(telefoneDTO.getTelefoneNovo());
-        } else {
-            telefoneService.atualizar(telefoneDTO.getTelefoneHidden(), telefoneDTO.getTelefoneNovo());
-        }
-        return "redirect:/telefones";
+        telefoneService.salvar(telefone);
+        return String.format("redirect:/funcionarios/%s/telefones", id);
     }
 
-    @GetMapping("/editar/{telefone}/funcionario/{id}")
-    public String excluirAtendente(Model model, @PathVariable String telefone, @PathVariable(name = "id") Long funcionarioId) throws SQLException {
-        model.addAttribute("telefoneDTO", telefoneService.getTelefoneDTO(telefone, funcionarioId));
-        model.addAttribute("funcionarios", funcionarioService.buscarTodos());
+    @GetMapping("/{id}/telefones/{telefone}/editar")
+    public String editarFormTelefone(Model model, @PathVariable Long id, @PathVariable String telefone) throws SQLException {
+        model.addAttribute("telefone", new Telefone(id, telefone));
         return "telefone/formulario";
     }
 
-    @GetMapping("/excluir/{telefone}/funcionario/{id}")
-    public String excluirAtendente(@PathVariable String telefone, @PathVariable(name = "id") Long funcionarioId) throws SQLException {
+    @PostMapping("/{id}/telefones/{telefoneAntigo}/editar")
+    public String editarTelefone(@ModelAttribute @Valid Telefone telefone, BindingResult bindingResult, @PathVariable Long id, @PathVariable String telefoneAntigo) throws SQLException {
+        telefoneService.atualizar(new Telefone(id, telefoneAntigo), telefone);
+        return String.format("redirect:/funcionarios/%s/telefones", id);
+    }
+
+    @GetMapping("/{id}/telefones/{telefone}/excluir")
+    public String excluirTelefone(@PathVariable String telefone, @PathVariable(name = "id") Long funcionarioId) throws SQLException {
         telefoneService.deletar(telefone, funcionarioId);
-        return "redirect:/telefones";
+        return String.format("redirect:/funcionarios/%s/telefones", funcionarioId);
     }
 }

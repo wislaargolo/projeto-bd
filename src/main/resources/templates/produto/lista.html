@@ -20,15 +20,15 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="produtoDTO : ${produtos}">
-        <td th:text="${produtoDTO.instanciaProduto.id}"></td>
-        <td th:text="${produtoDTO.produto.nome}"></td>
-        <td th:text="${produtoDTO.instanciaProduto.disponivel ? 'DISPONIVEL' : 'INDISPONIVEL'}"></td>
-        <td th:text="${produtoDTO.instanciaProduto.valor}"></td>
+    <tr th:each="instanciaProduto : ${instanciaProdutoList}">
+        <td th:text="${instanciaProduto.id}"></td>
+        <td th:text="${instanciaProduto.produto.nome}"></td>
+        <td th:text="${instanciaProduto.produto.disponivel ? 'DISPONIVEL' : 'INDISPONIVEL'}"></td>
+        <td th:text="${instanciaProduto.valor}"></td>
         <td>
-            <a th:href="@{'produtos/editar/' + ${produtoDTO.produto.id}}">Editar</a>
+            <a th:href="@{'produtos/' + ${instanciaProduto.id} + '/editar'}">Editar</a>
             <span>|</span>
-            <a th:href="@{'produtos/excluir/' + ${produtoDTO.produto.id}}" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
+            <a th:href="@{'produtos/' + ${instanciaProduto.id} + '/excluir'}" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
         </td>
     </tr>
     </tbody>

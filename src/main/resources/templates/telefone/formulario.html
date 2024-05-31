@@ -10,24 +10,17 @@
     </style>
 </head>
 <body>
-<h2>Cadastrar Telefone</h2>
+<h2 th:text="${telefone.telefone == null ? 'Cadastrar Telefone' : 'Editar Telefone'}">Cadastrar Telefone</h2>
 <div th:if="${error}">
     <p th:text="${error}"></p>
 </div>
-<form th:action="@{/telefones}" th:object="${telefoneDTO}" method="post">
-    <input type="hidden" th:field="*{telefoneHidden.telefone}" />
-    <input type="hidden" th:field="*{telefoneHidden.funcionario.id}" />
-    <!-- Hidden input field for telefoneHidden -->
+<form th:action="${telefone.telefone} == null ?
+                    @{'/funcionarios/' + ${telefone.funcionario.id} + '/telefones'} :
+                    @{'/funcionarios/' + ${telefone.funcionario.id} + '/telefones/' + ${telefone.telefone} + '/editar'}" th:object="${telefone}" method="post">
+    <input type="hidden" th:field="*{funcionario.id}" />
 
-    <label for="telefoneNovo.telefone">Telefone:</label>
-    <input type="text" th:field="*{telefoneNovo.telefone}" id="telefone" />
-    <br/>
-
-    <label for="telefoneNovo.funcionario.id">Funcionário:</label>
-    <select th:field="*{telefoneNovo.funcionario.id}" id="funcionario">
-        <option th:each="func : ${funcionarios}"
-                th:value="${func.id}" th:text="${func.nome}">Funcionário</option>
-    </select>
+    <label for="telefone">Telefone:</label>
+    <input type="text" th:field="*{telefone}" id="telefone" />
     <br/>
 
     <input type="submit" value="Submit" />

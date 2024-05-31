@@ -1,20 +1,24 @@
 package br.ufrn.imd.bd.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 public class Telefone {
 
-    @NotBlank
     private String telefone;
 
     private Funcionario funcionario;
 
-    public Telefone() {}
+    public Telefone() {
+        this.funcionario = new Funcionario();
+    }
 
-    public Telefone(String telefone, Funcionario funcionario) {
+    public Telefone(Long funcionarioId) {
+        this.funcionario = new Funcionario();
+        funcionario.setId(funcionarioId);
+    }
+
+    public Telefone(Long funcionarioId, String telefone) {
+        this.funcionario = new Funcionario();
+        funcionario.setId(funcionarioId);
         this.telefone = telefone;
-        this.funcionario = funcionario;
     }
 
     public String getTelefone() {

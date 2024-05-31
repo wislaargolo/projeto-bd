@@ -14,6 +14,10 @@
 <div th:if="${error}">
     <p th:text="${error}"></p>
 </div>
+
+<form th:action="${atendente.id} == null ?
+                    @{/atendentes} :
+                    @{/atendentes/editar}" th:object="${telefone}" method="post">
 <form th:action="@{/atendentes}" th:object="${atendente}" method="post">
     <input type="hidden" th:field="*{id}" />
 
