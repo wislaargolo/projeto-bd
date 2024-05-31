@@ -17,4 +17,8 @@ public class FuncionarioService {
     public List<Funcionario> buscarTodos() throws SQLException {
         return funcionarioDAO.buscarTodos();
     }
+
+    public Funcionario buscarPorId(Long id) throws SQLException {
+        return funcionarioDAO.buscarPorId(id);
+    }
 }

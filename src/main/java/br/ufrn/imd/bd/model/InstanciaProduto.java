@@ -12,14 +12,16 @@ public class InstanciaProduto {
     private Double valor;
 
     @NotNull
-    private Boolean isDisponivel;
+    private Boolean isAtivo;
 
     private LocalDateTime data;
 
-    private Long produtoId;
+    private Produto produto;
 
     public InstanciaProduto() {
-        this.setDisponivel(true);
+        this.setAtivo(true);
+        this.produto = new Produto();
+        produto.setDisponivel(true);
     }
 
     public Long getId() {
@@ -38,12 +40,12 @@ public class InstanciaProduto {
         this.valor = valor;
     }
 
-    public Boolean getDisponivel() {
-        return isDisponivel;
+    public Boolean getAtivo() {
+        return isAtivo;
     }
 
-    public void setDisponivel(Boolean disponivel) {
-        isDisponivel = disponivel;
+    public void setAtivo(Boolean ativo) {
+        isAtivo = ativo;
     }
 
     public LocalDateTime getData() {
@@ -54,11 +56,11 @@ public class InstanciaProduto {
         this.data = data;
     }
 
-    public Long getProdutoId() {
-        return produtoId;
+    public Produto getProduto() {
+        return produto;
     }
 
-    public void setProdutoId(Long produtoId) {
-        this.produtoId = produtoId;
+    public void setProduto(Produto produto) {
+        this.produto = produto;
     }
 }

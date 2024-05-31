@@ -1,27 +1,28 @@
 package br.ufrn.imd.bd.dao;
 
-import br.ufrn.imd.bd.model.Funcionario;
 import br.ufrn.imd.bd.model.Telefone;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
+
+
     @Override
     public Telefone salvar(Connection conn, Telefone telefone) throws SQLException {
-        String sql = String.format(
-                "INSERT INTO %s (telefone_funcionario, id_funcionario) VALUES (?, ?)",
-                getNomeTabela()
-        );
+        String sql = String.format("INSERT INTO %s (id_funcionario, telefone_funcionario) VALUES (?, ?)", getNomeTabela());
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, telefone.getTelefone());
-            stmt.setLong(2, telefone.getFuncionario().getId());
-            stmt.executeUpdate();
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setLong(1, telefone.getFuncionario().getId());
+            stmt.setString(2, telefone.getTelefone());
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("ERRO >> A inserção do funcionário falhou, nenhuma linha afetada.");
+            }
         }
 
         return telefone;
@@ -57,18 +58,36 @@ public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
     @Override
     protected Telefone mapearResultado(ResultSet rs) throws SQLException {
         Telefone telefone = new Telefone();
+        telefone.getFuncionario().setId(rs.getLong("id_funcionario"));
         telefone.setTelefone(rs.getString("telefone_funcionario"));
-
-        Funcionario funcionario = new Funcionario();
-        funcionario.setId(rs.getLong("id_funcionario"));
-        telefone.setFuncionario(funcionario);
-
         return telefone;
     }
 
     @Override
     public String getNomeTabela() {
         return "telefones";
+    }
+
+    public List<Telefone> buscarPorFuncionarioId(Long id) throws SQLException {
+        List<Telefone> resultados = new ArrayList<>();
+        String sql = String.format("SELECT * FROM %s WHERE id_funcionario = %s", getNomeTabela(), id);
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                resultados.add(mapearResultado(rs));
+            }
+        }
+        return resultados;
+    }
+
+    public void deletar(Connection conn, String telefone, Long funcionarioId) throws SQLException {
+        String sql = String.format("DELETE FROM %s WHERE id_funcionario = ? AND telefone_funcionario = ?", getNomeTabela());
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, funcionarioId);
+            stmt.setString(2, telefone);
+            stmt.executeUpdate();
+        }
     }
 
     public boolean existeTelefone(Connection conn, Telefone telefone) throws SQLException {
@@ -82,14 +101,5 @@ public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
             }
         }
         return false;
-    }
-
-    public void deletar(Connection conn, String telefone, Long funcionarioId) throws SQLException {
-        String sql = String.format("DELETE FROM %s WHERE id_funcionario = ? AND telefone_funcionario = ?", getNomeTabela());
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, funcionarioId);
-            stmt.setString(2, telefone);
-            stmt.executeUpdate();
-        }
     }
 }

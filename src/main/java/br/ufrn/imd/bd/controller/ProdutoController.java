@@ -1,10 +1,9 @@
 package br.ufrn.imd.bd.controller;
 
-import br.ufrn.imd.bd.controller.dto.ProdutoDTO;
-import br.ufrn.imd.bd.controller.dto.TelefoneDTO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.model.Caixa;
 import br.ufrn.imd.bd.model.InstanciaProduto;
-import br.ufrn.imd.bd.model.Produto;
+import br.ufrn.imd.bd.model.Telefone;
 import br.ufrn.imd.bd.service.ProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.List;
 
 @Controller
 @RequestMapping("/produtos")
@@ -23,35 +23,35 @@ public class ProdutoController {
     private ProdutoService produtoService;
 
     @GetMapping
-    public String listarTodosProdutos(Model model) throws SQLException {;
-        model.addAttribute("produtos", produtoService.buscarTodos());
+    public String listarTodosOsProdutos(Model model) throws SQLException {
+        model.addAttribute("instanciaProdutoList", produtoService.buscarTodos());
         return "produto/lista";
     }
 
     @GetMapping("/novo")
-    public String criarFormProduto(Model model) throws SQLException {
-        model.addAttribute("produtoDTO", new ProdutoDTO(new InstanciaProduto(), new Produto()));
+    public String criarFormProduto(Model model) {
+        model.addAttribute("instanciaProduto", new InstanciaProduto());
         return "produto/formulario";
     }
 
     @PostMapping
-    public String salvarProduto(@ModelAttribute @Valid ProdutoDTO produtoDTO, BindingResult bindingResult) throws SQLException, EntidadeJaExisteException {
+    public String salvarProduto(@ModelAttribute @Valid InstanciaProduto instanciaProduto, BindingResult bindingResult) throws SQLException, EntidadeJaExisteException {
         if (bindingResult.hasErrors()) {
             return "produto/formulario";
         }
-        produtoService.salvar(produtoDTO.getInstanciaProduto(), produtoDTO.getProduto());
+        produtoService.salvar(instanciaProduto);
         return "redirect:/produtos";
     }
 
-    @GetMapping("/editar/{id}")
-    public String editarFormmesa(Model model, @PathVariable Long id) throws SQLException {
-        model.addAttribute("produtoDTO", produtoService.buscarPorId(id));
+    @GetMapping("/{id}/editar")
+    public String editarProduto(Model model, @PathVariable Long id) throws SQLException {
+        model.addAttribute("instanciaProduto", produtoService.buscarPorId(id));
         return "produto/formulario";
     }
 
-    @GetMapping("/excluir/{id}")
+    @GetMapping("/{id}/excluir")
     public String excluirProduto(@PathVariable Long id) throws SQLException {
-        produtoService.inativarProduto(id);
-        return "redirect:/produtos";
+        produtoService.deletar(id);
+        return "produto/lista";
     }
 }

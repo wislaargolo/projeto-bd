@@ -26,6 +26,8 @@
         <td th:text="${cozinheiro.login}"></td>
         <td th:text="${cozinheiro.email}"></td>
         <td>
+            <a th:href="@{'funcionarios/' + ${cozinheiro.id} + '/telefones'}">Telefones</a>
+            <span>|</span>
             <a th:href="@{'cozinheiros/editar/' + ${cozinheiro.id}}">Editar</a>
             <span>|</span>
             <a th:href="@{'cozinheiros/excluir/' + ${cozinheiro.id}}" onclick="return confirm('Tem certeza que deseja excluir este cozinheiro?')">Excluir</a>
