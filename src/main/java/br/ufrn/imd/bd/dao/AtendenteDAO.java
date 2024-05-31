@@ -1,7 +1,7 @@
 package br.ufrn.imd.bd.dao;
 
 import br.ufrn.imd.bd.model.Atendente;
-import br.ufrn.imd.bd.model.TipoAtendente;
+import br.ufrn.imd.bd.model.enums.TipoAtendente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

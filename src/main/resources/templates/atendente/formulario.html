@@ -23,7 +23,7 @@
 
     <label for="tipo">Tipo de Atendente:</label>
     <select th:field="*{tipo}" id="tipo">
-        <option th:each="tipo : ${T(br.ufrn.imd.bd.model.TipoAtendente).values()}"
+        <option th:each="tipo : ${T(br.ufrn.imd.bd.model.enums.TipoAtendente).values()}"
                 th:value="${tipo}" th:text="${tipo}">Tipo</option>
     </select>
     <br/>

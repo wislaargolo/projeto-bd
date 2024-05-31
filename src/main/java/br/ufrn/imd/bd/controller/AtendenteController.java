@@ -21,7 +21,7 @@ public class AtendenteController {
     private AtendenteService atendenteService;
 
     @GetMapping
-    public String listarTodosOsAtendentes(Model model) throws SQLException {
+    public String listarAtendentes(Model model) throws SQLException {
         List<Atendente> atendentes = atendenteService.buscarTodos();
         model.addAttribute("atendentes", atendentes);
         return "atendente/lista";

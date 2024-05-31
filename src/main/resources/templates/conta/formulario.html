@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Conta</title>
+    <style>
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h2 th:text="${conta.id == null ? 'Cadastrar Conta' : 'Editar Conta'}"></h2>
+<div th:if="${error}">
+    <p th:text="${error}"></p>
+</div>
+
+<form th:action="${conta.id} == null ?
+                    @{/contas} :
+                    @{/contas/editar}" th:object="${conta}" method="post">    <input type="hidden" th:field="*{id}" />
+
+    <label for="id_mesa">Mesa:</label>
+    <select th:field="*{mesa.id}" id="id_mesa">
+        <option th:each="mesa : ${mesas}"
+                th:value="${mesa.id}" th:text="${mesa.descricao}">Descrição</option>
+    </select>
+    <br/>
+
+    <div th:style="${conta.statusConta.name() == 'SOLICITADA' || conta.statusConta.name() == 'FINALIZADA' ? '' : 'display:none;'}" id="metodoPagamentoBlock">
+        <label for="metodo_pagamento">Método de Pagamento:</label>
+        <select th:field="*{metodoPagamento}" id="metodo_pagamento">
+            <option th:each="metodo : ${T(br.ufrn.imd.bd.model.enums.MetodoPagamento).values()}"
+                    th:value="${metodo.name()}" th:text="${metodo}">Metodo</option>
+        </select>
+    </div>
+
+
+    <div th:if="${#fields.hasErrors('statusConta')}" class="error-message">
+        <p th:errors="*{statusConta}"></p>
+    </div>
+
+    <label for="status">Status:</label>
+    <select th:field="*{statusConta}" id="status">
+        <option th:each="status : ${T(br.ufrn.imd.bd.model.enums.StatusConta).values()}"
+                th:value="${status}" th:text="${status}">Status</option>
+    </select>
+    <br/>
+
+    <input type="submit" value="Submit" />
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var statusContaSelect = document.getElementById('status');
+        var metodoPagamentoBlock = document.getElementById('metodoPagamentoBlock');
+
+        function toggleMetodoPagamento() {
+            var status = statusContaSelect.value;
+            if (status === 'SOLICITADA' || status === 'FINALIZADA') {
+                metodoPagamentoBlock.style.display = '';
+            } else {
+                metodoPagamentoBlock.style.display = 'none';
+            }
+        }
+
+        statusContaSelect.addEventListener('change', toggleMetodoPagamento);
+        toggleMetodoPagamento();
+    });
+</script>
+
+
+</body>
+</html>

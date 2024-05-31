@@ -1,5 +1,6 @@
 package br.ufrn.imd.bd.model;
 
+import br.ufrn.imd.bd.model.enums.TipoAtendente;
 import jakarta.validation.constraints.NotNull;
 
 public class Atendente extends Funcionario {
