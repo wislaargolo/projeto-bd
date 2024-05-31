@@ -18,6 +18,7 @@
 <form th:action="@{/produtos}" th:object="${instanciaProduto}" method="post">
     <input type="hidden" th:field="*{id}" />
     <input type="hidden" th:field="*{produto.id}" />
+    <input type="hidden" th:field="*{ativo}" />
 
     <div th:if="${#fields.hasErrors('valor')}" class="error-message">
         <p th:errors="*{valor}"></p>

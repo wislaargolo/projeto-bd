@@ -10,11 +10,10 @@ public class ProdutoDAO extends AbstractDAOImpl<Produto, Long> {
 
     @Override
     public Produto salvar(Connection conn, Produto produto) throws SQLException {
-        String sql = String.format("INSERT INTO %s (nome, is_disponivel) VALUES (?,?)", getNomeTabela());
+        String sql = String.format("INSERT INTO %s (nome) VALUES (?)", getNomeTabela());
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, produto.getNome());
-            stmt.setBoolean(2, produto.getDisponivel());
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {

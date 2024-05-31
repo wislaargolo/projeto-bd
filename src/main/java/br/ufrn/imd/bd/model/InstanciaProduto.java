@@ -11,7 +11,6 @@ public class InstanciaProduto {
     @NotNull
     private Double valor;
 
-    @NotNull
     private Boolean isAtivo;
 
     private LocalDateTime data;
@@ -19,9 +18,7 @@ public class InstanciaProduto {
     private Produto produto;
 
     public InstanciaProduto() {
-        this.setAtivo(true);
         this.produto = new Produto();
-        produto.setDisponivel(true);
     }
 
     public Long getId() {

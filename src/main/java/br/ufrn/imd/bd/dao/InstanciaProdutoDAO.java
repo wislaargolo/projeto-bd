@@ -31,12 +31,11 @@ public class InstanciaProdutoDAO extends AbstractDAOImpl<InstanciaProduto, Long>
 
     @Override
     public InstanciaProduto salvar(Connection conn, InstanciaProduto instanciaProduto) throws SQLException {
-        String sql = String.format("INSERT INTO %s (valor, is_ativo, id_produto) VALUES (?, ?, ?)", getNomeTabela());
+        String sql = String.format("INSERT INTO %s (valor, id_produto) VALUES (?, ?)", getNomeTabela());
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setDouble(1, instanciaProduto.getValor());
-            stmt.setBoolean(2, instanciaProduto.getAtivo());
-            stmt.setLong(3, instanciaProduto.getProduto().getId());
+            stmt.setLong(2, instanciaProduto.getProduto().getId());
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
@@ -83,6 +82,7 @@ public class InstanciaProdutoDAO extends AbstractDAOImpl<InstanciaProduto, Long>
 
     @Override
     protected InstanciaProduto mapearResultado(ResultSet rs) throws SQLException {
+
         InstanciaProduto instanciaProduto = new InstanciaProduto();
         instanciaProduto.setId(rs.getLong("id"));
         instanciaProduto.setValor(rs.getDouble("valor"));
