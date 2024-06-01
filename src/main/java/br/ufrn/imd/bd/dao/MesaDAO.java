@@ -9,6 +9,14 @@ import java.sql.*;
 public class MesaDAO extends AbstractDAO<Mesa, Long> {
 
     @Override
+    public Mesa mapearResultado(ResultSet rs) throws SQLException {
+        Mesa mesa = new Mesa();
+        mesa.setId(rs.getLong("id"));
+        mesa.setDescricao(rs.getString("descricao"));
+        return mesa;
+    }
+
+    @Override
     public String getNomeTabela() {
         return "mesas";
     }
@@ -59,13 +67,5 @@ public class MesaDAO extends AbstractDAO<Mesa, Long> {
                 throw new SQLException("ERRO >> Atualização falhou.");
             }
         }
-    }
-
-    @Override
-    public Mesa mapearResultado(ResultSet rs) throws SQLException {
-        Mesa mesa = new Mesa();
-        mesa.setId(rs.getLong("id"));
-        mesa.setDescricao(rs.getString("descricao"));
-        return mesa;
     }
 }

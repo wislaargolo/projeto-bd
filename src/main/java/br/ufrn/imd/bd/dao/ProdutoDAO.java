@@ -9,11 +9,6 @@ import java.sql.*;
 public class ProdutoDAO extends AbstractDAO<Produto, Long> {
 
     @Override
-    public String getNomeTabela() {
-        return "produtos";
-    }
-
-    @Override
     public Produto salvar(Connection conn, Produto produto) throws SQLException {
         String sql = String.format("INSERT INTO %s (nome) VALUES (?)", getNomeTabela());
 
@@ -46,7 +41,7 @@ public class ProdutoDAO extends AbstractDAO<Produto, Long> {
         Produto novo = produtos[0];
 
         String sql = String.format(
-                "UPDATE %s SET nome = ?, is_disponivel = ? WHERE id_produto = ?",
+                "UPDATE %s SET nome = ?, is_disponivel = ? WHERE id = ?",
                 getNomeTabela()
         );
 
@@ -63,11 +58,16 @@ public class ProdutoDAO extends AbstractDAO<Produto, Long> {
     }
 
     @Override
-    public Produto mapearResultado(ResultSet rs) throws SQLException {
+    protected Produto mapearResultado(ResultSet rs) throws SQLException {
         Produto produto = new Produto();
-        produto.setId(rs.getLong("id_produto"));
+        produto.setId(rs.getLong("id"));
         produto.setNome(rs.getString("nome"));
         produto.setDisponivel(rs.getBoolean("is_disponivel"));
         return produto;
+    }
+
+    @Override
+    public String getNomeTabela() {
+        return "produtos";
     }
 }
