@@ -19,18 +19,30 @@ public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
     private FuncionarioDAO funcionarioDAO;
 
     @Override
+    protected Atendente mapearResultado(ResultSet rs) throws SQLException {
+        Atendente atendente = new Atendente(funcionarioDAO.mapearResultado(rs));
+        atendente.setTipo(TipoAtendente.valueOf(rs.getString("tipo")));
+        return atendente;
+    }
+
+    @Override
     public String getNomeTabela() {
         return "atendentes";
     }
 
     @Override
-    protected String getBuscarTodosQuery() {
-        return String.format("SELECT f.*, a.tipo FROM %s a JOIN funcionarios f ON a.id = f.id", getNomeTabela());
-    }
+    public List<Atendente> buscarTodos() throws SQLException {
+        List<Atendente> resultados = new ArrayList<>();
+        String sql = "SELECT f.*, a.tipo FROM atendentes a JOIN funcionarios f ON a.id = f.id";
 
-    @Override
-    protected String getBuscarPorIdQuery() {
-        return String.format("SELECT * FROM %s a JOIN funcionarios f on f.id = a.id WHERE a.id = ?", getNomeTabela());
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                resultados.add(mapearResultado(rs));
+            }
+        }
+        return resultados;
     }
 
     @Override
@@ -74,15 +86,17 @@ public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
     }
 
     @Override
-    public void deletarPorId(Connection conn, Long id) throws SQLException {
-        funcionarioDAO.deletarPorId(conn, id);
-        super.deletarPorId(conn, id);
+    public Atendente buscarPorId(Long id) throws SQLException {
+        return new Atendente(funcionarioDAO.buscarPorId(id));
     }
 
     @Override
-    public Atendente mapearResultado(ResultSet rs) throws SQLException {
-        Atendente atendente = new Atendente(funcionarioDAO.mapearResultado(rs));
-        atendente.setTipo(TipoAtendente.valueOf(rs.getString("tipo")));
-        return atendente;
+    public void deletarPorId(Connection conn, Long id) throws SQLException {
+        String sql = String.format("DELETE FROM %s WHERE id = ?", getNomeTabela());
+        funcionarioDAO.deletarPorId(conn, id);
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setObject(1, id);
+            stmt.executeUpdate();
+        }
     }
 }
