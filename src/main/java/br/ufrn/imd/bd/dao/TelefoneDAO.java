@@ -11,6 +11,19 @@ import java.util.List;
 @Component
 public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
 
+    @Override
+    protected Telefone mapearResultado(ResultSet rs) throws SQLException {
+        Telefone telefone = new Telefone();
+        telefone.getFuncionario().setId(rs.getLong("id_funcionario"));
+        telefone.setTelefone(rs.getString("telefone_funcionario"));
+        return telefone;
+    }
+
+    @Override
+    public String getNomeTabela() {
+        return "telefones";
+    }
+
 
     @Override
     public Telefone salvar(Connection conn, Telefone telefone) throws SQLException {
@@ -57,16 +70,13 @@ public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
     }
 
     @Override
-    protected Telefone mapearResultado(ResultSet rs) throws SQLException {
-        Telefone telefone = new Telefone();
-        telefone.getFuncionario().setId(rs.getLong("id_funcionario"));
-        telefone.setTelefone(rs.getString("telefone_funcionario"));
-        return telefone;
-    }
-
-    @Override
-    public String getNomeTabela() {
-        return "telefones";
+    public void deletarPorId(Connection conn, TelefoneKey key) throws SQLException {
+        String sql = String.format("DELETE FROM %s WHERE id_funcionario = ? AND telefone_funcionario = ?", getNomeTabela());
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, key.getIdFuncionario());
+            stmt.setString(2, key.getTelefoneFuncionario());
+            stmt.executeUpdate();
+        }
     }
 
     public List<Telefone> buscarPorFuncionarioId(Long id) throws SQLException {
@@ -80,16 +90,6 @@ public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
             }
         }
         return resultados;
-    }
-
-    @Override
-    public void deletarPorId(Connection conn, TelefoneKey key) throws SQLException {
-        String sql = String.format("DELETE FROM %s WHERE id_funcionario = ? AND telefone_funcionario = ?", getNomeTabela());
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, key.getIdFuncionario());
-            stmt.setString(2, key.getTelefoneFuncionario());
-            stmt.executeUpdate();
-        }
     }
 
     public boolean existeTelefone(Connection conn, TelefoneKey key) throws SQLException {

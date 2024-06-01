@@ -28,18 +28,13 @@ public class CozinheiroDAO extends AbstractDAO<Cozinheiro, Long> {
     }
 
     @Override
-    public List<Cozinheiro> buscarTodos() throws SQLException {
-        List<Cozinheiro> resultados = new ArrayList<>();
-        String sql = "SELECT f.* FROM cozinheiros c JOIN funcionarios f ON c.id = f.id";
+    protected String getBuscarTodosQuery() {
+        return String.format("SELECT f.* FROM %s c JOIN funcionarios f ON c.id = f.id", getNomeTabela());
+    }
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                resultados.add(mapearResultado(rs));
-            }
-        }
-        return resultados;
+    @Override
+    public Cozinheiro buscarPorId(Long id) throws SQLException {
+        return new Cozinheiro(funcionarioDAO.buscarPorId(id));
     }
 
     @Override
@@ -63,11 +58,6 @@ public class CozinheiroDAO extends AbstractDAO<Cozinheiro, Long> {
 
         Cozinheiro cozinheiro = cozinheiros[0];
         funcionarioDAO.atualizar(conn, cozinheiro);
-    }
-
-    @Override
-    public Cozinheiro buscarPorId(Long id) throws SQLException {
-        return new Cozinheiro(funcionarioDAO.buscarPorId(id));
     }
 
     @Override
