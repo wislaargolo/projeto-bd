@@ -31,18 +31,13 @@ public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
     }
 
     @Override
-    public List<Atendente> buscarTodos() throws SQLException {
-        List<Atendente> resultados = new ArrayList<>();
-        String sql = "SELECT f.*, a.tipo FROM atendentes a JOIN funcionarios f ON a.id = f.id";
+    protected String getBuscarTodosQuery() {
+        return String.format("SELECT * FROM %s a JOIN funcionarios f ON a.id = f.id", getNomeTabela());
+    }
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                resultados.add(mapearResultado(rs));
-            }
-        }
-        return resultados;
+    @Override
+    protected String getBuscarPorIdQuery() {
+        return String.format("SELECT * FROM %s a JOIN funcionarios f on f.id = a.id WHERE a.id = ?", getNomeTabela());
     }
 
     @Override
@@ -83,11 +78,6 @@ public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
                 throw new SQLException("ERRO >> Atualização falhou.");
             }
         }
-    }
-
-    @Override
-    public Atendente buscarPorId(Long id) throws SQLException {
-        return new Atendente(funcionarioDAO.buscarPorId(id));
     }
 
     @Override

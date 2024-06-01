@@ -9,6 +9,20 @@ import java.sql.*;
 public class ProdutoDAO extends AbstractDAO<Produto, Long> {
 
     @Override
+    protected Produto mapearResultado(ResultSet rs) throws SQLException {
+        Produto produto = new Produto();
+        produto.setId(rs.getLong("id"));
+        produto.setNome(rs.getString("nome"));
+        produto.setDisponivel(rs.getBoolean("is_disponivel"));
+        return produto;
+    }
+
+    @Override
+    public String getNomeTabela() {
+        return "produtos";
+    }
+
+    @Override
     public Produto salvar(Connection conn, Produto produto) throws SQLException {
         String sql = String.format("INSERT INTO %s (nome) VALUES (?)", getNomeTabela());
 
@@ -55,19 +69,5 @@ public class ProdutoDAO extends AbstractDAO<Produto, Long> {
                 throw new SQLException("ERRO >> Atualização falhou.");
             }
         }
-    }
-
-    @Override
-    protected Produto mapearResultado(ResultSet rs) throws SQLException {
-        Produto produto = new Produto();
-        produto.setId(rs.getLong("id"));
-        produto.setNome(rs.getString("nome"));
-        produto.setDisponivel(rs.getBoolean("is_disponivel"));
-        return produto;
-    }
-
-    @Override
-    public String getNomeTabela() {
-        return "produtos";
     }
 }

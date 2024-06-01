@@ -29,17 +29,33 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
     private MesaDAO mesaDAO;
 
     @Override
-    public List<Conta> buscarTodos() throws SQLException {
-        List<Conta> contas = new ArrayList<>();
-        String sql = String.format("SELECT * FROM %s WHERE is_ativo = true", getNomeTabela());
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                contas.add(mapearResultado(rs));
-            }
+    public String getNomeTabela() {
+        return "contas";
+    }
+
+    @Override
+    protected Conta mapearResultado(ResultSet rs) throws SQLException {
+        Conta conta = new Conta();
+        conta.setId(rs.getLong("id"));
+        conta.setAtendente(atendenteDAO.buscarPorId(rs.getLong("id_atendente")));
+        conta.setStatusConta(StatusConta.valueOf(rs.getString("status")));
+        conta.setCaixa(caixaDAO.buscarPorId(rs.getLong("id_caixa")));
+        conta.setMesa(mesaDAO.buscarPorId(rs.getLong("id_mesa")));
+        conta.setDataFinalizacao(rs.getObject("data_hora_finalizacao",LocalDateTime.class));
+        conta.setAtivo(rs.getBoolean("is_ativo"));
+        String metodoPagamento = rs.getString("metodo_pagamento");
+        if (metodoPagamento != null && !metodoPagamento.isEmpty()) {
+            conta.setMetodoPagamento(MetodoPagamento.valueOf(metodoPagamento));
+        } else {
+            conta.setMetodoPagamento(null);
         }
-        return contas;
+        return conta;
+    }
+
+
+    @Override
+    protected String getBuscarTodosQuery() {
+        return String.format("SELECT * FROM %s WHERE is_ativo = true", getNomeTabela());
     }
 
     @Override
@@ -98,29 +114,5 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
                 throw new SQLException("ERRO >> Atualização falhou.");
             }
         }
-    }
-
-    @Override
-    protected Conta mapearResultado(ResultSet rs) throws SQLException {
-        Conta conta = new Conta();
-        conta.setId(rs.getLong("id"));
-        conta.setAtendente(atendenteDAO.buscarPorId(rs.getLong("id_atendente")));
-        conta.setStatusConta(StatusConta.valueOf(rs.getString("status")));
-        conta.setCaixa(caixaDAO.buscarPorId(rs.getLong("id_caixa")));
-        conta.setMesa(mesaDAO.buscarPorId(rs.getLong("id_mesa")));
-        conta.setDataFinalizacao(rs.getObject("data_hora_finalizacao",LocalDateTime.class));
-        conta.setAtivo(rs.getBoolean("is_ativo"));
-        String metodoPagamento = rs.getString("metodo_pagamento");
-        if (metodoPagamento != null && !metodoPagamento.isEmpty()) {
-            conta.setMetodoPagamento(MetodoPagamento.valueOf(metodoPagamento));
-        } else {
-            conta.setMetodoPagamento(null);
-        }
-        return conta;
-    }
-
-    @Override
-    public String getNomeTabela() {
-        return "contas";
     }
 }

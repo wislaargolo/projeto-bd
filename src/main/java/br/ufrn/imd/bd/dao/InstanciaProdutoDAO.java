@@ -16,17 +16,25 @@ public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
     private ProdutoDAO produtoDAO;
 
     @Override
-    public List<InstanciaProduto> buscarTodos() throws SQLException {
-        List<InstanciaProduto> instanciaProdutoList = new ArrayList<>();
-        String sql = String.format("SELECT * FROM %s WHERE is_ativo = true", getNomeTabela());
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                instanciaProdutoList.add(mapearResultado(rs));
-            }
-        }
-        return instanciaProdutoList;
+    protected InstanciaProduto mapearResultado(ResultSet rs) throws SQLException {
+
+        InstanciaProduto instanciaProduto = new InstanciaProduto();
+        instanciaProduto.setId(rs.getLong("id"));
+        instanciaProduto.setValor(rs.getDouble("valor"));
+        instanciaProduto.setAtivo(rs.getBoolean("is_ativo"));
+        instanciaProduto.setData(rs.getObject("data", LocalDateTime.class));
+        instanciaProduto.setProduto(produtoDAO.buscarPorId(rs.getLong("id_produto")));
+        return instanciaProduto;
+    }
+
+    @Override
+    public String getNomeTabela() {
+        return "produto_instancias";
+    }
+
+    @Override
+    protected String getBuscarTodosQuery() {
+        return String.format("SELECT * FROM %s WHERE is_ativo = true", getNomeTabela());
     }
 
     @Override
@@ -78,23 +86,6 @@ public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
                 throw new SQLException("ERRO >> Atualização falhou.");
             }
         }
-    }
-
-    @Override
-    protected InstanciaProduto mapearResultado(ResultSet rs) throws SQLException {
-
-        InstanciaProduto instanciaProduto = new InstanciaProduto();
-        instanciaProduto.setId(rs.getLong("id"));
-        instanciaProduto.setValor(rs.getDouble("valor"));
-        instanciaProduto.setAtivo(rs.getBoolean("is_ativo"));
-        instanciaProduto.setData(rs.getObject("data", LocalDateTime.class));
-        instanciaProduto.setProduto(produtoDAO.buscarPorId(rs.getLong("id_produto")));
-        return instanciaProduto;
-    }
-
-    @Override
-    public String getNomeTabela() {
-        return "produto_instancias";
     }
 
     public boolean existeProdutoNome(Connection conn, InstanciaProduto instanciaProduto) throws SQLException {
