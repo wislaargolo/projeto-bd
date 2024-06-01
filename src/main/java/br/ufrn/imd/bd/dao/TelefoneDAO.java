@@ -1,6 +1,7 @@
 package br.ufrn.imd.bd.dao;
 
 import br.ufrn.imd.bd.model.Telefone;
+import br.ufrn.imd.bd.model.TelefoneKey;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
+public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
 
 
     @Override
@@ -81,20 +82,21 @@ public class TelefoneDAO extends AbstractDAOImpl<Telefone, Long> {
         return resultados;
     }
 
-    public void deletar(Connection conn, String telefone, Long funcionarioId) throws SQLException {
+    @Override
+    public void deletarPorId(Connection conn, TelefoneKey key) throws SQLException {
         String sql = String.format("DELETE FROM %s WHERE id_funcionario = ? AND telefone_funcionario = ?", getNomeTabela());
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, funcionarioId);
-            stmt.setString(2, telefone);
+            stmt.setLong(1, key.getIdFuncionario());
+            stmt.setString(2, key.getTelefoneFuncionario());
             stmt.executeUpdate();
         }
     }
 
-    public boolean existeTelefone(Connection conn, Telefone telefone) throws SQLException {
+    public boolean existeTelefone(Connection conn, TelefoneKey key) throws SQLException {
         String sql = String.format("SELECT * FROM %s WHERE id_funcionario = ? AND telefone_funcionario = ?", getNomeTabela());
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, telefone.getFuncionario().getId());
-            stmt.setObject(2, telefone.getTelefone());
+            stmt.setObject(1, key.getIdFuncionario());
+            stmt.setObject(2, key.getTelefoneFuncionario());
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return true;

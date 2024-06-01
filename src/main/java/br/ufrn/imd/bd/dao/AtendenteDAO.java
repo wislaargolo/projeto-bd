@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class AtendenteDAO extends AbstractDAOImpl<Atendente, Long> {
+public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
 
     @Autowired
     private FuncionarioDAO funcionarioDAO;

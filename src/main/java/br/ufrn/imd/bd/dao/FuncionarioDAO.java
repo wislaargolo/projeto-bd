@@ -2,7 +2,6 @@ package br.ufrn.imd.bd.dao;
 
 import br.ufrn.imd.bd.model.Funcionario;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 
 import java.sql.Connection;
@@ -13,7 +12,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 
 @Component
-public class FuncionarioDAO extends AbstractDAOImpl<Funcionario, Long> {
+public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
 
     @Override
     protected Funcionario mapearResultado(ResultSet rs) throws SQLException {

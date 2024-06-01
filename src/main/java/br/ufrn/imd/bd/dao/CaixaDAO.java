@@ -3,7 +3,6 @@ package br.ufrn.imd.bd.dao;
 import br.ufrn.imd.bd.model.Caixa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class CaixaDAO extends AbstractDAOImpl<Caixa,Long> {
+public class CaixaDAO extends AbstractDAO<Caixa,Long> {
 
     @Autowired
     private FuncionarioDAO funcionarioDAO;
