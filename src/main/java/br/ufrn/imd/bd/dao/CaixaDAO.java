@@ -18,29 +18,20 @@ public class CaixaDAO extends AbstractDAO<Caixa,Long> {
     private FuncionarioDAO funcionarioDAO;
 
     @Override
-    protected Caixa mapearResultado(ResultSet rs) throws SQLException {
-        return new Caixa(funcionarioDAO.mapearResultado(rs));
-    }
-
-    @Override
     public String getNomeTabela() {
         return "caixas";
     }
 
     @Override
-    public List<Caixa> buscarTodos() throws SQLException {
-        List<Caixa> resultados = new ArrayList<>();
-        String sql = "SELECT f.* FROM caixas c JOIN funcionarios f ON c.id = f.id";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                resultados.add(mapearResultado(rs));
-            }
-        }
-        return resultados;
+    protected String getBuscarTodosQuery() {
+        return String.format("SELECT f.* FROM %s c JOIN funcionarios f ON c.id = f.id", getNomeTabela());
     }
+
+    @Override
+    public Caixa buscarPorId(Long id) throws SQLException {
+        return new Caixa(funcionarioDAO.buscarPorId(id));
+    }
+
     @Override
     public Caixa salvar(Connection conn, Caixa caixa) throws SQLException {
         Caixa caixaSalvo = new Caixa(funcionarioDAO.salvar(conn, caixa));
@@ -65,17 +56,13 @@ public class CaixaDAO extends AbstractDAO<Caixa,Long> {
     }
 
     @Override
-    public Caixa buscarPorId(Long id) throws SQLException {
-        return new Caixa(funcionarioDAO.buscarPorId(id));
+    public void deletarPorId(Connection conn, Long id) throws SQLException {
+        funcionarioDAO.deletarPorId(conn, id);
+        super.deletarPorId(conn, id);
     }
 
     @Override
-    public void deletarPorId(Connection conn, Long id) throws SQLException {
-        String sql = String.format("DELETE FROM %s WHERE id = ?", getNomeTabela());
-        funcionarioDAO.deletarPorId(conn, id);
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, id);
-            stmt.executeUpdate();
-        }
+    public Caixa mapearResultado(ResultSet rs) throws SQLException {
+        return new Caixa(funcionarioDAO.mapearResultado(rs));
     }
 }

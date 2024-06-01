@@ -15,18 +15,6 @@ import java.time.LocalDate;
 public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
 
     @Override
-    protected Funcionario mapearResultado(ResultSet rs) throws SQLException {
-        Funcionario funcionario = new Funcionario();
-        funcionario.setId(rs.getLong("id"));
-        funcionario.setNome(rs.getString("nome"));
-        funcionario.setLogin(rs.getString("login"));
-        funcionario.setSenha(rs.getString("senha"));
-        funcionario.setEmail(rs.getString("email"));
-        funcionario.setDataCadastro(rs.getObject("data_cadastro", LocalDate.class));
-        return funcionario;
-    }
-
-    @Override
     public String getNomeTabela() {
         return "funcionarios";
     }
@@ -83,6 +71,18 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
                 throw new SQLException("ERRO >> Atualização falhou.");
             }
         }
+    }
+
+    @Override
+    public Funcionario mapearResultado(ResultSet rs) throws SQLException {
+        Funcionario funcionario = new Funcionario();
+        funcionario.setId(rs.getLong("id"));
+        funcionario.setNome(rs.getString("nome"));
+        funcionario.setLogin(rs.getString("login"));
+        funcionario.setSenha(rs.getString("senha"));
+        funcionario.setEmail(rs.getString("email"));
+        funcionario.setDataCadastro(rs.getObject("data_cadastro", LocalDate.class));
+        return funcionario;
     }
 
     public boolean existeFuncionarioComParametroEId(Connection conn, String parametro, String valor, Long id) throws SQLException {
