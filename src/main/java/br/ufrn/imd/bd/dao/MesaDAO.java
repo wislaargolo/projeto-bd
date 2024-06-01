@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 import java.sql.*;
 
 @Component
-public class MesaDAO extends AbstractDAOImpl<Mesa, Long>{
+public class MesaDAO extends AbstractDAO<Mesa, Long> {
 
     @Override
-    protected Mesa mapearResultado(ResultSet rs) throws SQLException {
+    public Mesa mapearResultado(ResultSet rs) throws SQLException {
         Mesa mesa = new Mesa();
         mesa.setId(rs.getLong("id"));
         mesa.setDescricao(rs.getString("descricao"));

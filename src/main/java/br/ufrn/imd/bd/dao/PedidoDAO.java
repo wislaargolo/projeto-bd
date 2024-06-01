@@ -1,9 +1,6 @@
 package br.ufrn.imd.bd.dao;
 
-import br.ufrn.imd.bd.model.Conta;
 import br.ufrn.imd.bd.model.Pedido;
-import br.ufrn.imd.bd.model.enums.MetodoPagamento;
-import br.ufrn.imd.bd.model.enums.StatusConta;
 import br.ufrn.imd.bd.model.enums.StatusPedido;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,7 +14,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Component
-public class PedidoDAO extends AbstractDAOImpl<Pedido, Long> {
+public class PedidoDAO extends AbstractDAO<Pedido, Long> {
 
     @Autowired
     private AtendenteDAO atendenteDAO;

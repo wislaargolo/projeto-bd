@@ -21,6 +21,10 @@ public class Telefone {
         this.telefone = telefone;
     }
 
+    public TelefoneKey getKey() {
+        return new TelefoneKey(this.funcionario.getId(), telefone);
+    }
+
     public String getTelefone() {
         return telefone;
     }

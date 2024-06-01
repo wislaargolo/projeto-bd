@@ -6,6 +6,7 @@ import br.ufrn.imd.bd.dao.TelefoneDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.model.Funcionario;
 import br.ufrn.imd.bd.model.Telefone;
+import br.ufrn.imd.bd.model.TelefoneKey;
 import br.ufrn.imd.bd.validation.TelefoneValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class TelefoneService {
 
     public Telefone salvar(Telefone telefone) throws SQLException, EntidadeJaExisteException {
         try (Connection conn = DatabaseConfig.getConnection()){
-            telefoneValidator.validar(conn, telefone);
+            telefoneValidator.validar(conn, telefone.getKey());
             telefone = telefoneDAO.salvar(conn, telefone);
         }
 
@@ -48,7 +49,7 @@ public class TelefoneService {
 
     public void deletar(String telefone, Long funcionarioId) throws SQLException {
         try (Connection conn = DatabaseConfig.getConnection()){
-            telefoneDAO.deletar(conn, telefone, funcionarioId);
+            telefoneDAO.deletarPorId(conn, new TelefoneKey(funcionarioId, telefone));
         }
     }
 }

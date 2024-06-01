@@ -1,7 +1,6 @@
 package br.ufrn.imd.bd.dao;
 
 import br.ufrn.imd.bd.model.Conta;
-import br.ufrn.imd.bd.model.InstanciaProduto;
 import br.ufrn.imd.bd.model.enums.MetodoPagamento;
 import br.ufrn.imd.bd.model.enums.StatusConta;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ContaDAO extends AbstractDAOImpl<Conta, Long> {
+public class ContaDAO extends AbstractDAO<Conta, Long> {
 
     @Autowired
     private AtendenteDAO atendenteDAO;

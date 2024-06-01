@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.sql.*;
 
 @Component
-public class ProdutoDAO extends AbstractDAOImpl<Produto, Long> {
+public class ProdutoDAO extends AbstractDAO<Produto, Long> {
 
     @Override
     public Produto salvar(Connection conn, Produto produto) throws SQLException {
