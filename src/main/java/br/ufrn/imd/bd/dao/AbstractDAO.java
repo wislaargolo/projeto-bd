@@ -12,7 +12,7 @@ public abstract class AbstractDAO<T, ID>{
     protected Connection getConnection() throws SQLException {
         return DatabaseConfig.getConnection();
     }
-    protected abstract T mapearResultado(ResultSet rs) throws SQLException;
+    public abstract T mapearResultado(ResultSet rs) throws SQLException;
 
     public abstract String getNomeTabela();
 

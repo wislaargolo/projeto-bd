@@ -8,8 +8,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class CaixaDAO extends AbstractDAO<Caixa,Long> {
@@ -18,7 +16,7 @@ public class CaixaDAO extends AbstractDAO<Caixa,Long> {
     private FuncionarioDAO funcionarioDAO;
 
     @Override
-    protected Caixa mapearResultado(ResultSet rs) throws SQLException {
+    public Caixa mapearResultado(ResultSet rs) throws SQLException {
         return new Caixa(funcionarioDAO.mapearResultado(rs));
     }
 

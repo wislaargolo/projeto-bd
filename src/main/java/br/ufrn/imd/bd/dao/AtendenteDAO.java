@@ -9,8 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
@@ -19,7 +17,7 @@ public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
     private FuncionarioDAO funcionarioDAO;
 
     @Override
-    protected Atendente mapearResultado(ResultSet rs) throws SQLException {
+    public Atendente mapearResultado(ResultSet rs) throws SQLException {
         Atendente atendente = new Atendente(funcionarioDAO.mapearResultado(rs));
         atendente.setTipo(TipoAtendente.valueOf(rs.getString("tipo")));
         return atendente;

@@ -13,8 +13,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class ContaDAO extends AbstractDAO<Conta, Long> {
@@ -34,7 +32,7 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
     }
 
     @Override
-    protected Conta mapearResultado(ResultSet rs) throws SQLException {
+    public Conta mapearResultado(ResultSet rs) throws SQLException {
         Conta conta = new Conta();
         conta.setId(rs.getLong("id"));
         conta.setAtendente(atendenteDAO.buscarPorId(rs.getLong("id_atendente")));

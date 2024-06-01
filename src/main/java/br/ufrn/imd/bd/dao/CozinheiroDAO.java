@@ -8,8 +8,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class CozinheiroDAO extends AbstractDAO<Cozinheiro, Long> {
@@ -18,7 +16,7 @@ public class CozinheiroDAO extends AbstractDAO<Cozinheiro, Long> {
     private FuncionarioDAO funcionarioDAO;
 
     @Override
-    protected Cozinheiro mapearResultado(ResultSet rs) throws SQLException {
+    public Cozinheiro mapearResultado(ResultSet rs) throws SQLException {
         return new Cozinheiro(funcionarioDAO.mapearResultado(rs));
     }
 

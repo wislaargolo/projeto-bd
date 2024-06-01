@@ -23,7 +23,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     private ContaDAO contaDAO;
 
     @Override
-    protected Pedido mapearResultado(ResultSet rs) throws SQLException {
+    public Pedido mapearResultado(ResultSet rs) throws SQLException {
         Pedido pedido = new Pedido();
         pedido.setId(rs.getLong("id"));
         pedido.setAtendente(atendenteDAO.buscarPorId(rs.getLong("id_atendente")));

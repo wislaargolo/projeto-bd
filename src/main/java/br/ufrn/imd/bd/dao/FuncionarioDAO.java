@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
 
     @Override
-    protected Funcionario mapearResultado(ResultSet rs) throws SQLException {
+    public Funcionario mapearResultado(ResultSet rs) throws SQLException {
         Funcionario funcionario = new Funcionario();
         funcionario.setId(rs.getLong("id"));
         funcionario.setNome(rs.getString("nome"));
