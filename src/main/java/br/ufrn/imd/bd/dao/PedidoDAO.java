@@ -41,6 +41,11 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     }
 
     @Override
+    protected String getBuscarTodosQuery() {
+        return String.format("SELECT * FROM %s WHERE is_ativo = true", getNomeTabela());
+    }
+
+    @Override
     public Pedido salvar(Connection conn, Pedido pedido) throws SQLException {
         String sql = String.format("INSERT INTO %s (id_atendente, id_conta, status, data_hora_registro, " +
                      "is_ativo) VALUES (?, ?, ?, ?, ?)", getNomeTabela());

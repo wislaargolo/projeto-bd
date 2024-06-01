@@ -25,10 +25,6 @@ public class Pedido {
 
     private Boolean isAtivo;
 
-    public Pedido() {
-        this.setAtivo(true);
-    }
-
     public Boolean getAtivo() {
         return isAtivo;
     }
