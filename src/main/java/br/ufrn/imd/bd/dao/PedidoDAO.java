@@ -23,6 +23,11 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     private ContaDAO contaDAO;
 
     @Override
+    public String getNomeTabela() {
+        return "pedidos";
+    }
+
+    @Override
     public Pedido salvar(Connection conn, Pedido pedido) throws SQLException {
         String sql = String.format("INSERT INTO %s (id_atendente, id_conta, status, data_hora_registro, " +
                      "is_ativo) VALUES (?, ?, ?, ?, ?)", getNomeTabela());
@@ -78,7 +83,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     }
 
     @Override
-    protected Pedido mapearResultado(ResultSet rs) throws SQLException {
+    public Pedido mapearResultado(ResultSet rs) throws SQLException {
         Pedido pedido = new Pedido();
         pedido.setId(rs.getLong("id"));
         pedido.setAtendente(atendenteDAO.buscarPorId(rs.getLong("id_atendente")));
@@ -88,10 +93,5 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
         pedido.setAtivo(rs.getBoolean("is_ativo"));
 
         return pedido;
-    }
-
-    @Override
-    public String getNomeTabela() {
-        return "pedidos";
     }
 }

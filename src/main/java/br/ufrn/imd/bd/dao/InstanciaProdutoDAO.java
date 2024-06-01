@@ -16,17 +16,18 @@ public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
     private ProdutoDAO produtoDAO;
 
     @Override
-    public List<InstanciaProduto> buscarTodos() throws SQLException {
-        List<InstanciaProduto> instanciaProdutoList = new ArrayList<>();
-        String sql = String.format("SELECT * FROM %s WHERE is_ativo = true", getNomeTabela());
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                instanciaProdutoList.add(mapearResultado(rs));
-            }
-        }
-        return instanciaProdutoList;
+    public String getNomeTabela() {
+        return "produto_instancias";
+    }
+
+    @Override
+    protected String getBuscarTodosQuery() {
+        return String.format("SELECT * FROM %s pi JOIN produtos p ON pi.id_produto = p.id_produto WHERE pi.is_ativo = true;", getNomeTabela());
+    }
+
+    @Override
+    protected String getBuscarPorIdQuery() {
+        return String.format("SELECT * FROM %s pi JOIN produtos p ON pi.id_produto = p.id_produto WHERE id_produto_instancia = ?", getNomeTabela());
     }
 
     @Override
@@ -63,7 +64,7 @@ public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
         InstanciaProduto novo = instanciaProdutos[0];
 
         String sql = String.format(
-                "UPDATE %s SET valor = ?, is_ativo = ?, id_produto = ? WHERE id = ?",
+                "UPDATE %s SET valor = ?, is_ativo = ?, id_produto = ? WHERE id_produto_instancia = ?",
                 getNomeTabela()
         );
 
@@ -81,29 +82,24 @@ public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
     }
 
     @Override
-    protected InstanciaProduto mapearResultado(ResultSet rs) throws SQLException {
+    public InstanciaProduto mapearResultado(ResultSet rs) throws SQLException {
 
         InstanciaProduto instanciaProduto = new InstanciaProduto();
-        instanciaProduto.setId(rs.getLong("id"));
+        instanciaProduto.setId(rs.getLong("id_produto_instancia"));
         instanciaProduto.setValor(rs.getDouble("valor"));
         instanciaProduto.setAtivo(rs.getBoolean("is_ativo"));
         instanciaProduto.setData(rs.getObject("data", LocalDateTime.class));
-        instanciaProduto.setProduto(produtoDAO.buscarPorId(rs.getLong("id_produto")));
+        instanciaProduto.setProduto(produtoDAO.mapearResultado(rs));
         return instanciaProduto;
-    }
-
-    @Override
-    public String getNomeTabela() {
-        return "produto_instancias";
     }
 
     public boolean existeProdutoNome(Connection conn, InstanciaProduto instanciaProduto) throws SQLException {
         String sql = "SELECT COUNT(*) FROM produto_instancias pi " +
-                "JOIN produtos p ON p.id = pi.id_produto " +
+                "JOIN produtos p ON p.id_produto = pi.id_produto " +
                 "WHERE pi.is_ativo = true ";
 
         if (instanciaProduto.getId() != null) {
-            sql += "AND pi.id != ? ";
+            sql += "AND pi.id_produto_instancia != ? ";
         }
 
         sql += "AND p.nome = ?";
