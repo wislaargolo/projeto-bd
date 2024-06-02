@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 public class ContaDAO extends AbstractDAO<Conta, Long> {
 
     @Autowired
+    private FuncionarioDAO funcionarioDAO;
+    @Autowired
     private AtendenteDAO atendenteDAO;
 
     @Autowired
@@ -28,33 +30,87 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
 
     @Override
     public String getNomeTabela() {
-        return "contas";
+        return "conta";
     }
 
     @Override
     public Conta mapearResultado(ResultSet rs) throws SQLException {
         Conta conta = new Conta();
-        conta.setId(rs.getLong("id"));
-        conta.setAtendente(atendenteDAO.buscarPorId(rs.getLong("id_atendente")));
+        conta.setId(rs.getLong("id_conta"));
         conta.setStatusConta(StatusConta.valueOf(rs.getString("status")));
-        conta.setCaixa(caixaDAO.buscarPorId(rs.getLong("id_caixa")));
-        conta.setMesa(mesaDAO.buscarPorId(rs.getLong("id_mesa")));
-        conta.setDataFinalizacao(rs.getObject("data_hora_finalizacao",LocalDateTime.class));
+        conta.setDataFinalizacao(rs.getObject("data_hora_finalizacao", LocalDateTime.class));
         conta.setAtivo(rs.getBoolean("is_ativo"));
+        conta.setCaixa(caixaDAO.mapearResultado(rs, "caixa_"));
+        conta.setAtendente(atendenteDAO.mapearResultado(rs, "atendente_"));
+        conta.setMesa(mesaDAO.mapearResultado(rs));
+
         String metodoPagamento = rs.getString("metodo_pagamento");
         if (metodoPagamento != null && !metodoPagamento.isEmpty()) {
             conta.setMetodoPagamento(MetodoPagamento.valueOf(metodoPagamento));
         } else {
             conta.setMetodoPagamento(null);
         }
+
         return conta;
     }
 
-
     @Override
     protected String getBuscarTodosQuery() {
-        return String.format("SELECT * FROM %s WHERE is_ativo = true", getNomeTabela());
+
+        return "SELECT conta.id_conta, conta.status, conta.metodo_pagamento, conta.data_hora_finalizacao, conta.is_ativo, " +
+                "atendente.tipo AS atendente_tipo, " +
+                "f_atendente.id_funcionario AS atendente_id_funcionario, " +
+                "f_atendente.nome AS atendente_nome, " +
+                "f_atendente.email AS atendente_email, " +
+                "f_atendente.login AS atendente_login, " +
+                "f_atendente.senha AS atendente_senha, " +
+                "f_atendente.data_cadastro AS atendente_data_cadastro, " +
+                "f_caixa.id_funcionario AS caixa_id_funcionario, " +
+                "f_caixa.nome AS caixa_nome, " +
+                "f_caixa.email AS caixa_email, " +
+                "f_caixa.login AS caixa_login, " +
+                "f_caixa.senha AS caixa_senha, " +
+                "f_caixa.data_cadastro AS caixa_data_cadastro, " +
+                "conta.id_mesa, " +
+                "mesa.descricao " +
+                "FROM conta " +
+                "JOIN atendente ON conta.id_atendente = atendente.id_funcionario " +
+                "JOIN funcionario AS f_atendente ON atendente.id_funcionario = f_atendente.id_funcionario " +
+                "JOIN caixa ON conta.id_caixa = caixa.id_funcionario " +
+                "JOIN funcionario AS f_caixa ON caixa.id_funcionario = f_caixa.id_funcionario " +
+                "JOIN mesa ON conta.id_mesa = mesa.id_mesa " +
+                "WHERE conta.is_ativo = true";
     }
+
+    @Override
+    protected String getBuscarPorIdQuery() {
+
+        return "SELECT conta.id_conta, conta.status, conta.metodo_pagamento, conta.data_hora_finalizacao, conta.is_ativo, " +
+                "atendente.tipo AS atendente_tipo, " +
+                "f_atendente.id_funcionario AS atendente_id_funcionario, " +
+                "f_atendente.nome AS atendente_nome, " +
+                "f_atendente.email AS atendente_email, " +
+                "f_atendente.login AS atendente_login, " +
+                "f_atendente.senha AS atendente_senha, " +
+                "f_atendente.data_cadastro AS atendente_data_cadastro, " +
+                "f_caixa.id_funcionario AS caixa_id_funcionario, " +
+                "f_caixa.nome AS caixa_nome, " +
+                "f_caixa.email AS caixa_email, " +
+                "f_caixa.login AS caixa_login, " +
+                "f_caixa.senha AS caixa_senha, " +
+                "f_caixa.data_cadastro AS caixa_data_cadastro, " +
+                "conta.id_mesa, " +
+                "mesa.descricao " +
+                "FROM conta " +
+                "JOIN atendente ON conta.id_atendente = atendente.id_funcionario " +
+                "JOIN funcionario AS f_atendente ON atendente.id_funcionario = f_atendente.id_funcionario " +
+                "JOIN caixa ON conta.id_caixa = caixa.id_funcionario " +
+                "JOIN funcionario AS f_caixa ON caixa.id_funcionario = f_caixa.id_funcionario " +
+                "JOIN mesa ON conta.id_mesa = mesa.id_mesa " +
+                "WHERE conta.is_ativo = true AND conta.id_conta = ?";
+    }
+
+
 
     @Override
     public Conta salvar(Connection conn, Conta conta) throws SQLException {
@@ -88,15 +144,15 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
     }
 
     @Override
-    public void atualizar(Connection conn, Conta... contas) throws SQLException {
-        if (contas.length != 1) {
+    public void atualizar(Connection conn, Conta... conta) throws SQLException {
+        if (conta.length != 1) {
             throw new IllegalArgumentException("ERRO >> Apenas uma Conta para atualização.");
         }
 
-        Conta novo = contas[0];
+        Conta novo = conta[0];
 
         String sql = String.format(
-                "UPDATE %s SET id_mesa = ?, metodo_pagamento = ?, status = ?, is_ativo = ? WHERE id = ?",
+                "UPDATE %s SET id_mesa = ?, metodo_pagamento = ?, status = ?, is_ativo = ? WHERE id_conta = ?",
                 getNomeTabela()
         );
 

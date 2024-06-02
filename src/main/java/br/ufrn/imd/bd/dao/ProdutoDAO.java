@@ -19,7 +19,7 @@ public class ProdutoDAO extends AbstractDAO<Produto, Long> {
 
     @Override
     public String getNomeTabela() {
-        return "produtos";
+        return "produto";
     }
 
     @Override

@@ -25,7 +25,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     @Override
     public Pedido mapearResultado(ResultSet rs) throws SQLException {
         Pedido pedido = new Pedido();
-        pedido.setId(rs.getLong("id"));
+        pedido.setId(rs.getLong("id_pedido"));
         pedido.setAtendente(atendenteDAO.buscarPorId(rs.getLong("id_atendente")));
         pedido.setConta(contaDAO.buscarPorId(rs.getLong("id_conta")));
         pedido.setStatusPedido(StatusPedido.valueOf(rs.getString("status")));
@@ -37,8 +37,28 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
 
     @Override
     public String getNomeTabela() {
-        return "pedidos";
+        return "pedido";
     }
+
+    @Override
+    protected String getBuscarTodosQuery() {
+
+        return "SELECT * FROM pedido AS p " +
+                "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
+                "JOIN conta AS c ON p.id_conta = c.id_conta " +
+                "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario";
+    }
+
+    @Override
+    protected String getBuscarPorIdQuery() {
+
+        return "SELECT * FROM pedido AS p " +
+                "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
+                "JOIN conta AS c ON p.id_conta = c.id_conta " +
+                "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario" +
+                "WHERE p.id = ?";
+    }
+
 
     @Override
     public Pedido salvar(Connection conn, Pedido pedido) throws SQLException {
@@ -79,7 +99,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
         Pedido novo = pedidos[0];
 
         String sql = String.format(
-                "UPDATE %s SET status = ?, is_ativo = ? WHERE id = ?",
+                "UPDATE %s SET status = ?, is_ativo = ? WHERE id_pedido = ?",
                 getNomeTabela()
         );
 

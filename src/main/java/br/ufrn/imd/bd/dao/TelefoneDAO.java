@@ -25,7 +25,7 @@ public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
 
     @Override
     public String getNomeTabela() {
-        return "telefones";
+        return "telefone";
     }
 
     @Override
@@ -84,7 +84,7 @@ public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
 
     public List<Telefone> buscarPorFuncionarioId(Long id) throws SQLException {
         List<Telefone> resultados = new ArrayList<>();
-        String sql = String.format("SELECT * from %s t JOIN funcionarios f ON t.id_funcionario = f.id WHERE id_funcionario = %s", getNomeTabela(), id);
+        String sql = String.format("SELECT * from %s NATURAL JOIN %s id_funcionario = %s", getNomeTabela(), funcionarioDAO.getNomeTabela(), id);
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {

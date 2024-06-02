@@ -1,6 +1,8 @@
 package br.ufrn.imd.bd.dao;
 
+import br.ufrn.imd.bd.model.Atendente;
 import br.ufrn.imd.bd.model.Caixa;
+import br.ufrn.imd.bd.model.enums.TipoAtendente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,25 +22,29 @@ public class CaixaDAO extends AbstractDAO<Caixa,Long> {
         return new Caixa(funcionarioDAO.mapearResultado(rs));
     }
 
+    public Caixa mapearResultado(ResultSet rs, String prefixo) throws SQLException {
+        return new Caixa(funcionarioDAO.mapearResultado(rs, prefixo));
+    }
+
     @Override
     public String getNomeTabela() {
-        return "caixas";
+        return "caixa";
     }
 
     @Override
     protected String getBuscarTodosQuery() {
-        return String.format("SELECT f.* FROM %s c JOIN funcionarios f ON c.id = f.id", getNomeTabela());
+        return String.format("SELECT * FROM %s NATURAL JOIN %s", getNomeTabela(), funcionarioDAO.getNomeTabela());
     }
 
     @Override
-    public Caixa buscarPorId(Long id) throws SQLException {
-        return new Caixa(funcionarioDAO.buscarPorId(id));
+    protected String getBuscarPorIdQuery() {
+        return String.format("SELECT * FROM %s NATURAL JOIN %s WHERE id_funcionario = ?", getNomeTabela(), funcionarioDAO.getNomeTabela());
     }
 
     @Override
     public Caixa salvar(Connection conn, Caixa caixa) throws SQLException {
         Caixa caixaSalvo = new Caixa(funcionarioDAO.salvar(conn, caixa));
-        String sql = String.format("INSERT INTO %s (id) VALUES (?)", getNomeTabela());
+        String sql = String.format("INSERT INTO %s (id_funcionario) VALUES (?)", getNomeTabela());
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, caixaSalvo.getId());
@@ -60,7 +66,7 @@ public class CaixaDAO extends AbstractDAO<Caixa,Long> {
 
     @Override
     public void deletarPorId(Connection conn, Long id) throws SQLException {
-        String sql = String.format("DELETE FROM %s WHERE id = ?", getNomeTabela());
+        String sql = String.format("DELETE FROM %s WHERE id_funcionario = ?", getNomeTabela());
         funcionarioDAO.deletarPorId(conn, id);
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setObject(1, id);

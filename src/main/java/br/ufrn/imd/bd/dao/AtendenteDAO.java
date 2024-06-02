@@ -23,26 +23,32 @@ public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
         return atendente;
     }
 
+    public Atendente mapearResultado(ResultSet rs, String prefixo) throws SQLException {
+        Atendente atendente = new Atendente(funcionarioDAO.mapearResultado(rs, prefixo));
+        atendente.setTipo(TipoAtendente.valueOf(rs.getString(prefixo + "tipo")));
+        return atendente;
+    }
+
     @Override
     public String getNomeTabela() {
-        return "atendentes";
+        return "atendente";
     }
 
     @Override
     protected String getBuscarTodosQuery() {
-        return String.format("SELECT * FROM %s a JOIN funcionarios f ON a.id = f.id", getNomeTabela());
+        return String.format("SELECT * FROM %s NATURAL JOIN %s", getNomeTabela(), funcionarioDAO.getNomeTabela());
     }
 
     @Override
     protected String getBuscarPorIdQuery() {
-        return String.format("SELECT * FROM %s a JOIN funcionarios f on f.id = a.id WHERE a.id = ?", getNomeTabela());
+        return String.format("SELECT * FROM %s NATURAL JOIN %s WHERE id_funcionario = ?", getNomeTabela(), funcionarioDAO.getNomeTabela());
     }
 
     @Override
     public Atendente salvar(Connection conn, Atendente atendente) throws SQLException {
         Atendente atendenteSalvo = new Atendente(funcionarioDAO.salvar(conn, atendente));
         atendenteSalvo.setTipo(atendente.getTipo());
-        String sql = String.format("INSERT INTO %s (id, tipo) VALUES (?, ?)", getNomeTabela());
+        String sql = String.format("INSERT INTO %s (id_funcionario, tipo) VALUES (?, ?)", getNomeTabela());
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, atendenteSalvo.getId());
@@ -60,7 +66,7 @@ public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
         }
 
         String sql = String.format(
-                "UPDATE %s SET tipo = ? WHERE id = ?",
+                "UPDATE %s SET tipo = ? WHERE id_funcionario = ?",
                 getNomeTabela()
         );
 
@@ -80,7 +86,7 @@ public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
 
     @Override
     public void deletarPorId(Connection conn, Long id) throws SQLException {
-        String sql = String.format("DELETE FROM %s WHERE id = ?", getNomeTabela());
+        String sql = String.format("DELETE FROM %s WHERE id_funcionario = ?", getNomeTabela());
         funcionarioDAO.deletarPorId(conn, id);
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setObject(1, id);
