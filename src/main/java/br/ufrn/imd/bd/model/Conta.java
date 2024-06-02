@@ -13,10 +13,8 @@ public class Conta {
 
     private Atendente atendente;
 
-    @NotNull
     private Mesa mesa;
 
-    @NotNull
     private StatusConta statusConta;
 
     private MetodoPagamento metodoPagamento;

@@ -1,6 +1,6 @@
 package br.ufrn.imd.bd.model.enums;
 
-public enum StatusPedido {
+public enum ProgressoPedido {
 
     SOLICITADO,
     ACEITO,

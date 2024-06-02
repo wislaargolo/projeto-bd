@@ -1,7 +1,6 @@
 package br.ufrn.imd.bd.model;
 
-import br.ufrn.imd.bd.model.enums.StatusPedido;
-import jakarta.validation.constraints.NotBlank;
+import br.ufrn.imd.bd.model.enums.ProgressoPedido;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
@@ -11,19 +10,31 @@ public class Pedido {
 
     private Long id;
 
-    @NotNull
     private Atendente atendente;
 
-    @NotNull
     private Conta conta;
 
-    @NotNull
-    private StatusPedido statusPedido;
 
-    @NotNull
+    private ProgressoPedido progressoPedido;
+
     private LocalDateTime dataRegistro;
 
     private Boolean isAtivo;
+
+    private List<PedidoInstancia> produtos;
+
+    public Pedido() {
+        atendente = new Atendente();
+        conta = new Conta();
+    }
+
+    public List<PedidoInstancia> getProdutos() {
+        return produtos;
+    }
+
+    public void setProdutos(List<PedidoInstancia> produtos) {
+        this.produtos = produtos;
+    }
 
     public Boolean getAtivo() {
         return isAtivo;
@@ -57,12 +68,12 @@ public class Pedido {
         this.conta = conta;
     }
 
-    public StatusPedido getStatusPedido() {
-        return statusPedido;
+    public ProgressoPedido getProgressoPedido() {
+        return progressoPedido;
     }
 
-    public void setStatusPedido(StatusPedido statusPedido) {
-        this.statusPedido = statusPedido;
+    public void setProgressoPedido(ProgressoPedido progressoPedido) {
+        this.progressoPedido = progressoPedido;
     }
 
     public LocalDateTime getDataRegistro() {

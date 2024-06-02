@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Adicionar Pedido</title>
+</head>
+<body>
+
+<h2 th:text="${pedido.id == null ? 'Cadastrar Pedido' : 'Editar Pedido'}"></h2>
+<div th:if="${error}">
+    <p th:text="${error}"></p>
+</div>
+
+<form th:action="${pedido.id } == null ?
+                    @{/pedidos} :
+                    @{/pedidos/editar}" th:object="${pedido}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <div>
+        <label for="status_pedido">Status do Pedido:</label>
+        <select th:field="*{progressoPedido}" id="status_pedido">
+            <option th:each="status : ${T(br.ufrn.imd.bd.model.enums.ProgressoPedido).values()}"
+                    th:value="${status.name()}" th:text="${status}">Status</option>
+        </select>
+        <div th:if="${#fields.hasErrors('progressoPedido')}" th:errors="*{progressoPedido}">Status Error</div>
+    </div>
+    <div>
+        <h3>Produtos</h3>
+        <div th:each="instancia, instStat : ${produtos}">
+            <input type="checkbox" th:value="${instancia.id}" th:name="'produtos[' + ${instStat.index} + '].instanciaProduto.id'" />
+            <label th:text="|${instancia.produto.nome} - $${instancia.valor}|">Produto</label>
+            <input type="number" min="1" th:field="*{produtos[__${instStat.index}__].quantidade}" placeholder="Quantidade" />
+            <div th:if="${#fields.hasErrors('produtos[__${instStat.index}__].quantidade')}" th:errors="*{produtos[__${instStat.index}__].quantidade}">Quantidade Error</div>
+        </div>
+    </div>
+    <button type="submit">Salvar Pedido</button>
+</form>
+</body>
+</html>

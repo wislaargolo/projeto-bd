@@ -32,7 +32,7 @@ public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
     public Telefone salvar(Connection conn, Telefone telefone) throws SQLException {
         String sql = String.format("INSERT INTO %s (id_funcionario, telefone_funcionario) VALUES (?, ?)", getNomeTabela());
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, telefone.getFuncionario().getId());
             stmt.setString(2, telefone.getTelefone());
 

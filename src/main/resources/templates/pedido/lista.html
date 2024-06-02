@@ -17,7 +17,7 @@
         <th>Status Conta</th>
         <th>Status Pedido</th>
         <th>Data/Hora de Registro</th>
-<!--        <th>Ações</th>-->
+        <th>Ações</th>
     </tr>
     </thead>
     <tbody>
@@ -25,7 +25,7 @@
         <td th:text="${pedido.id}"></td>
         <td th:text="${pedido.atendente.nome}"></td>
         <td th:text="${pedido.conta.statusConta}"></td>
-        <td th:text="${pedido.statusPedido}"></td>
+        <td th:text="${pedido.progressoPedido}"></td>
         <td th:text="${pedido.dataRegistro}"></td>
 <!--        <td>-->
 <!--            <a th:href="@{'contas/editar/' + ${mesa.id}}">Editar</a>-->
@@ -39,6 +39,6 @@
 </table>
 
 <br>
-<!--<a href="/pedidos/novo">Adicionar Novo Pedido</a>-->
+<a href="/pedidos/novo">Adicionar Novo Pedido</a>
 </body>
 </html>

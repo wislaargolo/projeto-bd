@@ -30,7 +30,7 @@ public class ProdutoService {
         return instanciaProdutoDAO.buscarTodos();
     }
 
-    public Object buscarPorId(Long id) throws SQLException {
+    public InstanciaProduto buscarPorId(Long id) throws SQLException {
         return instanciaProdutoDAO.buscarPorId(id);
     }
 

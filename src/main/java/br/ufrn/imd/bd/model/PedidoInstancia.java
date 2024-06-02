@@ -4,36 +4,15 @@ import jakarta.validation.constraints.NotNull;
 
 public class PedidoInstancia {
 
-    @NotNull
-    private Pedido pedido;
-
-    @NotNull
     private InstanciaProduto instanciaProduto;
 
-    @NotNull
     private Integer quantidade;
 
-    private Boolean isAtivo;
+    public PedidoInstancia() {}
 
-
-    public PedidoInstanciaKey getKey() {
-        return new PedidoInstanciaKey(this.pedido.getId(), this.instanciaProduto.getId());
-    }
-
-    public Boolean getAtivo() {
-        return isAtivo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        isAtivo = ativo;
-    }
-
-    public Pedido getPedido() {
-        return pedido;
-    }
-
-    public void setPedido(Pedido pedido) {
-        this.pedido = pedido;
+    public PedidoInstancia(InstanciaProduto instanciaProduto, Integer quantidade) {
+        this.instanciaProduto = instanciaProduto;
+        this.quantidade = quantidade;
     }
 
     public InstanciaProduto getInstanciaProduto() {

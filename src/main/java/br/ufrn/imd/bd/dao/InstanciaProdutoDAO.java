@@ -93,7 +93,7 @@ public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
 
     public boolean existeProdutoNome(Connection conn, InstanciaProduto instanciaProduto) throws SQLException {
         String sql = "SELECT COUNT(*) FROM instancia_produto pi " +
-                "JOIN produtos p ON p.id_produto = pi.id_produto " +
+                "JOIN produto p ON p.id_produto = pi.id_produto " +
                 "WHERE pi.is_ativo = true ";
 
         if (instanciaProduto.getId() != null) {

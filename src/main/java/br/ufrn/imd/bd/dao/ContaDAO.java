@@ -1,7 +1,9 @@
 package br.ufrn.imd.bd.dao;
 
+import br.ufrn.imd.bd.dao.util.ResultSetUtil;
 import br.ufrn.imd.bd.model.Conta;
 import br.ufrn.imd.bd.model.enums.MetodoPagamento;
+import br.ufrn.imd.bd.model.enums.ProgressoPedido;
 import br.ufrn.imd.bd.model.enums.StatusConta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,20 +38,14 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
     @Override
     public Conta mapearResultado(ResultSet rs) throws SQLException {
         Conta conta = new Conta();
-        conta.setId(rs.getLong("id_conta"));
-        conta.setStatusConta(StatusConta.valueOf(rs.getString("status")));
-        conta.setDataFinalizacao(rs.getObject("data_hora_finalizacao", LocalDateTime.class));
-        conta.setAtivo(rs.getBoolean("is_ativo"));
-        conta.setCaixa(caixaDAO.mapearResultado(rs, "caixa_"));
-        conta.setAtendente(atendenteDAO.mapearResultado(rs, "atendente_"));
-        conta.setMesa(mesaDAO.mapearResultado(rs));
-
-        String metodoPagamento = rs.getString("metodo_pagamento");
-        if (metodoPagamento != null && !metodoPagamento.isEmpty()) {
-            conta.setMetodoPagamento(MetodoPagamento.valueOf(metodoPagamento));
-        } else {
-            conta.setMetodoPagamento(null);
-        }
+        conta.setId(ResultSetUtil.getValue(rs, "id_conta", Long.class));
+        conta.setStatusConta(ResultSetUtil.getEnumValue(rs, "status", StatusConta.class));
+        conta.setDataFinalizacao(ResultSetUtil.getValue(rs, "data_hora_finalizacao", LocalDateTime.class));
+        conta.setAtivo(ResultSetUtil.getValue(rs, "is_ativo", Boolean.class));
+        conta.setCaixa(ResultSetUtil.getEntity(rs, caixaDAO, "caixa_", "id_funcionario"));
+        conta.setAtendente(ResultSetUtil.getEntity(rs, atendenteDAO, "atendente_", "id_funcionario"));
+        conta.setMesa(ResultSetUtil.getEntity(rs, mesaDAO, "id_mesa"));
+        conta.setMetodoPagamento(ResultSetUtil.getEnumValue(rs, "metodo_pagamento", MetodoPagamento.class));
 
         return conta;
     }
@@ -115,16 +111,15 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
     @Override
     public Conta salvar(Connection conn, Conta conta) throws SQLException {
         String sql = String.format("INSERT INTO %s (id_caixa, id_atendente, id_mesa, status, " +
-                                   "metodo_pagamento, data_hora_finalizacao, is_ativo) VALUES (?, ?, ?, ?, ?, ?, ?)", getNomeTabela());
+                                   "metodo_pagamento, data_hora_finalizacao) VALUES (?, ?, ?, ?, ?, ?)", getNomeTabela());
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setLong(1, conta.getCaixa() != null ? conta.getCaixa().getId() : null);
-            stmt.setLong(2, conta.getAtendente() != null ? conta.getAtendente().getId() : null);
+            stmt.setObject(1, conta.getCaixa() != null ? conta.getCaixa().getId() : null);
+            stmt.setObject(2, conta.getAtendente() != null ? conta.getAtendente().getId() : null);
             stmt.setLong(3, conta.getMesa().getId());
             stmt.setString(4, conta.getStatusConta().toString());
             stmt.setString(5, conta.getMetodoPagamento() != null ? conta.getMetodoPagamento().toString() : null);
             stmt.setTimestamp(6, Timestamp.valueOf(conta.getDataFinalizacao()));
-            stmt.setBoolean(7, conta.getAtivo());
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {

@@ -14,11 +14,17 @@ public abstract class AbstractDAO<T, ID>{
     }
     public abstract T mapearResultado(ResultSet rs) throws SQLException;
 
+    public T mapearResultado(ResultSet rs, String prefix) throws SQLException {
+        return mapearResultado(rs, "");
+    }
+
+
     public abstract String getNomeTabela();
 
     protected String getBuscarTodosQuery() {
         return String.format("SELECT * FROM %s", getNomeTabela());
     }
+
 
     public List<T> buscarTodos() throws SQLException {
         List<T> resultados = new ArrayList<>();

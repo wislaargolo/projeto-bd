@@ -8,7 +8,7 @@ public class InstanciaProduto {
 
     private Long id;
 
-    @NotNull
+
     private Double valor;
 
     private Boolean isAtivo;
