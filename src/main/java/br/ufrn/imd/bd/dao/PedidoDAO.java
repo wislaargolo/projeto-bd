@@ -60,6 +60,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     }
 
 
+
     @Override
     public Pedido salvar(Connection conn, Pedido pedido) throws SQLException {
         String sql = String.format("INSERT INTO %s (id_atendente, id_conta, status, data_hora_registro, " +

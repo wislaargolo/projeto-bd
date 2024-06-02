@@ -2,7 +2,7 @@ package br.ufrn.imd.bd.model;
 
 import jakarta.validation.constraints.NotNull;
 
-public class PedidoInstanciaProduto {
+public class PedidoInstancia {
 
     @NotNull
     private Pedido pedido;
@@ -13,6 +13,20 @@ public class PedidoInstanciaProduto {
     @NotNull
     private Integer quantidade;
 
+    private Boolean isAtivo;
+
+
+    public PedidoInstanciaKey getKey() {
+        return new PedidoInstanciaKey(this.pedido.getId(), this.instanciaProduto.getId());
+    }
+
+    public Boolean getAtivo() {
+        return isAtivo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        isAtivo = ativo;
+    }
 
     public Pedido getPedido() {
         return pedido;
