@@ -12,7 +12,7 @@ public abstract class AbstractDAO<T, ID>{
     protected Connection getConnection() throws SQLException {
         return DatabaseConfig.getConnection();
     }
-    protected abstract T mapearResultado(ResultSet rs) throws SQLException;
+    public abstract T mapearResultado(ResultSet rs) throws SQLException;
 
     public abstract String getNomeTabela();
 
@@ -34,7 +34,12 @@ public abstract class AbstractDAO<T, ID>{
     }
 
     protected String getBuscarPorIdQuery() {
-        return String.format("SELECT * FROM %s WHERE id = ?", getNomeTabela());
+        return String.format("SELECT * FROM %s WHERE id" + "_" + getNomeTabela() + " = ?", getNomeTabela());
+    }
+
+
+    protected String getDeletarPorIdQuery() {
+        return String.format("DELETE FROM %s WHERE id" + "_" + getNomeTabela() + " = ?", getNomeTabela());
     }
 
     public T buscarPorId(ID id) throws SQLException {
@@ -55,7 +60,7 @@ public abstract class AbstractDAO<T, ID>{
     public abstract void atualizar(Connection conn, T... entidade) throws SQLException;
 
     public void deletarPorId(Connection conn, ID id) throws SQLException {
-        String sql = String.format("DELETE FROM %s WHERE id = ?", getNomeTabela());
+        String sql = getDeletarPorIdQuery();
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setObject(1, id);
             stmt.executeUpdate();

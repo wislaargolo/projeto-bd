@@ -17,7 +17,9 @@
 
 <form th:action="${conta.id} == null ?
                     @{/contas} :
-                    @{/contas/editar}" th:object="${conta}" method="post">    <input type="hidden" th:field="*{id}" />
+                    @{/contas/editar}" th:object="${conta}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <input type="hidden" th:field="*{ativo}" />
 
     <label for="id_mesa">Mesa:</label>
     <select th:field="*{mesa.id}" id="id_mesa">
@@ -50,6 +52,7 @@
 </form>
 
 <script>
+
     document.addEventListener('DOMContentLoaded', function () {
         var statusContaSelect = document.getElementById('status');
         var metodoPagamentoBlock = document.getElementById('metodoPagamentoBlock');
@@ -67,7 +70,6 @@
         toggleMetodoPagamento();
     });
 </script>
-
 
 </body>
 </html>

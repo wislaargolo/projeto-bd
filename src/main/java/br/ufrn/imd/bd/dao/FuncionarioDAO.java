@@ -15,20 +15,29 @@ import java.time.LocalDate;
 public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
 
     @Override
-    protected Funcionario mapearResultado(ResultSet rs) throws SQLException {
+    public Funcionario mapearResultado(ResultSet rs) throws SQLException {
+        return this.mapearResultado(rs, "");
+    }
+
+
+    public Funcionario mapearResultado(ResultSet rs, String prefixo) throws SQLException {
         Funcionario funcionario = new Funcionario();
-        funcionario.setId(rs.getLong("id"));
-        funcionario.setNome(rs.getString("nome"));
-        funcionario.setLogin(rs.getString("login"));
-        funcionario.setSenha(rs.getString("senha"));
-        funcionario.setEmail(rs.getString("email"));
-        funcionario.setDataCadastro(rs.getObject("data_cadastro", LocalDate.class));
+        funcionario.setId(rs.getLong(prefixo + "id_funcionario"));
+        funcionario.setNome(rs.getString(prefixo + "nome"));
+        funcionario.setLogin(rs.getString(prefixo + "login"));
+        funcionario.setSenha(rs.getString(prefixo + "senha"));
+        funcionario.setEmail(rs.getString(prefixo + "email"));
+        funcionario.setDataCadastro(rs.getObject(prefixo + "data_cadastro", LocalDate.class));
         return funcionario;
+    }
+
+    protected String getDeletarPorIdQuery() {
+        return String.format("DELETE FROM %s WHERE id_funcionario = ?", getNomeTabela());
     }
 
     @Override
     public String getNomeTabela() {
-        return "funcionarios";
+        return "funcionario";
     }
 
     @Override
@@ -67,7 +76,7 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
         Funcionario novo = funcionarios[0];
 
         String sql = String.format(
-                "UPDATE %s SET nome = ?, login = ?, senha = ?, email = ? WHERE id = ?",
+                "UPDATE %s SET nome = ?, login = ?, senha = ?, email = ? WHERE id_funcionario = ?",
                 getNomeTabela()
         );
 
@@ -89,7 +98,7 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
         String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s = ?", getNomeTabela(), parametro);
 
         if(id != null) {
-            sql += " AND id != " + id;
+            sql += " AND id_funcionario != " + id;
         }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

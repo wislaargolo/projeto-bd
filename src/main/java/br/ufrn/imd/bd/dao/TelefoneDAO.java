@@ -2,6 +2,7 @@ package br.ufrn.imd.bd.dao;
 
 import br.ufrn.imd.bd.model.Telefone;
 import br.ufrn.imd.bd.model.TelefoneKey;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -11,19 +12,21 @@ import java.util.List;
 @Component
 public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
 
+    @Autowired
+    private FuncionarioDAO funcionarioDAO;
+
     @Override
-    protected Telefone mapearResultado(ResultSet rs) throws SQLException {
+    public Telefone mapearResultado(ResultSet rs) throws SQLException {
         Telefone telefone = new Telefone();
-        telefone.getFuncionario().setId(rs.getLong("id_funcionario"));
+        telefone.setFuncionario(funcionarioDAO.mapearResultado(rs));
         telefone.setTelefone(rs.getString("telefone_funcionario"));
         return telefone;
     }
 
     @Override
     public String getNomeTabela() {
-        return "telefones";
+        return "telefone";
     }
-
 
     @Override
     public Telefone salvar(Connection conn, Telefone telefone) throws SQLException {
@@ -81,7 +84,7 @@ public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
 
     public List<Telefone> buscarPorFuncionarioId(Long id) throws SQLException {
         List<Telefone> resultados = new ArrayList<>();
-        String sql = String.format("SELECT * FROM %s WHERE id_funcionario = %s", getNomeTabela(), id);
+        String sql = String.format("SELECT * from %s NATURAL JOIN %s WHERE id_funcionario = %s", getNomeTabela(), funcionarioDAO.getNomeTabela(), id);
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {

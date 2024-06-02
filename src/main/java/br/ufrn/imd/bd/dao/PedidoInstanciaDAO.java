@@ -1,5 +1,5 @@
-package br.ufrn.imd.bd.dao;
 
+package br.ufrn.imd.bd.dao;
 import br.ufrn.imd.bd.model.PedidoInstancia;
 import br.ufrn.imd.bd.model.PedidoInstanciaKey;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class PedidoInstanciaDAO extends AbstractDAO<PedidoInstancia, PedidoInsta
     @Autowired
     private InstanciaProdutoDAO instanciaProdutoDAO;
     @Override
-    protected PedidoInstancia mapearResultado(ResultSet rs) throws SQLException {
+    public PedidoInstancia mapearResultado(ResultSet rs) throws SQLException {
         PedidoInstancia pedidoInstancia = new PedidoInstancia();
         pedidoInstancia.setPedido(pedidoDAO.buscarPorId(rs.getLong("id_pedido")));
         pedidoInstancia.setInstanciaProduto(instanciaProdutoDAO.buscarPorId(rs.getLong("id_instancia_produto")));

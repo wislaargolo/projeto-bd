@@ -11,15 +11,16 @@ public class MesaDAO extends AbstractDAO<Mesa, Long> {
     @Override
     public Mesa mapearResultado(ResultSet rs) throws SQLException {
         Mesa mesa = new Mesa();
-        mesa.setId(rs.getLong("id"));
+        mesa.setId(rs.getLong("id_mesa"));
         mesa.setDescricao(rs.getString("descricao"));
         return mesa;
     }
 
     @Override
     public String getNomeTabela() {
-        return "mesas";
+        return "mesa";
     }
+
 
     @Override
     public Mesa salvar(Connection conn, Mesa mesa) throws SQLException {
@@ -54,7 +55,7 @@ public class MesaDAO extends AbstractDAO<Mesa, Long> {
         Mesa novo = mesas[0];
 
         String sql = String.format(
-                "UPDATE %s SET descricao = ? WHERE id = ?",
+                "UPDATE %s SET descricao = ? WHERE id_mesa = ?",
                 getNomeTabela()
         );
 
