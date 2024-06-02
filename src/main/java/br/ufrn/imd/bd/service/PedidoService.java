@@ -1,10 +1,13 @@
 package br.ufrn.imd.bd.service;
 
 import br.ufrn.imd.bd.connection.DatabaseConfig;
+import br.ufrn.imd.bd.dao.ContaDAO;
 import br.ufrn.imd.bd.dao.InstanciaProdutoDAO;
 import br.ufrn.imd.bd.dao.PedidoDAO;
+import br.ufrn.imd.bd.model.Conta;
 import br.ufrn.imd.bd.model.InstanciaProduto;
 import br.ufrn.imd.bd.model.Pedido;
+import br.ufrn.imd.bd.model.enums.StatusConta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,9 @@ public class PedidoService {
 
     @Autowired
     private PedidoDAO pedidoDAO;
+
+    @Autowired
+    private ContaDAO contaDAO;
 
     public List<Pedido> buscarTodos() throws SQLException {
         return pedidoDAO.buscarTodos();

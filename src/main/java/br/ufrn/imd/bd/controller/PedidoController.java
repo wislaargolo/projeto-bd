@@ -4,6 +4,7 @@ import br.ufrn.imd.bd.model.InstanciaProduto;
 import br.ufrn.imd.bd.model.Pedido;
 import br.ufrn.imd.bd.model.PedidoInstancia;
 import br.ufrn.imd.bd.model.Produto;
+import br.ufrn.imd.bd.service.MesaService;
 import br.ufrn.imd.bd.service.PedidoService;
 import br.ufrn.imd.bd.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ public class PedidoController {
                 .collect(Collectors.toList());
 
         pedido.getAtendente().setId(1L);
-        pedido.getConta().setId(1L);// para testar ja que nao tem autenticacao
+        pedido.getConta().setId(1L);
         pedido.setProdutos(instancias);
         pedidoService.salvar(pedido);
 

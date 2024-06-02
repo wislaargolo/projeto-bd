@@ -13,7 +13,7 @@ public class ProdutoDAO extends AbstractDAO<Produto, Long> {
         Produto produto = new Produto();
         produto.setId(rs.getLong("id_produto"));
         produto.setNome(rs.getString("nome"));
-        produto.setDisponivel(rs.getBoolean("is_disponivel"));
+        produto.setDisponivel(rs.getBoolean("disponibilidade"));
         return produto;
     }
 
@@ -24,10 +24,11 @@ public class ProdutoDAO extends AbstractDAO<Produto, Long> {
 
     @Override
     public Produto salvar(Connection conn, Produto produto) throws SQLException {
-        String sql = String.format("INSERT INTO %s (nome) VALUES (?)", getNomeTabela());
+        String sql = String.format("INSERT INTO %s (nome, disponibilidade) VALUES (?, ?)", getNomeTabela());
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, produto.getNome());
+            stmt.setBoolean(2, produto.getDisponivel());
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
@@ -55,7 +56,7 @@ public class ProdutoDAO extends AbstractDAO<Produto, Long> {
         Produto novo = produtos[0];
 
         String sql = String.format(
-                "UPDATE %s SET nome = ?, is_disponivel = ? WHERE id_produto = ?",
+                "UPDATE %s SET nome = ?, disponibilidade = ? WHERE id_produto = ?",
                 getNomeTabela()
         );
 
