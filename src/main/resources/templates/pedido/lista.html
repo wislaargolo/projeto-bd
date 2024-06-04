@@ -1,44 +1,40 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Lista de Pedidos</title>
-</head>
+<html layout:decorate="~{cozinha/layout}" xmlns="http://www.w3.org/1999/html">
 <body>
 
-<div th:replace="menu :: menu"></div>
+    <section class="main p-3" layout:fragment="corpo" >
 
-<h1>Lista de Pedidos</h1>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome Atendente</th>
+                <th>Status Conta</th>
+                <th>Status Pedido</th>
+                <th>Data/Hora de Registro</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="pedido : ${pedidos}">
+                <td th:text="${pedido.id}"></td>
+                <td th:text="${pedido.atendente.nome}"></td>
+                <td th:text="${pedido.conta.statusConta}"></td>
+                <td th:text="${pedido.progressoPedido}"></td>
+                <td th:text="${pedido.dataRegistro}"></td>
+        <!--        <td>-->
+        <!--            <a th:href="@{'contas/editar/' + ${mesa.id}}">Editar</a>-->
+        <!--            <span>|</span>-->
+        <!--            <a th:href="@{'contas/produtos/' + ${mesa.id}}">Listar Produtos</a>-->
+        <!--            <span>|</span>-->
+        <!--            <a th:href="@{'contas/excluir/' + ${mesa.id}}" onclick="return confirm('Tem certeza que deseja excluir esta mesa?')">Excluir</a>-->
+        <!--        </td>-->
+            </tr>
+            </tbody>
+        </table>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Nome Atendente</th>
-        <th>Status Conta</th>
-        <th>Status Pedido</th>
-        <th>Data/Hora de Registro</th>
-        <th>Ações</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="pedido : ${pedidos}">
-        <td th:text="${pedido.id}"></td>
-        <td th:text="${pedido.atendente.nome}"></td>
-        <td th:text="${pedido.conta.statusConta}"></td>
-        <td th:text="${pedido.progressoPedido}"></td>
-        <td th:text="${pedido.dataRegistro}"></td>
-<!--        <td>-->
-<!--            <a th:href="@{'contas/editar/' + ${mesa.id}}">Editar</a>-->
-<!--            <span>|</span>-->
-<!--            <a th:href="@{'contas/produtos/' + ${mesa.id}}">Listar Produtos</a>-->
-<!--            <span>|</span>-->
-<!--            <a th:href="@{'contas/excluir/' + ${mesa.id}}" onclick="return confirm('Tem certeza que deseja excluir esta mesa?')">Excluir</a>-->
-<!--        </td>-->
-    </tr>
-    </tbody>
-</table>
-
-<br>
-<a href="/pedidos/novo">Adicionar Novo Pedido</a>
+        <br>
+        <a href="/pedidos/novo">Adicionar Novo Pedido</a>
+    </section>
 </body>
 </html>

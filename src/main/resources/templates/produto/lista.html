@@ -1,40 +1,38 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Lista de Produtos</title>
-</head>
+<html layout:decorate="~{cozinha/layout}" xmlns="http://www.w3.org/1999/html">
 <body>
 
-<div th:replace="menu :: menu"></div>
+<section class="main p-3" layout:fragment="corpo" >
 
-<h1>Lista de Produtos</h1>
+    <h1>Lista de Produtos</h1>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Status</th>
-        <th>Valor</th>
-        <th>Ações</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="instanciaProduto : ${instanciaProdutoList}">
-        <td th:text="${instanciaProduto.id}"></td>
-        <td th:text="${instanciaProduto.produto.nome}"></td>
-        <td th:text="${instanciaProduto.produto.disponivel ? 'DISPONIVEL' : 'INDISPONIVEL'}"></td>
-        <td th:text="${instanciaProduto.valor}"></td>
-        <td>
-            <a th:href="@{'produtos/' + ${instanciaProduto.id} + '/editar'}">Editar</a>
-            <span>|</span>
-            <a th:href="@{'produtos/' + ${instanciaProduto.id} + '/excluir'}" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Status</th>
+            <th>Valor</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="instanciaProduto : ${instanciaProdutoList}">
+            <td th:text="${instanciaProduto.id}"></td>
+            <td th:text="${instanciaProduto.produto.nome}"></td>
+            <td th:text="${instanciaProduto.produto.disponivel ? 'DISPONIVEL' : 'INDISPONIVEL'}"></td>
+            <td th:text="${instanciaProduto.valor}"></td>
+            <td>
+                <a th:href="@{'produtos/' + ${instanciaProduto.id} + '/editar'}">Editar</a>
+                <span>|</span>
+                <a th:href="@{'produtos/' + ${instanciaProduto.id} + '/excluir'}" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
-<br>
-<a href="/produtos/novo">Adicionar Novo Produto</a>
+    <br>
+    <a href="/produtos/novo">Adicionar Novo Produto</a>
+</section>
 </body>
 </html>
