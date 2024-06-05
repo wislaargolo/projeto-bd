@@ -21,7 +21,7 @@ public class CozinheiroController {
     private CozinheiroService cozinheiroService;
 
     @GetMapping
-    public String listarTodosOsCozinheiros(Model model) throws SQLException {
+    public String listarCozinheiros(Model model) throws SQLException {
         List<Cozinheiro> cozinheiros = cozinheiroService.buscarTodos();
         model.addAttribute("cozinheiros", cozinheiros);
         return "cozinheiro/lista";

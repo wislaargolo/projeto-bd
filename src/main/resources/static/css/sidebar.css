@@ -100,6 +100,11 @@ a.sidebar-link:hover {
     transition: all .2s ease-out;
 }
 
+.active {
+    border-left: 3px solid white !important;
+}
+
+
 #sidebar.expand .sidebar-link[data-bs-toggle="collapse"].collapsed::after {
     transform: rotate(45deg);
     transition: all .2s ease-out;

@@ -1,51 +1,50 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Criar Produto</title>
-    <style>
-        .error-message {
-            color: red;
-        }
-    </style>
-</head>
+<html layout:decorate="~{cozinha/layout}" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.w3.org/1999/xhtml">
 <body>
-<h2 th:text="${instanciaProduto.id == null ? 'Cadastrar Produto' : 'Editar Produto'}"></h2>
-<div th:if="${error}">
-    <p th:text="${error}"></p>
-</div>
 
-<form th:action="@{/produtos}" th:object="${instanciaProduto}" method="post">
-    <input type="hidden" th:field="*{id}" />
-    <input type="hidden" th:field="*{produto.id}" />
-    <input type="hidden" th:field="*{ativo}" />
-
-    <div th:if="${#fields.hasErrors('valor')}" class="error-message">
-        <p th:errors="*{valor}"></p>
-    </div>
-    <label for="valor">Valor:</label>
-    <input type="text" th:field="*{valor}" id="valor" />
-    <br/>
-
-    <div th:if="${#fields.hasErrors('produto.nome')}" class="error-message">
-        <p th:errors="*{produto.nome}"></p>
-    </div>
-    <label for="nome">Nome:</label>
-    <input type="text" th:field="*{produto.nome}" id="nome" />
-    <br/>
-
-    <div>
-        <label>
-            <input type="radio" th:field="*{produto.disponivel}" value="true" checked="checked"/>
-            <span>DISPONIVEL</span>
-        </label>
-        <label>
-            <input type="radio" th:field="*{produto.disponivel}" value="false"/>
-            <span>INDISPONIVEL</span>
-        </label>
+<section class="main p-4" layout:fragment="corpo">
+    <div class="header-area container d-flex justify-content-between align-items-center">
+        <h1 th:text="${instanciaProduto.id == null ? 'Cadastrar Produto' : 'Editar Produto'}"></h1>
     </div>
 
-    <input type="submit" value="Enviar" />
-</form>
+    <div class="container mt-4">
+        <form th:action="@{/produtos}" th:object="${instanciaProduto}" method="post" class="needs-validation" novalidate>
+            <input type="hidden" th:field="*{id}" />
+            <input type="hidden" th:field="*{produto.id}" />
+            <input type="hidden" th:field="*{ativo}" />
+
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome:</label>
+                <input type="text" th:field="*{produto.nome}" id="nome" class="form-control" required>
+                <div th:if="${#fields.hasErrors('produto.nome')}" class="invalid-feedback">
+                    <p th:errors="*{produto.nome}">Nome inválido</p>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="valor" class="form-label">Valor:</label>
+                <input type="text" th:field="*{valor}" id="valor" class="form-control" required>
+                <div th:if="${#fields.hasErrors('valor')}" class="invalid-feedback">
+                    <p th:errors="*{valor}">Valor inválido</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label>Status:</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" th:field="*{produto.disponivel}" id="disponivelTrue" value="true">
+                    <label class="form-check-label" for="disponivelTrue">Disponível</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" th:field="*{produto.disponivel}" id="disponivelFalse" value="false">
+                    <label class="form-check-label" for="disponivelFalse">Indisponível</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+    </div>
+</section>
+
 </body>
 </html>

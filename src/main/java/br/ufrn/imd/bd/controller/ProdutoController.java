@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.List;
-
+//esse controller vai sumir
 @Controller
 @RequestMapping("/produtos")
 public class ProdutoController {
@@ -23,7 +23,7 @@ public class ProdutoController {
     private ProdutoService produtoService;
 
     @GetMapping
-    public String listarTodosOsProdutos(Model model) throws SQLException {
+    public String listarProdutos (Model model) throws SQLException {
         model.addAttribute("instanciaProdutoList", produtoService.buscarTodos());
         return "produto/lista";
     }

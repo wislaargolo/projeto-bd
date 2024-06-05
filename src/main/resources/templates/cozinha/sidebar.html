@@ -4,45 +4,36 @@
     <aside id="sidebar" th:fragment="nav-sidebar">
         <div class="d-flex">
             <button class="toggle-btn" type="button">
-                <i class="lni lni-menu"></i>
+                <i class="fa-solid fa-bars"></i>
             </button>
             <div class="sidebar-logo">
-                <a href="#">Home</a>
+                <a href="#"></a>
             </div>
         </div>
         <ul class="sidebar-nav">
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
-                    <i class="lni lni-user"></i>
-                    <span>Conta</span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
-                    <i class="lni lni-service"></i>
+                <a th:href="@{/pedidos}" class="sidebar-link">
+                    <i class="fa-solid fa-bell-concierge"></i>
                     <span>Pedidos</span>
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-                   data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
-                    <i class="lni lni-dinner"></i>
+                <a th:href="@{/produtos}" class="sidebar-link">
+                    <i class="fa-solid fa-drumstick-bite"></i>
                     <span>Produtos</span>
                 </a>
-                <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                    <li class="sidebar-item" >
-                        <a th:href="@{/produtos}" class="sidebar-link">Listar</a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">Cadastrar</a>
-                    </li>
-                </ul>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Conta</span>
+                </a>
             </li>
 
         </ul>
         <div class="sidebar-footer">
             <a href="#" class="sidebar-link">
-                <i class="lni lni-exit"></i>
+                <i class="fa-solid fa-arrow-right-from-bracket fa-flip-horizontal"></i>
                 <span>Sair</span>
             </a>
         </div>

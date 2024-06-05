@@ -21,7 +21,7 @@ public class CaixaController {
     private CaixaService caixaService;
 
     @GetMapping
-    public String listarTodosOsCaixas(Model model) throws SQLException {
+    public String listarCaixas (Model model) throws SQLException {
         List<Caixa> caixas = caixaService.buscarTodos();
         model.addAttribute("caixas", caixas);
         return "caixa/lista";

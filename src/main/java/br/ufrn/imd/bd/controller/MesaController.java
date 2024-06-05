@@ -21,7 +21,7 @@ public class MesaController {
     private MesaService mesaService;
 
     @GetMapping
-    public String listarTodosAsMesas(Model model) throws SQLException {
+    public String listarMesas(Model model) throws SQLException {
         List<Mesa> mesas = mesaService.buscarTodos();
         model.addAttribute("mesas", mesas);
         return "mesa/lista";

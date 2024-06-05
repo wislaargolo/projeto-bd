@@ -1,7 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
 .wrapper {
     display: flex;
+    justify-content: center;
 }
 
 ::after,
@@ -24,14 +29,11 @@ h1 {
     font-size: 1.5rem;
 }
 
-* {
-    font-family: 'Poppins', sans-serif;
-}
-
 .main {
     min-height: 100vh;
     width: 100%;
-    overflow: hidden;
+    overflow-y: auto;
     transition: all 0.35s ease-in-out;
     background-color: #fafbfe;
 }
+
