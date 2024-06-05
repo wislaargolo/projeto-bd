@@ -1,5 +1,6 @@
 package br.ufrn.imd.bd.model;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
@@ -9,12 +10,14 @@ public class InstanciaProduto {
     private Long id;
 
 
+    @NotNull(message = "Valor é obrigatório")
     private Double valor;
 
     private Boolean isAtivo;
 
     private LocalDateTime data;
 
+    @Valid
     private Produto produto;
 
     public InstanciaProduto() {

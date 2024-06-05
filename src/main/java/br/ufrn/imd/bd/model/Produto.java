@@ -1,21 +1,23 @@
 package br.ufrn.imd.bd.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class Produto {
 
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Nome é obrigatório")
     private String nome;
 
-    private Boolean isDisponivel;
+    @NotNull(message = "Disponibilidade é obrigatório")
+    private Boolean disponivel;
 
     public Produto() {}
 
     public Produto(String nome, Boolean isDisponivel) {
         this.nome = nome;
-        this.isDisponivel = isDisponivel;
+        this.disponivel = isDisponivel;
     }
 
     public Long getId() {
@@ -35,10 +37,10 @@ public class Produto {
     }
 
     public Boolean getDisponivel() {
-        return isDisponivel;
+        return disponivel;
     }
 
     public void setDisponivel(Boolean disponivel) {
-        isDisponivel = disponivel;
+        this.disponivel = disponivel;
     }
 }

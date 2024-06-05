@@ -15,29 +15,37 @@
 
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome:</label>
-                <input type="text" th:field="*{produto.nome}" id="nome" class="form-control" required>
-                <div th:if="${#fields.hasErrors('produto.nome')}" class="invalid-feedback">
-                    <p th:errors="*{produto.nome}">Nome inválido</p>
+                <input type="text" th:field="*{produto.nome}" id="nome" class="form-control"
+                       th:classappend="${#fields.hasErrors('produto.nome')} ? 'is-invalid'" required>
+
+                <div class="invalid-feedback">
+                    <span th:errors="*{produto.nome}"></span>
                 </div>
             </div>
 
             <div class="mb-3">
                 <label for="valor" class="form-label">Valor:</label>
-                <input type="text" th:field="*{valor}" id="valor" class="form-control" required>
-                <div th:if="${#fields.hasErrors('valor')}" class="invalid-feedback">
-                    <p th:errors="*{valor}">Valor inválido</p>
+                <input type="text" th:field="*{valor}" id="valor" class="form-control"
+                       th:classappend="${#fields.hasErrors('valor')} ? 'is-invalid'" required>
+                <div class="invalid-feedback">
+                    <span th:errors="*{valor}"></span>
                 </div>
             </div>
 
             <div class="mb-4">
                 <label>Status:</label>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" th:field="*{produto.disponivel}" id="disponivelTrue" value="true">
+                    <input class="form-check-input" type="radio" th:field="*{produto.disponivel}" id="disponivelTrue" value="true"
+                           th:classappend="${#fields.hasErrors('produto.disponivel')} ? 'is-invalid'" required>
                     <label class="form-check-label" for="disponivelTrue">Disponível</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" th:field="*{produto.disponivel}" id="disponivelFalse" value="false">
+                    <input class="form-check-input" type="radio" th:field="*{produto.disponivel}" id="disponivelFalse" value="false"
+                           th:classappend="${#fields.hasErrors('produto.disponivel')} ? 'is-invalid'" required>
                     <label class="form-check-label" for="disponivelFalse">Indisponível</label>
+                </div>
+                <div class="invalid-feedback">
+                    <span th:errors="*{produto.disponivel}"></span>
                 </div>
             </div>
 

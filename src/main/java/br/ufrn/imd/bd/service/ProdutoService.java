@@ -44,6 +44,7 @@ public class ProdutoService {
 
     public InstanciaProduto salvar(InstanciaProduto instanciaProduto) throws SQLException, EntidadeJaExisteException {
         Connection conn = null;
+
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);

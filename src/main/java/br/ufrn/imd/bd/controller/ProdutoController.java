@@ -37,12 +37,19 @@ public abstract class ProdutoController {
 
     @PostMapping("/produtos/salvar")
     public String salvarProduto(@ModelAttribute @Valid InstanciaProduto instanciaProduto,
-                                BindingResult bindingResult, Model model) throws SQLException, EntidadeJaExisteException {
+                                BindingResult bindingResult, Model model) throws SQLException {
         if (bindingResult.hasErrors()) {
             model.addAttribute("layout", getLayout() + "/layout");
             return "produto/formulario";
         }
-        produtoService.salvar(instanciaProduto);
+        try {
+            produtoService.salvar(instanciaProduto);
+        } catch (EntidadeJaExisteException e) {
+            bindingResult.rejectValue("produto.nome", "error.produto", e.getMessage());
+            model.addAttribute("layout", getLayout() + "/layout");
+            model.addAttribute("instanciaProduto", instanciaProduto);
+            return "produto/formulario";
+        }
         return "redirect:/" + getLayout() + "/produtos";
     }
 
