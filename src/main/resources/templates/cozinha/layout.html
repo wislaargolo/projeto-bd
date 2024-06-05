@@ -53,8 +53,11 @@
 <script type="text/javascript">
     var url = '';
 
-    $('button[id*="btn_"]').click(function() {
-        url = "http://localhost:8080/" + $(this).attr('id').split("_")[1];
+   $('button[id^="btn_"]').click(function() {
+        var pathParts = $(this).attr('id').split('_');
+        var basePath = pathParts[1];
+        var productId = pathParts[3];
+        url = "http://localhost:8080/" + basePath + "/produtos/" + productId + "/excluir";
     });
 
     $('#ok_confirm').click(function() {

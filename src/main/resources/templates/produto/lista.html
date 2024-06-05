@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html layout:decorate="~{cozinha/layout}" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.w3.org/1999/xhtml">
+<html th:with="layout=${layout}" layout:decorate="${layout}" xmlns="http://www.w3.org/1999/xhtml">
 <body>
 
-<section class="main p-4" layout:fragment="corpo" >
-
+<section class="main p-4" layout:fragment="corpo">
     <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
         <h1>Lista de Produtos</h1>
-        <a class="btn btn-primary btn-md" th:href="@{/produtos/novo}" role="button">
+        <a class="btn btn-primary btn-md" th:href="@{'/' + ${#strings.substringBefore(layout, '/')} + '/produtos/novo'}" role="button">
             <i class="fa-solid fa-plus"></i>
             <span>Novo Produto</span>
         </a>
@@ -29,14 +28,13 @@
                     <td th:text="${instanciaProduto.produto.disponivel ? 'DISPONIVEL' : 'INDISPONIVEL'}"></td>
                     <td th:text="${#numbers.formatCurrency(instanciaProduto.valor)}"></td>
                     <td colspan="2">
-                        <a class="btn btn-secondary btn-sm" th:href="@{/produtos/{id}/editar (id=${instanciaProduto.id})}" role="button">
+                        <a class="btn btn-secondary btn-sm" th:href="@{'/' + ${#strings.substringBefore(layout, '/')} + '/produtos/' + ${instanciaProduto.id} + '/editar'}" role="button">
                             <span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
                         </a>
-                        <button th:id="${#strings.concat('btn_produtos/', instanciaProduto.id, '/excluir')}" type="button"
+                        <button th:id="'btn_' + ${#strings.substringBefore(layout, '/')} + '_produtos_' + ${instanciaProduto.id} + '_excluir'" type="button"
                                 class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#myModal">
-                            <span class="oi oi-circle-x" title="Exclusão desabilitada" aria-hidden="true"></span>
+                            <span class="oi oi-circle-x" title="Exclusão" aria-hidden="true"></span>
                         </button>
-
                     </td>
                 </tr>
                 </tbody>
