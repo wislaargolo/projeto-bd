@@ -35,7 +35,7 @@ public class CozinhaPedidosController {
 
     @GetMapping
     public String listarPedidos(Model model) throws SQLException {
-        model.addAttribute("pedidos", pedidoService.buscarPedidosPorTuno());
+        model.addAttribute("pedidos", pedidoService.buscarPedidosPorTurno());
         return "pedido/lista_cozinha";
     }
 
@@ -54,7 +54,6 @@ public class CozinhaPedidosController {
         return "redirect:/cozinha/pedidos";
     }
 
-    // ainda nao ta feitoo
     @GetMapping("/{id}")
     public String buscarPedido(Model model, @PathVariable Long id) throws SQLException {
         model.addAttribute("pedido", pedidoService.buscarPorId(id));

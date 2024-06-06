@@ -60,7 +60,7 @@ public class PedidoService {
         return pedidoDAO.buscarPorId(id);
     }
 
-    public List<Pedido> buscarPedidosPorTuno() throws SQLException {
+    public List<Pedido> buscarPedidosPorTurno() throws SQLException {
         LocalDateTime inicioTurno;
         LocalDateTime fimTurno;
 

@@ -24,7 +24,7 @@
                     <td th:text="${pedido.atendente.nome}"></td>
                     <td th:text="${pedido.conta.mesa.descricao}"></td>
                     <td th:text="${pedido.progressoPedido}"></td>
-                    <td th:text="${pedido.dataRegistro}"></td>
+                    <td th:text="${#temporals.format(pedido.dataRegistro, 'dd/MM/yyyy HH:mm:ss')}"></td>
                     <td>
                         <a class="btn btn-secondary btn-sm" th:href="@{'/cozinha/pedidos/' + ${pedido.id} + '/editar'}"
                            role="button">
