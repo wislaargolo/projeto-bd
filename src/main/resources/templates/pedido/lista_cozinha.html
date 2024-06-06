@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html  layout:decorate="~{cozinha/layout}" xmlns="http://www.w3.org/1999/html">
+<body>
+
+<section class="main p-4" layout:fragment="corpo">
+    <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Lista de Pedidos</h1>
+    </div>
+
+    <div class="container" id="listagem">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm">
+                <thead>
+                <tr>
+                    <th> Atendente </th>
+                    <th>Status</th>
+                    <th>Momento do Registro</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="pedido : ${pedidos}">
+                    <td th:text="${pedido.atendente.nome}"></td>
+                    <td th:text="${pedido.progressoPedido}"></td>
+                    <td th:text="${pedido.dataRegistro}"></td>
+                    <td>
+                        <a class="btn btn-secondary btn-sm" th:href="@{'/cozinha/pedidos/' + ${pedido.id} + '/editar'}"
+                           role="button">
+                            <span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
+                        </a>
+                        <!--                        <button th:id="'btn_' + ${#strings.substringBefore(layout, '/')} + '_pedidos_' + ${pedido.id} + '_excluir'" type="button"-->
+                        <!--                                class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#myModal">-->
+                        <!--                            <span class="oi oi-circle-x" title="Exclusão" aria-hidden="true"></span>-->
+                        <!--                        </button>-->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:replace="~{/modal :: modal}"></div>
+</section>
+</body>
+</html>

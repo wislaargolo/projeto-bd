@@ -15,11 +15,10 @@ public class Pedido {
     private Conta conta;
 
 
+    @NotNull(message = "Status é obrigatório")
     private ProgressoPedido progressoPedido;
 
     private LocalDateTime dataRegistro;
-
-    private Boolean isAtivo;
 
     private List<PedidoInstancia> produtos;
 
@@ -34,14 +33,6 @@ public class Pedido {
 
     public void setProdutos(List<PedidoInstancia> produtos) {
         this.produtos = produtos;
-    }
-
-    public Boolean getAtivo() {
-        return isAtivo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        isAtivo = ativo;
     }
 
     public Long getId() {

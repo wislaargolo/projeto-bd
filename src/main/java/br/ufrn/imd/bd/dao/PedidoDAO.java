@@ -36,7 +36,6 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
         pedido.setConta(contaDAO.mapearResultado(rs));
         pedido.setProgressoPedido(ProgressoPedido.valueOf(rs.getString("progresso")));
         pedido.setDataRegistro(rs.getObject("data_hora_registro", LocalDateTime.class));
-        pedido.setAtivo(rs.getBoolean("is_ativo"));
 
         return pedido;
     }
@@ -49,20 +48,18 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     @Override
     protected String getBuscarTodosQuery() {
 
-        return "SELECT p.*, a.*, f.*, c.status FROM pedido AS p " +
+        return "SELECT p.*, a.*, f.* FROM pedido AS p " +
                 "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
-                "JOIN conta AS c ON p.id_conta = c.id_conta " +
                 "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario";
     }
 
     @Override
     protected String getBuscarPorIdQuery() {
 
-        return "SELECT p.*, a.*, f.*, c.status FROM pedido AS p " +
+        return "SELECT p.*, a.*, f.* FROM pedido AS p " +
                 "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
-                "JOIN conta AS c ON p.id_conta = c.id_conta " +
-                "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario" +
-                "WHERE p.id = ?";
+                "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario " +
+                "WHERE p.id_pedido = ?";
     }
 
 
@@ -151,14 +148,13 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
         Pedido novo = pedidos[0];
 
         String sql = String.format(
-                "UPDATE %s SET progresso = ?, is_ativo = ? WHERE id_pedido = ?",
+                "UPDATE %s SET progresso = ? WHERE id_pedido = ?",
                 getNomeTabela()
         );
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, novo.getProgressoPedido().toString());
-            stmt.setBoolean(2, novo.getAtivo());
-            stmt.setLong(3, novo.getId());
+            stmt.setLong(2, novo.getId());
 
             int linhasAfetadas = stmt.executeUpdate();
             if (linhasAfetadas == 0) {
@@ -166,4 +162,30 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
             }
         }
     }
+
+    public List<Pedido> buscarPedidosPorTurno(Connection conn, LocalDateTime inicioTurno, LocalDateTime fimTurno) throws SQLException {
+        List<Pedido> pedidos = new ArrayList<>();
+
+        String sql = "SELECT p.*, a.*, f.* " +
+                "FROM pedido AS p " +
+                "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
+                "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario " +
+                "WHERE p.data_hora_registro >= ? " +
+                "AND p.data_hora_registro < ? " +
+                "ORDER BY p.progresso = 'SOLICITADO' DESC, p.data_hora_registro DESC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setObject(1, inicioTurno);
+            stmt.setObject(2, fimTurno);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Pedido pedido = mapearResultado(rs);
+                pedidos.add(pedido);
+            }
+        }
+
+        return pedidos;
+    }
+
 }

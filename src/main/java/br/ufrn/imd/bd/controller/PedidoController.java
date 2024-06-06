@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// esse vai sumir
 @Controller
 @RequestMapping("/pedidos")
 public class PedidoController {
@@ -56,7 +57,7 @@ public class PedidoController {
                 .filter(pi -> pi.getInstanciaProduto() != null && pi.getQuantidade() != null && pi.getQuantidade() > 0)
                 .collect(Collectors.toList());
 
-        pedido.getAtendente().setId(1L);
+        pedido.getAtendente().setId(2L);
         pedido.getConta().setId(1L);
         pedido.setProdutos(instancias);
         pedidoService.salvar(pedido);

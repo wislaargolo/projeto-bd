@@ -38,7 +38,7 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
     @Override
     public Conta mapearResultado(ResultSet rs) throws SQLException {
         Conta conta = new Conta();
-        conta.setId(ResultSetUtil.getValue(rs, "id_conta", Long.class));
+        conta.setId(Long.valueOf(ResultSetUtil.getValue(rs, "id_conta", Integer.class)));
         conta.setStatusConta(ResultSetUtil.getEnumValue(rs, "status", StatusConta.class));
         conta.setDataFinalizacao(ResultSetUtil.getValue(rs, "data_hora_finalizacao", LocalDateTime.class));
         conta.setAtivo(ResultSetUtil.getValue(rs, "is_ativo", Boolean.class));

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html layout:decorate="~{cozinha/layout}" xmlns="http://www.w3.org/1999/xhtml">
+<body>
+
+<section class="main p-4" layout:fragment="corpo">
+    <div class="header-area container d-flex justify-content-between align-items-center">
+        <div>
+<!--            <a th:href="@{/cozinha/pedidos/editar}" class="btn btn-secondary me-3">-->
+<!--                <span class="fa-solid fa-chevron-left" aria-hidden="true"></span>-->
+<!--            </a>-->
+            <h1 class="d-inline">Editar Pedido</h1>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <form th:action="@{'/cozinha/pedidos/editar'}" th:object="${pedido}" method="post" class="needs-validation" novalidate>
+            <input type="hidden" th:field="*{id}" />
+
+            <div class="mb-3">
+                <label for="status_pedido" class="form-label">Status do Pedido:</label>
+                <select th:field="*{progressoPedido}" id="status_pedido" class="form-select" required>
+                    <option th:each="status : ${T(br.ufrn.imd.bd.model.enums.ProgressoPedido).values()}"
+                            th:value="${status.name()}" th:text="${status}">Status</option>
+                </select>
+                <div class="invalid-feedback">
+                    <span th:errors="*{progressoPedido}">Status Error</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+    </div>
+</section>
+
+</body>
+</html>

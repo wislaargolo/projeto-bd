@@ -10,7 +10,7 @@ public class Produto {
     @NotBlank(message = "Nome é obrigatório")
     private String nome;
 
-    @NotNull(message = "Disponibilidade é obrigatório")
+    @NotNull(message = "Disponibilidade é obrigatória")
     private Boolean disponivel;
 
     public Produto() {}
