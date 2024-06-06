@@ -13,6 +13,7 @@
                 <thead>
                 <tr>
                     <th> Atendente </th>
+                    <th> Mesa </th>
                     <th>Status</th>
                     <th>Momento do Registro</th>
                     <th>Ações</th>
@@ -21,6 +22,7 @@
                 <tbody>
                 <tr th:each="pedido : ${pedidos}">
                     <td th:text="${pedido.atendente.nome}"></td>
+                    <td th:text="${pedido.conta.mesa.descricao}"></td>
                     <td th:text="${pedido.progressoPedido}"></td>
                     <td th:text="${pedido.dataRegistro}"></td>
                     <td>
@@ -28,10 +30,9 @@
                            role="button">
                             <span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
                         </a>
-                        <!--                        <button th:id="'btn_' + ${#strings.substringBefore(layout, '/')} + '_pedidos_' + ${pedido.id} + '_excluir'" type="button"-->
-                        <!--                                class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#myModal">-->
-                        <!--                            <span class="oi oi-circle-x" title="Exclusão" aria-hidden="true"></span>-->
-                        <!--                        </button>-->
+                        <a class="btn btn-info btn-sm" th:href="@{'/cozinha/pedidos/' + ${pedido.id}}" role="button">
+                            <span class="oi oi-eye" title="Ver Detalhes" aria-hidden="true"></span>
+                        </a>
                     </td>
                 </tr>
                 </tbody>

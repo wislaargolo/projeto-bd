@@ -48,9 +48,9 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     @Override
     protected String getBuscarTodosQuery() {
 
-        return "SELECT p.*, a.*, f.* FROM pedido AS p " +
+          return "SELECT p.*, a.*, f.* FROM pedido AS p " +
                 "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
-                "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario";
+                "NATURAL JOIN funcionario AS f";
     }
 
     @Override
@@ -58,7 +58,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
 
         return "SELECT p.*, a.*, f.* FROM pedido AS p " +
                 "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
-                "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario " +
+                "NATURAL JOIN funcionario AS f " +
                 "WHERE p.id_pedido = ?";
     }
 
@@ -166,10 +166,12 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     public List<Pedido> buscarPedidosPorTurno(Connection conn, LocalDateTime inicioTurno, LocalDateTime fimTurno) throws SQLException {
         List<Pedido> pedidos = new ArrayList<>();
 
-        String sql = "SELECT p.*, a.*, f.* " +
+        String sql = "SELECT p.*, a.*, f.*, m.* " +
                 "FROM pedido AS p " +
                 "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
                 "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario " +
+                "JOIN conta AS c ON c.id_conta = p.id_conta " +
+                "JOIN mesa AS m ON c.id_mesa = m.id_mesa " +
                 "WHERE p.data_hora_registro >= ? " +
                 "AND p.data_hora_registro < ? " +
                 "ORDER BY p.progresso = 'SOLICITADO' DESC, p.data_hora_registro DESC";

@@ -53,4 +53,11 @@ public class CozinhaPedidosController {
         pedidoService.atualizar(pedido);
         return "redirect:/cozinha/pedidos";
     }
+
+    // ainda nao ta feitoo
+    @GetMapping("/{id}")
+    public String buscarPedido(Model model, @PathVariable Long id) throws SQLException {
+        model.addAttribute("pedido", pedidoService.buscarPorId(id));
+        return "pedido/formulario_cozinha";
+    }
 }
