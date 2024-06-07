@@ -43,7 +43,7 @@ public class ProdutoController {
         try {
             produtoService.salvar(instanciaProduto);
         } catch (EntidadeJaExisteException e) {
-            bindingResult.rejectValue("produto.nome", "error.produto", e.getMessage());
+            bindingResult.rejectValue("produto.descricao", "error.produto", e.getMessage());
             return "produto/formulario";
         }
         return "redirect:/produtos";

@@ -19,11 +19,11 @@
                     @{/mesas/editar}" th:object="${mesa}" method="post">
     <input type="hidden" th:field="*{id}" />
 
-    <div th:if="${#fields.hasErrors('descricao')}" class="error-message">
-        <p th:errors="*{descricao}"></p>
+    <div th:if="${#fields.hasErrors('identificacao')}" class="error-message">
+        <p th:errors="*{identificacao}"></p>
     </div>
-    <label for="descricao">Descrição:</label>
-    <input type="text" th:field="*{descricao}" id="descricao" />
+    <label for="identificacao">Identificação:</label>
+    <input type="text" th:field="*{identificacao}" id="identificacao" />
     <br/>
 
     <input type="submit" value="Enviar" />

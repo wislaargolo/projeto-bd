@@ -13,14 +13,14 @@
     <thead>
     <tr>
         <th>ID</th>
-        <th>Descrição</th>
+        <th>Identificação</th>
         <th>Ações</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="mesa : ${mesas}">
         <td th:text="${mesa.id}"></td>
-        <td th:text="${mesa.descricao}"></td>
+        <td th:text="${mesa.identificacao}"></td>
         <td>
             <a th:href="@{'mesas/editar/' + ${mesa.id}}">Editar</a>
             <span>|</span>

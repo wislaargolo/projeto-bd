@@ -38,8 +38,8 @@ public class ContaController {
         return "conta/lista";
     }
 
-    @GetMapping("/excluir/{id}")
-    public String excluirConta(@PathVariable Long id) throws SQLException {
+    @GetMapping("/cancelar/{id}")
+    public String cancelarConta(@PathVariable Long id) throws SQLException {
         contaService.deletar(id);
         return "redirect:/contas";
     }

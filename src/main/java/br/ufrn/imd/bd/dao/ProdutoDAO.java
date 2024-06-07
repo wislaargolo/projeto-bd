@@ -12,7 +12,7 @@ public class ProdutoDAO extends AbstractDAO<Produto, Long> {
     public Produto mapearResultado(ResultSet rs) throws SQLException {
         Produto produto = new Produto();
         produto.setId(rs.getLong("id_produto"));
-        produto.setNome(rs.getString("nome"));
+        produto.setDescricao(rs.getString("descricao"));
         produto.setDisponivel(rs.getBoolean("disponibilidade"));
         return produto;
     }
@@ -24,10 +24,10 @@ public class ProdutoDAO extends AbstractDAO<Produto, Long> {
 
     @Override
     public Produto salvar(Connection conn, Produto produto) throws SQLException {
-        String sql = String.format("INSERT INTO %s (nome, disponibilidade) VALUES (?, ?)", getNomeTabela());
+        String sql = String.format("INSERT INTO %s (descricao, disponibilidade) VALUES (?, ?)", getNomeTabela());
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, produto.getNome());
+            stmt.setString(1, produto.getDescricao());
             stmt.setBoolean(2, produto.getDisponivel());
 
             int affectedRows = stmt.executeUpdate();
@@ -56,12 +56,12 @@ public class ProdutoDAO extends AbstractDAO<Produto, Long> {
         Produto novo = produtos[0];
 
         String sql = String.format(
-                "UPDATE %s SET nome = ?, disponibilidade = ? WHERE id_produto = ?",
+                "UPDATE %s SET descricao = ?, disponibilidade = ? WHERE id_produto = ?",
                 getNomeTabela()
         );
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, novo.getNome());
+            stmt.setString(1, novo.getDescricao());
             stmt.setBoolean(2, novo.getDisponivel());
             stmt.setLong(3, novo.getId());
 

@@ -12,7 +12,7 @@ public class MesaDAO extends AbstractDAO<Mesa, Long> {
     public Mesa mapearResultado(ResultSet rs) throws SQLException {
         Mesa mesa = new Mesa();
         mesa.setId(rs.getLong("id_mesa"));
-        mesa.setDescricao(rs.getString("descricao"));
+        mesa.setIdentificacao(rs.getString("identificacao"));
         return mesa;
     }
 
@@ -24,10 +24,10 @@ public class MesaDAO extends AbstractDAO<Mesa, Long> {
 
     @Override
     public Mesa salvar(Connection conn, Mesa mesa) throws SQLException {
-        String sql = String.format("INSERT INTO %s (descricao) VALUES (?)", getNomeTabela());
+        String sql = String.format("INSERT INTO %s (identificacao) VALUES (?)", getNomeTabela());
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, mesa.getDescricao());
+            stmt.setString(1, mesa.getIdentificacao());
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
@@ -55,12 +55,12 @@ public class MesaDAO extends AbstractDAO<Mesa, Long> {
         Mesa novo = mesas[0];
 
         String sql = String.format(
-                "UPDATE %s SET descricao = ? WHERE id_mesa = ?",
+                "UPDATE %s SET identificacao = ? WHERE id_mesa = ?",
                 getNomeTabela()
         );
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, novo.getDescricao());
+            stmt.setString(1, novo.getIdentificacao());
             stmt.setLong(2, novo.getId());
 
             int linhasAfetadas = stmt.executeUpdate();

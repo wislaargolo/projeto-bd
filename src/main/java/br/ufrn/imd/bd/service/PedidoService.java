@@ -9,6 +9,7 @@ import br.ufrn.imd.bd.model.Conta;
 import br.ufrn.imd.bd.model.InstanciaProduto;
 import br.ufrn.imd.bd.model.Mesa;
 import br.ufrn.imd.bd.model.Pedido;
+import br.ufrn.imd.bd.model.enums.ProgressoPedido;
 import br.ufrn.imd.bd.model.enums.StatusConta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,8 +57,8 @@ public class PedidoService {
         }
     }
 
-    public Pedido buscarPorId(Long id) throws SQLException {
-        return pedidoDAO.buscarPorId(id);
+    public Pedido buscarPorIdComProdutos(Long id) throws SQLException {
+        return pedidoDAO.buscarPorIdComProdutos(id);
     }
 
     public List<Pedido> buscarPedidosPorTurno() throws SQLException {
@@ -82,7 +83,8 @@ public class PedidoService {
         }
 
         try (Connection conn = DatabaseConfig.getConnection()) {
-            return pedidoDAO.buscarPedidosPorTurno(conn, inicioTurno, fimTurno);
+            return pedidoDAO.buscarPedidoPorPeriodo(conn, inicioTurno, fimTurno);
         }
     }
+
 }

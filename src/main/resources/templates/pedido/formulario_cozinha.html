@@ -8,7 +8,7 @@
 <!--            <a th:href="@{/cozinha/pedidos/editar}" class="btn btn-secondary me-3">-->
 <!--                <span class="fa-solid fa-chevron-left" aria-hidden="true"></span>-->
 <!--            </a>-->
-            <h1 class="d-inline">Editar Pedido</h1>
+            <h1 class="d-inline" th:text="'Editar Pedido #' + ${pedido.id}">Editar Pedido</h1>
         </div>
     </div>
 
@@ -19,7 +19,7 @@
             <div class="mb-3">
                 <label for="status_pedido" class="form-label">Status do Pedido:</label>
                 <select th:field="*{progressoPedido}" id="status_pedido" class="form-select" required>
-                    <option th:each="status : ${T(br.ufrn.imd.bd.model.enums.ProgressoPedido).values()}"
+                    <option th:each="status : ${T(br.ufrn.imd.bd.model.enums.ProgressoPedido).listaCozinha()}"
                             th:value="${status.name()}" th:text="${status}">Status</option>
                 </select>
                 <div class="invalid-feedback">

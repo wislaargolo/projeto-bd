@@ -54,7 +54,7 @@ public abstract class AbstractDAO<T, ID>{
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setObject(1, id);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 return mapearResultado(rs);
             }
         }

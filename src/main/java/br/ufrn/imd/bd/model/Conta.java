@@ -5,6 +5,7 @@ import br.ufrn.imd.bd.model.enums.StatusConta;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Conta {
     private Long id;
@@ -20,16 +21,6 @@ public class Conta {
     private MetodoPagamento metodoPagamento;
 
     private LocalDateTime dataFinalizacao;
-
-    private Boolean isAtivo;
-
-    public Boolean getAtivo() {
-        return isAtivo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        isAtivo = ativo;
-    }
 
     public Long getId() {
         return id;

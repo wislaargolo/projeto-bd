@@ -4,6 +4,7 @@ import br.ufrn.imd.bd.model.enums.ProgressoPedido;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Pedido {
@@ -25,6 +26,7 @@ public class Pedido {
     public Pedido() {
         atendente = new Atendente();
         conta = new Conta();
+        produtos = new ArrayList<>();
     }
 
     public List<PedidoInstancia> getProdutos() {

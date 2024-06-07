@@ -107,7 +107,7 @@ public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
             if (instanciaProduto.getId() != null) {
                 stmt.setObject(parameterIndex++, instanciaProduto.getId());
             }
-            stmt.setString(parameterIndex, instanciaProduto.getProduto().getNome());
+            stmt.setString(parameterIndex, instanciaProduto.getProduto().getDescricao());
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {

@@ -57,7 +57,7 @@ public class PedidoController {
                 .filter(pi -> pi.getInstanciaProduto() != null && pi.getQuantidade() != null && pi.getQuantidade() > 0)
                 .collect(Collectors.toList());
 
-        pedido.getAtendente().setId(2L);
+        pedido.getAtendente().setId(1L);
         pedido.getConta().setId(1L);
         pedido.setProdutos(instancias);
         pedidoService.salvar(pedido);

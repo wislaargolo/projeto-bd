@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html layout:decorate="~{cozinha/layout}" xmlns="http://www.w3.org/1999/xhtml">
+<body>
+<section class="main p-4" layout:fragment="corpo">
+
+    <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Pedido #<span th:text="${pedido.id}"></span></h1>
+    </div>
+    <div class="container mt-4" id="listagem">
+        <p><strong>Atendente:</strong> <span th:text="${pedido.atendente.nome}"></span></p>
+        <p><strong>Mesa:</strong> <span th:text="${pedido.conta.mesa.identificacao}"></span></p>
+
+        <div class="items-card">
+            <h5>Itens do Pedido</h5>
+            <div th:each="item : ${pedido.produtos}" class="card-item">
+                <div class="icon-wrapper">
+                    <i class="fa-solid fa-bowl-rice"></i>
+                </div>
+                <div class="item-details" style="display: flex; align-items: center; gap: 10px;">
+                    <span class="item-quantity" th:text="${item.quantidade}"></span>
+                    <span class="item-times">×</span>
+                    <span class="item-description" th:text="${item.instanciaProduto.produto.descricao}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${pedido.progressoPedido.name()} == 'SOLICITADO'" class="btn-pedidos">
+            <form th:action="@{'/cozinha/pedidos/' + ${pedido.id} + '/status'}" method="post" class="d-inline-block">
+                <input type="hidden" name="progressoPedido" value="PREPARANDO"/>
+                <button type="submit" class="btn btn-success">Preparar</button>
+            </form>
+            <form th:action="@{'/cozinha/pedidos/' + ${pedido.id} + '/status'}" method="post" class="d-inline-block">
+                <input type="hidden" name="progressoPedido" value="REJEITADO"/>
+                <button type="submit" class="btn btn-danger">Rejeitar</button>
+            </form>
+        </div>
+
+
+    </div>
+</section>
+</body>
+</html>

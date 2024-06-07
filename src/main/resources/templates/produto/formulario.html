@@ -14,12 +14,12 @@
             <input type="hidden" th:field="*{ativo}" />
 
             <div class="mb-3">
-                <label for="nome" class="form-label">Nome:</label>
-                <input type="text" th:field="*{produto.nome}" id="nome" class="form-control"
-                       th:classappend="${#fields.hasErrors('produto.nome')} ? 'is-invalid'" required>
+                <label for="descricao" class="form-label">Descrição:</label>
+                <input type="text" th:field="*{produto.descricao}" id="descricao" class="form-control"
+                       th:classappend="${#fields.hasErrors('produto.descricao')} ? 'is-invalid'" required>
 
                 <div class="invalid-feedback">
-                    <span th:errors="*{produto.nome}"></span>
+                    <span th:errors="*{produto.descricao}"></span>
                 </div>
             </div>
 

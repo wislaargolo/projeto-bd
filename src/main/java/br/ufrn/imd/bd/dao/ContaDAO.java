@@ -41,7 +41,6 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
         conta.setId(Long.valueOf(ResultSetUtil.getValue(rs, "id_conta", Integer.class)));
         conta.setStatusConta(ResultSetUtil.getEnumValue(rs, "status", StatusConta.class));
         conta.setDataFinalizacao(ResultSetUtil.getValue(rs, "data_hora_finalizacao", LocalDateTime.class));
-        conta.setAtivo(ResultSetUtil.getValue(rs, "is_ativo", Boolean.class));
         conta.setCaixa(ResultSetUtil.getEntity(rs, caixaDAO, "caixa_", "id_funcionario"));
         conta.setAtendente(ResultSetUtil.getEntity(rs, atendenteDAO, "atendente_", "id_funcionario"));
         conta.setMesa(ResultSetUtil.getEntity(rs, mesaDAO, "id_mesa"));
@@ -50,10 +49,11 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
         return conta;
     }
 
+
     @Override
     protected String getBuscarTodosQuery() {
 
-        return "SELECT conta.id_conta, conta.status, conta.metodo_pagamento, conta.data_hora_finalizacao, conta.is_ativo, " +
+        return "SELECT conta.id_conta, conta.status, conta.metodo_pagamento, conta.data_hora_finalizacao, " +
                 "atendente.tipo AS atendente_tipo, " +
                 "f_atendente.id_funcionario AS atendente_id_funcionario, " +
                 "f_atendente.nome AS atendente_nome, " +
@@ -74,14 +74,13 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
                 "JOIN funcionario AS f_atendente ON atendente.id_funcionario = f_atendente.id_funcionario " +
                 "JOIN caixa ON conta.id_caixa = caixa.id_funcionario " +
                 "JOIN funcionario AS f_caixa ON caixa.id_funcionario = f_caixa.id_funcionario " +
-                "JOIN mesa ON conta.id_mesa = mesa.id_mesa " +
-                "WHERE conta.is_ativo = true";
+                "JOIN mesa ON conta.id_mesa = mesa.id_mesa";
     }
 
     @Override
     protected String getBuscarPorIdQuery() {
 
-        return "SELECT conta.id_conta, conta.status, conta.metodo_pagamento, conta.data_hora_finalizacao, conta.is_ativo, " +
+        return "SELECT conta.id_conta, conta.status, conta.metodo_pagamento, conta.data_hora_finalizacao, " +
                 "atendente.tipo AS atendente_tipo, " +
                 "f_atendente.id_funcionario AS atendente_id_funcionario, " +
                 "f_atendente.nome AS atendente_nome, " +
@@ -103,7 +102,7 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
                 "JOIN caixa ON conta.id_caixa = caixa.id_funcionario " +
                 "JOIN funcionario AS f_caixa ON caixa.id_funcionario = f_caixa.id_funcionario " +
                 "JOIN mesa ON conta.id_mesa = mesa.id_mesa " +
-                "WHERE conta.is_ativo = true AND conta.id_conta = ?";
+                "AND conta.id_conta = ?";
     }
 
 
@@ -147,7 +146,7 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
         Conta novo = conta[0];
 
         String sql = String.format(
-                "UPDATE %s SET id_mesa = ?, metodo_pagamento = ?, status = ?, is_ativo = ? WHERE id_conta = ?",
+                "UPDATE %s SET id_mesa = ?, metodo_pagamento = ?, status = ? WHERE id_conta = ?",
                 getNomeTabela()
         );
 
@@ -155,8 +154,7 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
             stmt.setLong(1, novo.getMesa().getId());
             stmt.setString(2, novo.getMetodoPagamento() != null ? novo.getMetodoPagamento().toString() : null);
             stmt.setString(3, novo.getStatusConta().toString());
-            stmt.setBoolean(4, novo.getAtivo());
-            stmt.setLong(5, novo.getId());
+            stmt.setLong(4, novo.getId());
 
             int linhasAfetadas = stmt.executeUpdate();
             if (linhasAfetadas == 0) {

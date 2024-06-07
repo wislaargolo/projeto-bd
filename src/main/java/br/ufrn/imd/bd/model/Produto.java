@@ -7,16 +7,16 @@ public class Produto {
 
     private Long id;
 
-    @NotBlank(message = "Nome é obrigatório")
-    private String nome;
+    @NotBlank(message = "Descrição é obrigatória")
+    private String descricao;
 
     @NotNull(message = "Disponibilidade é obrigatória")
     private Boolean disponivel;
 
     public Produto() {}
 
-    public Produto(String nome, Boolean isDisponivel) {
-        this.nome = nome;
+    public Produto(String descricao, Boolean isDisponivel) {
+        this.descricao = descricao;
         this.disponivel = isDisponivel;
     }
 
@@ -28,12 +28,12 @@ public class Produto {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public Boolean getDisponivel() {

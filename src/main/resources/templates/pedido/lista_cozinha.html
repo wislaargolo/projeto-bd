@@ -1,19 +1,32 @@
 <!DOCTYPE html>
-<html  layout:decorate="~{cozinha/layout}" xmlns="http://www.w3.org/1999/html">
+<html layout:decorate="~{cozinha/layout}" xmlns="http://www.w3.org/1999/xhtml">
 <body>
-
 <section class="main p-4" layout:fragment="corpo">
     <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
         <h1>Lista de Pedidos</h1>
     </div>
-
     <div class="container" id="listagem">
+        <!-- Mensagem de Sucesso -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <!-- Mensagem de Erro -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
         <div class="table-responsive">
             <table class="table table-striped table-hover table-sm">
                 <thead>
                 <tr>
-                    <th> Atendente </th>
-                    <th> Mesa </th>
+                    <th>#</th>
+                    <th>Atendente</th>
+                    <th>Mesa</th>
                     <th>Status</th>
                     <th>Momento do Registro</th>
                     <th>Ações</th>
@@ -21,15 +34,21 @@
                 </thead>
                 <tbody>
                 <tr th:each="pedido : ${pedidos}">
+                    <td th:text="${pedido.id}"></td>
                     <td th:text="${pedido.atendente.nome}"></td>
-                    <td th:text="${pedido.conta.mesa.descricao}"></td>
-                    <td th:text="${pedido.progressoPedido}"></td>
+                    <td th:text="${pedido.conta.mesa.identificacao}"></td>
+                    <td>
+                        <form th:action="@{'/cozinha/pedidos/' + ${pedido.id} + '/status'}" method="post">
+                            <select class="form-select form-select-sm" name="progressoPedido" onchange="this.form.submit()">
+                                <option th:each="status : ${T(br.ufrn.imd.bd.model.enums.ProgressoPedido).listaCozinha()}"
+                                        th:value="${status}"
+                                        th:selected="${status.name() == pedido.progressoPedido.name()}"
+                                        th:text="${status}">Status</option>
+                            </select>
+                        </form>
+                    </td>
                     <td th:text="${#temporals.format(pedido.dataRegistro, 'dd/MM/yyyy HH:mm:ss')}"></td>
                     <td>
-                        <a class="btn btn-secondary btn-sm" th:href="@{'/cozinha/pedidos/' + ${pedido.id} + '/editar'}"
-                           role="button">
-                            <span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
-                        </a>
                         <a class="btn btn-info btn-sm" th:href="@{'/cozinha/pedidos/' + ${pedido.id}}" role="button">
                             <span class="oi oi-eye" title="Ver Detalhes" aria-hidden="true"></span>
                         </a>
@@ -39,8 +58,6 @@
             </table>
         </div>
     </div>
-
-    <div th:replace="~{/modal :: modal}"></div>
 </section>
 </body>
 </html>

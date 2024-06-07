@@ -1,5 +1,6 @@
 package br.ufrn.imd.bd.dao;
 
+import br.ufrn.imd.bd.dao.util.ResultSetUtil;
 import br.ufrn.imd.bd.model.InstanciaProduto;
 import br.ufrn.imd.bd.model.Pedido;
 import br.ufrn.imd.bd.model.PedidoInstancia;
@@ -40,11 +41,20 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
         return pedido;
     }
 
+    public PedidoInstancia mapearPedidoInstancia(ResultSet rs) throws SQLException {
+        PedidoInstancia pedidoInstancia = new PedidoInstancia();
+        pedidoInstancia.setInstanciaProduto(ResultSetUtil.getEntity(rs, instanciaProdutoDAO, "id_instancia_produto"));
+        pedidoInstancia.setQuantidade(ResultSetUtil.getValue(rs, "quantidade", Integer.class));
+
+        return pedidoInstancia;
+    }
+
     @Override
     public String getNomeTabela() {
         return "pedido";
     }
 
+    // modifica de acordo com que quiser
     @Override
     protected String getBuscarTodosQuery() {
 
@@ -53,13 +63,11 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
                 "NATURAL JOIN funcionario AS f";
     }
 
+    // modifica de acordo com o que quiser
     @Override
     protected String getBuscarPorIdQuery() {
 
-        return "SELECT p.*, a.*, f.* FROM pedido AS p " +
-                "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
-                "NATURAL JOIN funcionario AS f " +
-                "WHERE p.id_pedido = ?";
+        return  "SELECT * FROM pedido WHERE p.id_pedido = ?";
     }
 
 
@@ -163,7 +171,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
         }
     }
 
-    public List<Pedido> buscarPedidosPorTurno(Connection conn, LocalDateTime inicioTurno, LocalDateTime fimTurno) throws SQLException {
+    public List<Pedido> buscarPedidoPorPeriodo(Connection conn, LocalDateTime inicio, LocalDateTime fim) throws SQLException {
         List<Pedido> pedidos = new ArrayList<>();
 
         String sql = "SELECT p.*, a.*, f.*, m.* " +
@@ -177,8 +185,8 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
                 "ORDER BY p.progresso = 'SOLICITADO' DESC, p.data_hora_registro DESC";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, inicioTurno);
-            stmt.setObject(2, fimTurno);
+            stmt.setObject(1, inicio);
+            stmt.setObject(2, fim);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -188,6 +196,37 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
         }
 
         return pedidos;
+    }
+
+    public Pedido buscarPorIdComProdutos(Long id) throws SQLException {
+        String sql = "SELECT * FROM pedido p " +
+                "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
+                "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario " +
+                "JOIN conta AS c ON p.id_conta = c.id_conta " +
+                "JOIN mesa AS m ON c.id_mesa = m.id_mesa " +
+                "JOIN pedido_possui_instancia AS ppi ON p.id_pedido = ppi.id_pedido " +
+                "JOIN instancia_produto AS ip ON ppi.id_instancia_produto = ip.id_instancia_produto " +
+                "JOIN produto ON ip.id_produto = produto.id_produto WHERE p.id_pedido = ?";
+        Pedido pedido = new Pedido();
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setObject(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                if (pedido.getId() == null) {
+                    pedido = mapearResultado(rs);
+                }
+
+                PedidoInstancia pedidoInstancia = mapearPedidoInstancia(rs);
+                if (pedidoInstancia != null && pedidoInstancia.getInstanciaProduto() != null) {
+                    pedido.getProdutos().add(pedidoInstancia);
+                }
+            }
+        }
+
+        return pedido;
     }
 
 }

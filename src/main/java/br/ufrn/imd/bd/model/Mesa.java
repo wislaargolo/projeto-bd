@@ -7,7 +7,7 @@ public class Mesa {
     private Long id;
 
     @NotBlank
-    private String descricao;
+    private String identificacao;
 
     public Long getId() {
         return id;
@@ -17,11 +17,11 @@ public class Mesa {
         this.id = id;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getIdentificacao() {
+        return identificacao;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setIdentificacao(String identificacao) {
+        this.identificacao = identificacao;
     }
 }

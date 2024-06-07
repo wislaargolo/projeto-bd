@@ -26,7 +26,7 @@
         <h3>Produtos</h3>
         <div th:each="instancia, instStat : ${produtos}">
             <input type="checkbox" th:value="${instancia.id}" th:name="'produtos[' + ${instStat.index} + '].instanciaProduto.id'" />
-            <label th:text="|${instancia.produto.nome} - $${instancia.valor}|">Produto</label>
+            <label th:text="|${instancia.produto.descricao} - $${instancia.valor}|">Produto</label>
             <input type="number" min="1" th:field="*{produtos[__${instStat.index}__].quantidade}" placeholder="Quantidade" />
             <div th:if="${#fields.hasErrors('produtos[__${instStat.index}__].quantidade')}" th:errors="*{produtos[__${instStat.index}__].quantidade}">Quantidade Error</div>
         </div>
