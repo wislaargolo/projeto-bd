@@ -8,14 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.sql.SQLException;
 import java.util.List;
-// esse controller vai vazar
+
 @Controller
-@RequestMapping("/mesas")
-public class MesaController {
+@RequestMapping("/gerente/mesas")
+public class GerenteMesasController {
 
     @Autowired
     private MesaService mesaService;
@@ -33,13 +37,13 @@ public class MesaController {
         return "mesa/formulario";
     }
 
-    @GetMapping("/editar/{id}")
+    @GetMapping("{id}/editar")
     public String editarFormMesa(Model model, @PathVariable Long id) throws SQLException {
         model.addAttribute("mesa", mesaService.buscarPorId(id));
         return "mesa/formulario";
     }
 
-    @PostMapping
+    @PostMapping("/salvar")
     public String salvarMesa(@ModelAttribute @Valid Mesa mesa, BindingResult bindingResult) throws SQLException, EntidadeJaExisteException {
         if (bindingResult.hasErrors()) {
             return "mesa/formulario";
@@ -57,9 +61,10 @@ public class MesaController {
         return "redirect:/mesas";
     }
 
-    @GetMapping("/excluir/{id}")
+    @GetMapping("{id}/excluir")
     public String excluirMesa(@PathVariable Long id) throws SQLException {
         mesaService.deletarPorId(id);
         return "redirect:/mesas";
     }
+
 }

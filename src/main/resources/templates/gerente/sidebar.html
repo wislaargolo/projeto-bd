@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<aside id="sidebar" th:fragment="nav-sidebar">
+    <div class="d-flex">
+        <button class="toggle-btn" type="button">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="sidebar-logo">
+            <a href="#"></a>
+        </div>
+    </div>
+    <ul class="sidebar-nav">
+        <li class="sidebar-item">
+            <a th:href="@{/gerente/pedidos}" class="sidebar-link">
+                <i class="fa-solid fa-utensils"></i>
+                <span>Pedidos</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a th:href="@{/gerente/produtos}" class="sidebar-link">
+                <i class="fa-solid fa-drumstick-bite"></i>
+                <span>Produtos</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a th:href="@{/gerente/mesas}" class="sidebar-link">
+                <i class="fa-solid fa-chair"></i>
+                <span>Mesas</span>
+            </a>
+        </li>
+        </li>
+        <li class="sidebar-item">
+            <a th:href="@{/gerente/atendentes}" class="sidebar-link">
+                <i class="fa-solid fa-bell-concierge"></i>
+                <span>Atendentes</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a th:href="@{/gerente/caixas}" class="sidebar-link">
+                <i class="fa-solid fa-cash-register"></i>
+                <span>Caixas</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a th:href="@{/gerente/cozinha}" class="sidebar-link">
+                <i class="fa-solid fa-fire-burner"></i>
+                <span>Cozinha</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+                <i class="fa-solid fa-user"></i>
+                <span>Conta</span>
+            </a>
+        </li>
+
+    </ul>
+    <div class="sidebar-footer">
+        <a href="#" class="sidebar-link">
+            <i class="fa-solid fa-arrow-right-from-bracket fa-flip-horizontal"></i>
+            <span>Sair</span>
+        </a>
+    </div>
+</aside>
+
+</html>

@@ -6,7 +6,7 @@ public class Mesa {
 
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Identificação é obrigatória")
     private String identificacao;
 
     public Long getId() {
