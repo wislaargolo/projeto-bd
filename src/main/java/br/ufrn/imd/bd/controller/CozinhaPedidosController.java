@@ -63,23 +63,6 @@ public class CozinhaPedidosController {
         }
         return "redirect:/cozinha/pedidos";
     }
-    @GetMapping("/{id}/aceitar")
-    public String aceitarPedido(Model model, @PathVariable Long id) throws SQLException, EntidadeJaExisteException {
-        Pedido pedido = new Pedido();
-        pedido.setId(id);
-        pedido.setProgressoPedido(ProgressoPedido.PREPARANDO);
-        pedidoService.atualizar(pedido);
-        return "redirect:/cozinha/pedidos";
-    }
-
-    @GetMapping("/{id}/rejeitar")
-    public String rejeitarPedido(Model model, @PathVariable Long id) throws SQLException, EntidadeJaExisteException {
-        Pedido pedido = new Pedido();
-        pedido.setId(id);
-        pedido.setProgressoPedido(ProgressoPedido.REJEITADO);
-        pedidoService.atualizar(pedido);
-        return "redirect:/cozinha/pedidos";
-    }
 
 
 }

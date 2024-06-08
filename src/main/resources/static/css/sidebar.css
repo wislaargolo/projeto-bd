@@ -4,7 +4,7 @@
     min-width: 70px;
     z-index: 1000;
     transition: all .25s ease-in-out;
-    background-color: #3b7ddd;
+    background-color: #007bff;
     display: flex;
     height: 100%;
     flex-direction: column;
