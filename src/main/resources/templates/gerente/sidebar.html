@@ -13,7 +13,7 @@
     <ul class="sidebar-nav">
         <li class="sidebar-item">
             <a th:href="@{/gerente/pedidos}" class="sidebar-link">
-                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-bell-concierge"></i>
                 <span>Pedidos</span>
             </a>
         </li>
@@ -29,24 +29,23 @@
                 <span>Mesas</span>
             </a>
         </li>
-        </li>
         <li class="sidebar-item">
-            <a th:href="@{/gerente/atendentes}" class="sidebar-link">
-                <i class="fa-solid fa-bell-concierge"></i>
-                <span>Atendentes</span>
+            <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+               data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
+                <i class="fa-solid fa-users"></i>
+                <span>Funcionários</span>
             </a>
-        </li>
-        <li class="sidebar-item">
-            <a th:href="@{/gerente/caixas}" class="sidebar-link">
-                <i class="fa-solid fa-cash-register"></i>
-                <span>Caixas</span>
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a th:href="@{/gerente/cozinha}" class="sidebar-link">
-                <i class="fa-solid fa-fire-burner"></i>
-                <span>Cozinha</span>
-            </a>
+            <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                <li class="sidebar-item">
+                    <a th:href="@{/gerente/atendentes}" class="sidebar-link">Atendentes</a>
+                </li>
+                <li class="sidebar-item">
+                    <a th:href="@{/gerente/caixas}" class="sidebar-link">Caixas</a>
+                </li>
+                <li class="sidebar-item">
+                    <a th:href="@{/gerente/cozinha}" class="sidebar-link">Cozinha</a>
+                </li>
+            </ul>
         </li>
         <li class="sidebar-item">
             <a href="#" class="sidebar-link">

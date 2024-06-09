@@ -24,16 +24,33 @@ const hamBurger = document.querySelector(".toggle-btn");
     document.querySelector("#sidebar").classList.toggle("expand");
   });
 
- // componentes ativos do sidebar
 
+// verifica opcao ativa do sidebar
 document.addEventListener("DOMContentLoaded", function() {
   const sidebarLinks = document.querySelectorAll('.sidebar-link');
   const currentPath = window.location.pathname;
 
+  function isActive(linkPath) {
+    return currentPath.startsWith(linkPath);
+  }
+
   sidebarLinks.forEach(link => {
-      const linkPath = link.getAttribute('href');
-      if (currentPath.startsWith(linkPath)) {
-          link.closest('a.sidebar-link').classList.add('active');
-      }
+    const linkPath = link.getAttribute('href');
+
+    if (isActive(linkPath)) {
+      link.classList.add('active');
+    }
   });
+
+  const funcionariosSublinks = document.querySelectorAll('#auth a.sidebar-link');
+  let funcionariosActive = Array.from(funcionariosSublinks).some(sublink => {
+    return isActive(sublink.getAttribute('href'));
+  });
+
+  if (funcionariosActive) {
+    const funcionariosMainLink = document.querySelector('a.has-dropdown[data-bs-target="#auth"]');
+    funcionariosMainLink.classList.add('active');
+  }
 });
+
+
