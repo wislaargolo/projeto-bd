@@ -30,7 +30,7 @@ public class CaixaService {
         return caixaDAO.buscarPorId(id);
     }
 
-    public Funcionario salvar(Caixa caixa, String confirmacaoSenha) throws SQLException, EntidadeJaExisteException {
+    public Funcionario salvar(Caixa caixa) throws SQLException, EntidadeJaExisteException {
         Connection conn = null;
         try {
             conn = DatabaseConfig.getConnection();
@@ -48,7 +48,7 @@ public class CaixaService {
         return caixa;
     }
 
-    public void atualizar(Caixa caixa, String confirmacaoSenha) throws EntidadeJaExisteException, SQLException {
+    public void atualizar(Caixa caixa) throws EntidadeJaExisteException, SQLException {
         Connection conn = null;
         try {
             conn = DatabaseConfig.getConnection();
