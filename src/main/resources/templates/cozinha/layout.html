@@ -45,6 +45,11 @@
 <!-- jQuery Mask Plugin -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
 <!-- Popper.js (necessário para Bootstrap) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -69,19 +74,8 @@
         document.location.href = url;
     });
 
+
    document.addEventListener('DOMContentLoaded', function() {
-
-    $('#modalCancel').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var pedidoId = button.data('pedido-id');
-        console.log(pedidoId);
-
-        var okButton = $(this).find('#ok_confirm');
-        okButton.off('click').on('click', function() {
-            document.location.href = 'http://localhost:8080/cozinha/pedidos/' + pedidoId + '/rejeitar';
-        });
-    });
-});
 
 
 </script>

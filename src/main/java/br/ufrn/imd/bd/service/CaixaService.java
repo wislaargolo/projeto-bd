@@ -49,6 +49,7 @@ public class CaixaService {
     }
 
     public void atualizar(Caixa caixa) throws EntidadeJaExisteException, SQLException {
+
         Connection conn = null;
         try {
             conn = DatabaseConfig.getConnection();

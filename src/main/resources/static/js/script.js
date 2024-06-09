@@ -54,3 +54,12 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
+// fechar modal
+$(document).ready(function(){
+
+    $(".close, .btn-default").click(function(){
+        $("#myModal").modal('hide');
+    });
+});
+
+
