@@ -3,7 +3,6 @@ package br.ufrn.imd.bd.service;
 import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.CaixaDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
-import br.ufrn.imd.bd.exceptions.SenhaInvalidaException;
 import br.ufrn.imd.bd.model.Caixa;
 import br.ufrn.imd.bd.model.Funcionario;
 import br.ufrn.imd.bd.validation.FuncionarioValidator;
@@ -31,13 +30,12 @@ public class CaixaService {
         return caixaDAO.buscarPorId(id);
     }
 
-    public Funcionario salvar(Caixa caixa, String confirmacaoSenha) throws SQLException, EntidadeJaExisteException, SenhaInvalidaException {
+    public Funcionario salvar(Caixa caixa, String confirmacaoSenha) throws SQLException, EntidadeJaExisteException {
         Connection conn = null;
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
             funcionarioValidator.validar(conn, caixa);
-            funcionarioValidator.validarSenha(caixa, confirmacaoSenha, true);
             caixa = caixaDAO.salvar(conn, caixa);
             conn.commit();
         } catch (SQLException e) {
@@ -50,13 +48,12 @@ public class CaixaService {
         return caixa;
     }
 
-    public void atualizar(Caixa caixa, String confirmacaoSenha) throws EntidadeJaExisteException, SQLException, SenhaInvalidaException {
+    public void atualizar(Caixa caixa, String confirmacaoSenha) throws EntidadeJaExisteException, SQLException {
         Connection conn = null;
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
             funcionarioValidator.validar(conn, caixa);
-            funcionarioValidator.validarSenha(caixa, confirmacaoSenha,false);
             caixaDAO.atualizar(conn, caixa);
             conn.commit();
         } catch (SQLException e) {

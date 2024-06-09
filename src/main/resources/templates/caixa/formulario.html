@@ -16,15 +16,11 @@
 
         <input type="hidden" th:field="*{id}" />
 
-            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                <span th:text="${error}"></span>
+            <div th:if="${not #lists.isEmpty(errors)}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:each="error, iterStat : ${errors}" th:utext="${error + '<br/>'}">
+                    <span th:if="${not iterStat.last}"><br/></span>
+                </span>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <div th:if="${#fields.hasErrors()}" class="alert alert-danger alert-dismissible fade show" role="alert" >
-                <span th:each="err : ${#fields.allErrors()}" th:utext="${err + '<br/>'}"></span>                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>

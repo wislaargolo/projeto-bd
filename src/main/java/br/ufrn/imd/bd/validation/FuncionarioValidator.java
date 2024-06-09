@@ -2,7 +2,6 @@ package br.ufrn.imd.bd.validation;
 
 import br.ufrn.imd.bd.dao.FuncionarioDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
-import br.ufrn.imd.bd.exceptions.SenhaInvalidaException;
 import br.ufrn.imd.bd.model.Funcionario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,15 +26,6 @@ public class FuncionarioValidator {
         }
 
     }
-
-    public void validarSenha(Funcionario funcionario, String confirmacaoSenha, boolean isNew) throws SenhaInvalidaException  {
-
-        if (!funcionario.getSenha().equals(confirmacaoSenha)) {
-            throw new SenhaInvalidaException("As senhas não coincidem!");
-        }
-
-    }
-
 
 
 
