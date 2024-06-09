@@ -75,17 +75,24 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
 
         Funcionario novo = funcionarios[0];
 
-        String sql = String.format(
-                "UPDATE %s SET nome = ?, login = ?, senha = ?, email = ? WHERE id_funcionario = ?",
-                getNomeTabela()
-        );
+        StringBuilder sqlBuilder = new StringBuilder("UPDATE ");
+        sqlBuilder.append(getNomeTabela());
+        sqlBuilder.append(" SET nome = ?, login = ?, email = ?");
+        if (novo.getSenha() != null && !novo.getSenha().isBlank()) {
+            sqlBuilder.append(", senha = ?");
+        }
+        sqlBuilder.append(" WHERE id_funcionario = ?");
+        String sql = sqlBuilder.toString();
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, novo.getNome());
             stmt.setString(2, novo.getLogin());
-            stmt.setString(3, novo.getSenha());
-            stmt.setString(4, novo.getEmail());
-            stmt.setLong(5, novo.getId());
+            stmt.setString(3, novo.getEmail());
+            int parameterIndex = 4;
+            if (novo.getSenha() != null && !novo.getSenha().isBlank()) {
+                stmt.setString(parameterIndex++, novo.getSenha());
+            }
+            stmt.setLong(parameterIndex, novo.getId());
 
             int linhasAfetadas = stmt.executeUpdate();
             if (linhasAfetadas == 0) {

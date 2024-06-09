@@ -69,4 +69,25 @@ public class MesaDAO extends AbstractDAO<Mesa, Long> {
             }
         }
     }
+
+    public boolean existeMesaComIdentificacao(Connection conn, String parametro, String valor, Long id) throws SQLException {
+        String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s = ?", getNomeTabela(), parametro);
+
+        if(id != null) {
+            sql += " AND id_mesa != " + id;
+        }
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, valor);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0;
+                }
+            }
+        }
+
+        return false;
+    }
 }

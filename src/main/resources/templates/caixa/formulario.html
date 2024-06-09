@@ -1,54 +1,73 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Create Funcionario</title>
-    <style>
-        .error-message {
-            color: red;
-        }
-    </style>
-</head>
+<html layout:decorate="~{gerente/layout}" xmlns="http://www.w3.org/1999/xhtml">
 <body>
-<h2 th:text="${caixa.id == null ? 'Cadastrar Caixa' : 'Editar Caixa'}"></h2>
-<div th:if="${error}">
-    <p th:text="${error}"></p>
-</div>
 
-<form th:action="${caixa.id } == null ?
-                    @{/caixas} :
-                    @{/caixas/editar}" th:object="${caixa}" method="post">
-    <input type="hidden" th:field="*{id}" />
-
-    <div th:if="${#fields.hasErrors('nome')}" class="error-message">
-        <p th:errors="*{nome}"></p>
+<section class="main p-4" layout:fragment="corpo">
+    <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
+        <a th:href="@{/gerente/caixas}" class="btn btn-primary" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
+            <i class="fa fa-arrow-left" style="font-size: 16px;"></i>
+        </a>
+        <h1 th:text="${caixa.id == null ? 'Cadastrar Caixa' :'Editar Caixa'}"></h1>
     </div>
-    <label for="nome">Nome:</label>
-    <input type="text" th:field="*{nome}" id="nome" />
-    <br/>
 
-    <div th:if="${#fields.hasErrors('login')}" class="error-message">
-        <p th:errors="*{login}"></p>
+    <div class="container mt-4">
+
+        <form th:action="@{${caixa.id == null ? '/gerente/caixas/salvar' : '/gerente/caixas/editar'}}" th:object="${caixa}" method="post" class="needs-validation" novalidate>
+
+        <input type="hidden" th:field="*{id}" />
+
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div th:if="${#fields.hasErrors()}" class="alert alert-danger alert-dismissible fade show" role="alert" >
+                <span th:each="err : ${#fields.allErrors()}" th:utext="${err + '<br/>'}"></span>                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome:</label>
+                <input type="text" th:field="*{nome}" id="nome" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" th:field="*{email}" id="email" class="form-control" required>
+
+            </div>
+
+            <div class="mb-3">
+                <label for="login" class="form-label">Login:</label>
+                <input type="text" th:field="*{login}" id="login" class="form-control" required>
+
+            </div>
+
+            <div class="mb-3">
+                <label for="senha" class="form-label">Senha:</label>
+                <input type="password" th:field="*{senha}" id="senha" class="form-control"
+                       th:required="${caixa.id == null}">
+                <small id="senhaHelp" class="form-text text-muted" th:if="${caixa.id != null}">
+                    Preencha este campo apenas se desejar alterar a senha.
+                </small>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmacaoSenha" class="form-label">Confirmar Senha:</label>
+                <input type="password" id="confirmacaoSenha" name="confirmacaoSenha" class="form-control"
+                       th:required="${caixa.id == null}">
+                <div class="invalid-feedback" th:if="${senhaErro}">
+                    As senhas não correspondem.
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
     </div>
-    <label for="login">Login:</label>
-    <input type="text" th:field="*{login}" id="login" />
-    <br/>
+</section>
 
-    <div th:if="${#fields.hasErrors('senha')}" class="error-message">
-        <p th:errors="*{senha}"></p>
-    </div>
-    <label for="senha">Senha:</label>
-    <input type="password" th:field="*{senha}" id="senha" />
-    <br/>
-
-    <div th:if="${#fields.hasErrors('email')}" class="error-message">
-        <p th:errors="*{email}"></p>
-    </div>
-    <label for="email">Email:</label>
-    <input type="email" th:field="*{email}" id="email" />
-    <br/>
-
-    <input type="submit" value="Submit" />
-</form>
 </body>
 </html>

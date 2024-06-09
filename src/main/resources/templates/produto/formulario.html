@@ -8,44 +8,48 @@
     </div>
 
     <div class="container mt-4">
+
+
         <form th:action="@{'/' + ${#strings.substringBefore(layout, '/')} + '/produtos/salvar'}" th:object="${instanciaProduto}" method="post" class="needs-validation" novalidate>
             <input type="hidden" th:field="*{id}" />
             <input type="hidden" th:field="*{produto.id}" />
             <input type="hidden" th:field="*{ativo}" />
 
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div th:if="${#fields.hasErrors()}" class="alert alert-danger alert-dismissible fade show" role="alert" >
+                <span th:each="err : ${#fields.allErrors()}" th:utext="${err + '<br/>'}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
             <div class="mb-3">
                 <label for="descricao" class="form-label">Descrição:</label>
-                <input type="text" th:field="*{produto.descricao}" id="descricao" class="form-control"
-                       th:classappend="${#fields.hasErrors('produto.descricao')} ? 'is-invalid'" required>
+                <input type="text" th:field="*{produto.descricao}" id="descricao" class="form-control" required>
 
-                <div class="invalid-feedback">
-                    <span th:errors="*{produto.descricao}"></span>
-                </div>
             </div>
 
             <div class="mb-3">
                 <label for="valor" class="form-label">Valor:</label>
-                <input type="text" th:field="*{valor}" id="valor" class="form-control"
-                       th:classappend="${#fields.hasErrors('valor')} ? 'is-invalid'" required>
-                <div class="invalid-feedback">
-                    <span th:errors="*{valor}"></span>
-                </div>
+                <input type="text" th:field="*{valor}" id="valor" class="form-control" required>
             </div>
 
             <div class="mb-4">
                 <label>Status:</label>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" th:field="*{produto.disponivel}" id="disponivelTrue" value="true"
-                           th:classappend="${#fields.hasErrors('produto.disponivel')} ? 'is-invalid'" required>
+                          required>
                     <label class="form-check-label" for="disponivelTrue">Disponível</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" th:field="*{produto.disponivel}" id="disponivelFalse" value="false"
-                           th:classappend="${#fields.hasErrors('produto.disponivel')} ? 'is-invalid'" required>
+                    <input class="form-check-input" type="radio" th:field="*{produto.disponivel}" id="disponivelFalse" value="false">
                     <label class="form-check-label" for="disponivelFalse">Indisponível</label>
-                </div>
-                <div class="invalid-feedback">
-                    <span th:errors="*{produto.disponivel}"></span>
                 </div>
             </div>
 

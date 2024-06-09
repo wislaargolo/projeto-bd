@@ -1,42 +1,48 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Lista de Caixas</title>
-</head>
+<html layout:decorate="~{gerente/layout}" xmlns="http://www.w3.org/1999/xhtml">
 <body>
+<section class="main p-4" layout:fragment="corpo">
+    <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Lista de Caixas</h1>
+        <a class="btn btn-primary btn-md" th:href="@{/gerente/caixas/novo}" role="button">
+            <i class="fa-solid fa-plus"></i>
+            <span>Novo Caixa</span>
+        </a>
+    </div>
 
-<div th:replace="menu :: menu"></div>
+    <div class="container" id="listagem">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm flex-table">
+                <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Login</th>
+                    <th>Email</th>
+                    <th class="action-column">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="caixa : ${caixas}">
+                    <td th:text="${caixa.nome}"></td>
+                    <td th:text="${caixa.login}"></td>
+                    <td th:text="${caixa.email}"></td>
+                    <td colspan="2">
+                        <a class="btn btn-secondary btn-sm" th:href="@{'/gerente/caixas/' + ${caixa.id} + '/editar'}" role="button">
+                            <span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
+                        </a>
+                        <button th:id="'btn_gerente' + '_caixas_' + ${caixa.id} + '_excluir'" type="button"
+                                class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#myModal">
+                            <span class="oi oi-circle-x" title="Exclusão" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-<h1>Lista de Caixas</h1>
+    <div th:replace="~{/modal :: modal}"></div>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Login</th>
-        <th>Email</th>
-        <th>Ações</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="caixa : ${caixas}">
-        <td th:text="${caixa.id}"></td>
-        <td th:text="${caixa.nome}"></td>
-        <td th:text="${caixa.login}"></td>
-        <td th:text="${caixa.email}"></td>
-        <td>
-            <a th:href="@{'funcionarios/' + ${caixa.id} + '/telefones'}">Telefones</a>
-            <span>|</span>
-            <a th:href="@{'caixas/editar/' + ${caixa.id}}">Editar</a>
-            <span>|</span>
-            <a th:href="@{'caixas/excluir/' + ${caixa.id}}" onclick="return confirm('Tem certeza que deseja excluir este caixa?')">Excluir</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-<br>
-<a href="/caixas/novo">Adicionar Novo Caixa</a>
+</section>
 </body>
 </html>

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -44,27 +45,41 @@ public class GerenteMesasController {
     }
 
     @PostMapping("/salvar")
-    public String salvarMesa(@ModelAttribute @Valid Mesa mesa, BindingResult bindingResult) throws SQLException, EntidadeJaExisteException {
+    public String salvarMesa(@ModelAttribute @Valid Mesa mesa, BindingResult bindingResult, Model model) throws SQLException {
         if (bindingResult.hasErrors()) {
             return "mesa/formulario";
         }
-        mesaService.salvar(mesa);
-        return "redirect:/mesas";
+
+        try {
+            mesaService.salvar(mesa);
+        } catch (EntidadeJaExisteException e) {
+            model.addAttribute("error", e.getMessage());
+            return "mesa/formulario";
+        }
+
+        return "redirect:/gerente/mesas";
     }
 
     @PostMapping("/editar")
-    public String editarMesa(@ModelAttribute @Valid Mesa mesa, BindingResult bindingResult) throws SQLException, EntidadeJaExisteException {
+    public String editarMesa(@ModelAttribute @Valid Mesa mesa, BindingResult bindingResult, Model model) throws SQLException {
         if (bindingResult.hasErrors()) {
             return "mesa/formulario";
         }
-        mesaService.atualizar(mesa);
-        return "redirect:/mesas";
+
+        try {
+            mesaService.atualizar(mesa);
+        } catch (EntidadeJaExisteException e) {
+            model.addAttribute("error", e.getMessage());
+            return "mesa/formulario";
+        }
+
+        return "redirect:/gerente/mesas";
     }
 
     @GetMapping("{id}/excluir")
     public String excluirMesa(@PathVariable Long id) throws SQLException {
         mesaService.deletarPorId(id);
-        return "redirect:/mesas";
+        return "redirect:/gerente/mesas";
     }
 
 }

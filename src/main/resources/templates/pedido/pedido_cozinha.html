@@ -4,9 +4,9 @@
 <section class="main p-4" layout:fragment="corpo">
 
     <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
-        <button onclick="history.back()" class="btn btn-primary" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
+        <a th:href="@{/cozinha/pedidos}" class="btn btn-primary" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
             <i class="fa fa-arrow-left" style="font-size: 16px;"></i>
-        </button>
+        </a>
         <h1>Pedido #<span th:text="${pedido.id}"></span></h1>
     </div>
     <div class="container mt-4" id="listagem">

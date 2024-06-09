@@ -100,7 +100,7 @@ public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
             sql += "AND pi.id_instancia_produto != ? ";
         }
 
-        sql += "AND p.nome = ?";
+        sql += "AND p.descricao = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             int parameterIndex = 1;
