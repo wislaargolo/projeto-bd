@@ -52,7 +52,6 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
 
     @Override
     protected String getBuscarTodosQuery() {
-
         return "SELECT conta.id_conta, conta.status, conta.metodo_pagamento, conta.data_hora_finalizacao, " +
                 "atendente.tipo AS atendente_tipo, " +
                 "f_atendente.id_funcionario AS atendente_id_funcionario, " +
@@ -68,14 +67,15 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
                 "f_caixa.senha AS caixa_senha, " +
                 "f_caixa.data_cadastro AS caixa_data_cadastro, " +
                 "conta.id_mesa, " +
-                "mesa.descricao " +
+                "mesa.identificacao, mesa.is_ativo " +
                 "FROM conta " +
-                "JOIN atendente ON conta.id_atendente = atendente.id_funcionario " +
-                "JOIN funcionario AS f_atendente ON atendente.id_funcionario = f_atendente.id_funcionario " +
-                "JOIN caixa ON conta.id_caixa = caixa.id_funcionario " +
-                "JOIN funcionario AS f_caixa ON caixa.id_funcionario = f_caixa.id_funcionario " +
+                "LEFT OUTER JOIN atendente ON conta.id_atendente = atendente.id_funcionario " +
+                "LEFT OUTER JOIN funcionario AS f_atendente ON atendente.id_funcionario = f_atendente.id_funcionario " +
+                "LEFT OUTER JOIN caixa ON conta.id_caixa = caixa.id_funcionario " +
+                "LEFT OUTER JOIN funcionario AS f_caixa ON caixa.id_funcionario = f_caixa.id_funcionario " +
                 "JOIN mesa ON conta.id_mesa = mesa.id_mesa";
     }
+
 
     @Override
     protected String getBuscarPorIdQuery() {
@@ -95,7 +95,7 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
                 "f_caixa.senha AS caixa_senha, " +
                 "f_caixa.data_cadastro AS caixa_data_cadastro, " +
                 "conta.id_mesa, " +
-                "mesa.descricao " +
+                "mesa.identificacao " +
                 "FROM conta " +
                 "JOIN atendente ON conta.id_atendente = atendente.id_funcionario " +
                 "JOIN funcionario AS f_atendente ON atendente.id_funcionario = f_atendente.id_funcionario " +

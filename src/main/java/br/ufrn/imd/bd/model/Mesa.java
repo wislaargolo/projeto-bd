@@ -9,6 +9,16 @@ public class Mesa {
     @NotBlank(message = "Identificação é obrigatória")
     private String identificacao;
 
+    private Boolean ativo;
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
     public Long getId() {
         return id;
     }

@@ -20,12 +20,6 @@ public class AtendenteController {
     @Autowired
     private AtendenteService atendenteService;
 
-    @GetMapping
-    public String listarAtendentes(Model model) throws SQLException {
-        List<Atendente> atendentes = atendenteService.buscarTodos();
-        model.addAttribute("atendentes", atendentes);
-        return "atendente/lista";
-    }
 
     @GetMapping("/novo")
     public String criarFormAtendente(Model model) {
@@ -59,7 +53,7 @@ public class AtendenteController {
 
     @GetMapping("/excluir/{id}")
     public String excluirAtendente(@PathVariable Long id) throws SQLException {
-        atendenteService.deletarPorId(id);
+        atendenteService.deletar(id);
         return "redirect:/atendentes";
     }
 }

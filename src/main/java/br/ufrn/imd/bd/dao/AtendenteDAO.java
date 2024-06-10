@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
@@ -36,7 +38,7 @@ public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
 
     @Override
     protected String getBuscarTodosQuery() {
-        return String.format("SELECT * FROM %s NATURAL JOIN %s", getNomeTabela(), funcionarioDAO.getNomeTabela());
+        return String.format("SELECT * FROM %s NATURAL JOIN %s WHERE is_ativo = true", getNomeTabela(), funcionarioDAO.getNomeTabela());
     }
 
     @Override
@@ -85,12 +87,24 @@ public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
     }
 
     @Override
-    public void deletarPorId(Connection conn, Long id) throws SQLException {
-        String sql = String.format("DELETE FROM %s WHERE id_funcionario = ?", getNomeTabela());
-        funcionarioDAO.deletarPorId(conn, id);
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, id);
-            stmt.executeUpdate();
-        }
+    public void deletar(Connection conn, Long id) throws SQLException {
+        funcionarioDAO.deletar(conn, id);
     }
+
+    public List<Atendente> buscarPorTipo(TipoAtendente tipo) throws SQLException {
+        String sql = String.format("SELECT * FROM %s NATURAL JOIN %s WHERE is_ativo = true AND tipo = ?", getNomeTabela(), funcionarioDAO.getNomeTabela());
+        List<Atendente> resultados = new ArrayList<>();
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, tipo.toString()); // Configura o tipo de atendente no SQL
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    resultados.add(mapearResultado(rs, ""));
+                }
+            }
+        }
+        return resultados;
+    }
+
 }

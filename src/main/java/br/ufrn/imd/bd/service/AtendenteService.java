@@ -5,6 +5,7 @@ import br.ufrn.imd.bd.dao.AtendenteDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.model.Atendente;
 import br.ufrn.imd.bd.model.Funcionario;
+import br.ufrn.imd.bd.model.enums.TipoAtendente;
 import br.ufrn.imd.bd.validation.FuncionarioValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,8 @@ public class AtendenteService {
     @Autowired
     private FuncionarioValidator funcionarioValidator;
 
-    public List<Atendente> buscarTodos() throws SQLException {
-        return atendenteDAO.buscarTodos();
+    public List<Atendente> buscarPorTipo(TipoAtendente tipo) throws SQLException {
+        return atendenteDAO.buscarPorTipo(tipo);
     }
 
     public Atendente buscarPorId(Long id) throws SQLException {
@@ -64,18 +65,10 @@ public class AtendenteService {
         }
     }
 
-    public void deletarPorId(Long id) throws SQLException {
-        Connection conn = null;
-        try {
-            conn = DatabaseConfig.getConnection();
-            conn.setAutoCommit(false);
-            atendenteDAO.deletarPorId(conn, id);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
-        } finally {
-            DatabaseConfig.close(conn);
+    public void deletar(Long id) throws SQLException {
+        try (Connection conn = DatabaseConfig.getConnection()){
+            atendenteDAO.deletar(conn, id);
         }
+
     }
 }

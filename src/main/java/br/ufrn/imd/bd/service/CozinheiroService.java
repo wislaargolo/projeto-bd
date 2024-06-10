@@ -34,7 +34,14 @@ public class CozinheiroService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
-            funcionarioValidator.validar(conn, cozinheiro);
+
+            try {
+                funcionarioValidator.validar(conn, cozinheiro);
+            } catch (EntidadeJaExisteException e) {
+                conn.commit();
+                throw e;
+            }
+
             cozinheiro = cozinheiroDAO.salvar(conn, cozinheiro);
             conn.commit();
         } catch (SQLException e) {
@@ -52,7 +59,14 @@ public class CozinheiroService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
-            funcionarioValidator.validar(conn, cozinheiro);
+
+            try {
+                funcionarioValidator.validar(conn, cozinheiro);
+            } catch (EntidadeJaExisteException e) {
+                conn.commit();
+                throw e;
+            }
+
             cozinheiroDAO.atualizar(conn, cozinheiro);
             conn.commit();
         } catch (SQLException e) {
@@ -63,18 +77,11 @@ public class CozinheiroService {
         }
     }
 
-    public void deletarPorId(Long id) throws SQLException {
-        Connection conn = null;
-        try {
-            conn = DatabaseConfig.getConnection();
-            conn.setAutoCommit(false);
-            cozinheiroDAO.deletarPorId(conn, id);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
-        } finally {
-            DatabaseConfig.close(conn);
+    public void deletar(Long id) throws SQLException {
+        try (Connection conn = DatabaseConfig.getConnection()){
+
+            cozinheiroDAO.deletar(conn, id);
         }
+
     }
 }

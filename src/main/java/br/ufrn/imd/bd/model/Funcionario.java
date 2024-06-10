@@ -23,6 +23,16 @@ public class Funcionario {
     private String email;
     private LocalDate dataCadastro;
 
+    private Boolean isAtivo;
+
+    public Boolean getAtivo() {
+        return isAtivo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        isAtivo = ativo;
+    }
+
     public Long getId() {
         return id;
     }

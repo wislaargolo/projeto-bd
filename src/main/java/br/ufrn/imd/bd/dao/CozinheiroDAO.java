@@ -27,7 +27,7 @@ public class CozinheiroDAO extends AbstractDAO<Cozinheiro, Long> {
 
     @Override
     protected String getBuscarTodosQuery() {
-        return String.format("SELECT * FROM %s NATURAL JOIN %s", getNomeTabela(), funcionarioDAO.getNomeTabela());
+        return String.format("SELECT * FROM %s NATURAL JOIN %s WHERE is_ativo = true", getNomeTabela(), funcionarioDAO.getNomeTabela());
     }
 
     @Override
@@ -59,12 +59,7 @@ public class CozinheiroDAO extends AbstractDAO<Cozinheiro, Long> {
     }
 
     @Override
-    public void deletarPorId(Connection conn, Long id) throws SQLException {
-        String sql = String.format("DELETE FROM %s WHERE id_funcionario = ?", getNomeTabela());
-        funcionarioDAO.deletarPorId(conn, id);
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, id);
-            stmt.executeUpdate();
-        }
+    public void deletar(Connection conn, Long id) throws SQLException {
+        funcionarioDAO.deletar(conn, id);
     }
 }

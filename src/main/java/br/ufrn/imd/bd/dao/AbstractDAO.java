@@ -22,7 +22,7 @@ public abstract class AbstractDAO<T, ID>{
     public abstract String getNomeTabela();
 
     protected String getBuscarTodosQuery() {
-        return String.format("SELECT * FROM %s", getNomeTabela());
+        return String.format("SELECT * FROM %s WHERE is_ativo = true", getNomeTabela());
     }
 
 
@@ -44,10 +44,6 @@ public abstract class AbstractDAO<T, ID>{
     }
 
 
-    protected String getDeletarPorIdQuery() {
-        return String.format("DELETE FROM %s WHERE id" + "_" + getNomeTabela() + " = ?", getNomeTabela());
-    }
-
     public T buscarPorId(ID id) throws SQLException {
         String sql = getBuscarPorIdQuery();
         try (Connection conn = getConnection();
@@ -65,8 +61,11 @@ public abstract class AbstractDAO<T, ID>{
 
     public abstract void atualizar(Connection conn, T... entidade) throws SQLException;
 
-    public void deletarPorId(Connection conn, ID id) throws SQLException {
-        String sql = getDeletarPorIdQuery();
+    public void deletar(Connection conn, Long id) throws SQLException {
+        String sql = String.format(
+                "UPDATE %s SET is_ativo = false WHERE id" + "_" + getNomeTabela() + " = ?",
+                getNomeTabela()
+        );
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setObject(1, id);
             stmt.executeUpdate();

@@ -1,5 +1,6 @@
 package br.ufrn.imd.bd.dao;
 
+import br.ufrn.imd.bd.dao.util.ResultSetUtil;
 import br.ufrn.imd.bd.model.Funcionario;
 import org.springframework.stereotype.Component;
 
@@ -28,11 +29,9 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
         funcionario.setSenha(rs.getString(prefixo + "senha"));
         funcionario.setEmail(rs.getString(prefixo + "email"));
         funcionario.setDataCadastro(rs.getObject(prefixo + "data_cadastro", LocalDate.class));
-        return funcionario;
-    }
+        funcionario.setAtivo(ResultSetUtil.getBooleanFromInteger(rs, "is_ativo", prefixo));
 
-    protected String getDeletarPorIdQuery() {
-        return String.format("DELETE FROM %s WHERE id_funcionario = ?", getNomeTabela());
+        return funcionario;
     }
 
     @Override
@@ -63,7 +62,7 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
                 }
             }
         }
-        
+
         return funcionario;
     }
 
@@ -77,7 +76,7 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
 
         StringBuilder sqlBuilder = new StringBuilder("UPDATE ");
         sqlBuilder.append(getNomeTabela());
-        sqlBuilder.append(" SET nome = ?, login = ?, email = ?");
+        sqlBuilder.append(" SET nome = ?, login = ?, email = ?, is_ativo = ?");
         if (novo.getSenha() != null && !novo.getSenha().isBlank()) {
             sqlBuilder.append(", senha = ?");
         }
@@ -88,7 +87,8 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
             stmt.setString(1, novo.getNome());
             stmt.setString(2, novo.getLogin());
             stmt.setString(3, novo.getEmail());
-            int parameterIndex = 4;
+            stmt.setBoolean(4, novo.getAtivo());
+            int parameterIndex = 5;
             if (novo.getSenha() != null && !novo.getSenha().isBlank()) {
                 stmt.setString(parameterIndex++, novo.getSenha());
             }
@@ -101,24 +101,18 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
         }
     }
 
-    public boolean existeFuncionarioComParametroEId(Connection conn, String parametro, String valor, Long id) throws SQLException {
-        String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s = ?", getNomeTabela(), parametro);
-
-        if(id != null) {
-            sql += " AND id_funcionario != " + id;
-        }
+    public Funcionario buscarPorParametros(Connection conn, String email, String login) throws SQLException {
+        String sql = String.format("SELECT * FROM %s WHERE email = ? OR login = ?", getNomeTabela());
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, valor);
-
+            stmt.setString(1, email);
+            stmt.setString(2, login);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    int count = rs.getInt(1);
-                    return count > 0;
+                    return mapearResultado(rs);
                 }
             }
         }
-
-        return false;
+        return null;
     }
 }

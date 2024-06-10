@@ -78,7 +78,7 @@ public class GerenteMesasController {
 
     @GetMapping("{id}/excluir")
     public String excluirMesa(@PathVariable Long id) throws SQLException {
-        mesaService.deletarPorId(id);
+        mesaService.deletar(id);
         return "redirect:/gerente/mesas";
     }
 

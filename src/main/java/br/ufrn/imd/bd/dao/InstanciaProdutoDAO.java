@@ -74,14 +74,14 @@ public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
         InstanciaProduto novo = instanciaProdutos[0];
 
         String sql = String.format(
-                "UPDATE %s SET valor = ?, is_ativo = ?, id_produto = ? WHERE id_instancia_produto = ?",
+                "UPDATE %s SET valor = ?, id_produto = ?, is_ativo = ? WHERE id_instancia_produto = ?",
                 getNomeTabela()
         );
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setDouble(1, novo.getValor());
-            stmt.setBoolean(2, novo.getAtivo());
-            stmt.setLong(3, novo.getProduto().getId());
+            stmt.setLong(2, novo.getProduto().getId());
+            stmt.setBoolean(3, novo.getAtivo());
             stmt.setLong(4, novo.getId());
 
             int linhasAfetadas = stmt.executeUpdate();
@@ -91,30 +91,21 @@ public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
         }
     }
 
-    public boolean existeProdutoNome(Connection conn, InstanciaProduto instanciaProduto) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM instancia_produto pi " +
-                "JOIN produto p ON p.id_produto = pi.id_produto " +
-                "WHERE pi.is_ativo = true ";
-
-        if (instanciaProduto.getId() != null) {
-            sql += "AND pi.id_instancia_produto != ? ";
-        }
-
-        sql += "AND p.descricao = ?";
+    public InstanciaProduto buscarUltimaInstanciaPorDescricao(Connection conn, String descricao) throws SQLException {
+        String sql = "SELECT * FROM instancia_produto " +
+                    "NATURAL JOIN produto " +
+                    "WHERE produto.descricao = ? " +
+                    "ORDER BY instancia_produto.data DESC " +
+                    "LIMIT 1";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            int parameterIndex = 1;
-            if (instanciaProduto.getId() != null) {
-                stmt.setObject(parameterIndex++, instanciaProduto.getId());
-            }
-            stmt.setString(parameterIndex, instanciaProduto.getProduto().getDescricao());
-
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                int count = rs.getInt(1);
-                return count > 0;
+            stmt.setString(1, descricao);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapearResultado(rs);
+                }
             }
         }
-        return false;
+        return null;
     }
 }

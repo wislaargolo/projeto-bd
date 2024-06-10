@@ -50,5 +50,10 @@ public class ResultSetUtil {
             return null;
         }
     }
+
+    public static boolean getBooleanFromInteger(ResultSet rs, String columnName, String prefixo) throws SQLException {
+        Integer value = getValue(rs, prefixo + columnName, Integer.class);
+        return value != null && value == 1;
+    }
 }
 

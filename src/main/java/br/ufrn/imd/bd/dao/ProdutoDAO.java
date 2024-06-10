@@ -1,5 +1,6 @@
 package br.ufrn.imd.bd.dao;
 
+import br.ufrn.imd.bd.model.Mesa;
 import br.ufrn.imd.bd.model.Produto;
 import org.springframework.stereotype.Component;
 
@@ -71,4 +72,5 @@ public class ProdutoDAO extends AbstractDAO<Produto, Long> {
             }
         }
     }
+
 }

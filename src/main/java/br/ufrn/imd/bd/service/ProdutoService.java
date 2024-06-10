@@ -35,10 +35,8 @@ public class ProdutoService {
     }
 
     public void deletar(Long id) throws SQLException {
-        try (Connection conn = DatabaseConfig.getConnection()){
-            InstanciaProduto instanciaProduto = instanciaProdutoDAO.buscarPorId(id);
-            instanciaProduto.setAtivo(false);
-            instanciaProdutoDAO.atualizar(conn, instanciaProduto);
+        try (Connection conn = DatabaseConfig.getConnection()) {
+            instanciaProdutoDAO.deletar(conn, id);
         }
     }
 
@@ -48,7 +46,14 @@ public class ProdutoService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
-            produtoValidator.validar(conn, instanciaProduto);
+
+            try {
+                produtoValidator.validar(conn, instanciaProduto);
+            } catch (EntidadeJaExisteException e) {
+                conn.commit();
+                throw e;
+            }
+
             instanciaProduto.setProduto(this.salvarProduto(conn, instanciaProduto.getProduto()));
             instanciaProduto = this.salvarInstanciaProduto(conn, instanciaProduto);
             conn.commit();
@@ -70,9 +75,8 @@ public class ProdutoService {
         InstanciaProduto antiga = instanciaProdutoDAO.buscarPorId(instanciaProduto.getId());
 
         if (antiga.getValor().compareTo(instanciaProduto.getValor()) != 0) {
+            instanciaProdutoDAO.deletar(conn, antiga.getId());
             instanciaProdutoDAO.salvar(conn, instanciaProduto);
-            antiga.setAtivo(false);
-            instanciaProdutoDAO.atualizar(conn, antiga);
         } else {
             instanciaProdutoDAO.atualizar(conn, instanciaProduto);
         }

@@ -15,6 +15,7 @@
         <form th:action="@{${cozinheiro.id == null ? '/gerente/cozinheiros/salvar' : '/gerente/cozinheiros/editar'}}" th:object="${cozinheiro}" method="post" class="needs-validation" novalidate>
 
             <input type="hidden" th:field="*{id}" />
+            <input type="hidden" th:field="*{ativo}" />
 
             <div th:if="${not #lists.isEmpty(errors)}" class="alert alert-danger alert-dismissible fade show" role="alert">
                 <span th:each="error, iterStat : ${errors}" th:utext="${error + '<br/>'}">

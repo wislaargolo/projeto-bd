@@ -33,7 +33,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     public Pedido mapearResultado(ResultSet rs) throws SQLException {
         Pedido pedido = new Pedido();
         pedido.setId(rs.getLong("id_pedido"));
-        pedido.setAtendente(atendenteDAO.mapearResultado(rs));
+        pedido.setAtendente(atendenteDAO.mapearResultado(rs, "atendente_"));
         pedido.setConta(contaDAO.mapearResultado(rs));
         pedido.setProgressoPedido(ProgressoPedido.valueOf(rs.getString("progresso")));
         pedido.setDataRegistro(rs.getObject("data_hora_registro", LocalDateTime.class));
@@ -174,7 +174,15 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     public List<Pedido> buscarPedidoPorPeriodo(Connection conn, LocalDateTime inicio, LocalDateTime fim) throws SQLException {
         List<Pedido> pedidos = new ArrayList<>();
 
-        String sql = "SELECT p.*, a.*, f.*, m.* " +
+        String sql = "SELECT p.*, m.*, " +
+                "f.is_ativo AS atendente_is_ativo, " +
+                "f.nome AS atendente_nome, " +
+                "f.email AS atendente_email, " +
+                "f.login AS atendente_login, " +
+                "f.senha AS atendente_senha, " +
+                "a.tipo AS atendente_tipo, " +
+                "f.data_cadastro AS atendente_data_cadastro, " +
+                "f.id_funcionario AS atendente_id_funcionario " +
                 "FROM pedido AS p " +
                 "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
                 "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario " +

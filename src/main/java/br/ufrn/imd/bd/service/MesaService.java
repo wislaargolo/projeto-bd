@@ -36,7 +36,14 @@ public class MesaService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
-            mesaValidator.validar(conn, mesa);
+
+            try {
+                mesaValidator.validar(conn, mesa);
+            } catch (EntidadeJaExisteException e) {
+                conn.commit();
+                throw e;
+            }
+
             mesa = mesaDAO.salvar(conn, mesa);
             conn.commit();
         } catch (SQLException e) {
@@ -57,7 +64,14 @@ public class MesaService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
-            mesaValidator.validar(conn, mesa);
+
+            try {
+                mesaValidator.validar(conn, mesa);
+            } catch (EntidadeJaExisteException e) {
+                conn.commit();
+                throw e;
+            }
+
             mesaDAO.atualizar(conn, mesa);
             conn.commit();
         } catch (SQLException e) {
@@ -68,9 +82,9 @@ public class MesaService {
         }
     }
 
-    public void deletarPorId(Long id) throws SQLException {
+    public void deletar(Long id) throws SQLException {
         try (Connection conn = DatabaseConfig.getConnection()){
-            mesaDAO.deletarPorId(conn, id);
+            mesaDAO.deletar(conn, id);
         }
     }
 }

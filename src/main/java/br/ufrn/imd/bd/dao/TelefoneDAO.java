@@ -72,8 +72,7 @@ public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
         }
     }
 
-    @Override
-    public void deletarPorId(Connection conn, TelefoneKey key) throws SQLException {
+    public void deletar(Connection conn, TelefoneKey key) throws SQLException {
         String sql = String.format("DELETE FROM %s WHERE id_funcionario = ? AND telefone_funcionario = ?", getNomeTabela());
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, key.getIdFuncionario());

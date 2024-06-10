@@ -1,44 +1,48 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Lista de Atendentes</title>
-</head>
+<html layout:decorate="~{gerente/layout}" xmlns="http://www.w3.org/1999/xhtml">
 <body>
+<section class="main p-4" layout:fragment="corpo">
+    <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
+        <h1 th:text="${tipo == 'gerente' ? 'Lista de Gerentes' : tipo == 'garcom' ? 'Lista de Garçons' : 'Lista de Atendentes'}">Lista de Atendentes</h1>
+        <a class="btn btn-primary btn-md" th:href="${tipo == 'Gerente' ? '/gerente/gerentes/novo' : tipo == 'Garçom' ? '/gerente/garcons/novo' : '/gerente/atendentes/novo'}" role="button">
+            <i class="fa-solid fa-plus"></i>
+            <span th:text="${tipo == 'gerente' ? 'Novo Gerente' : tipo == 'garcom' ? 'Novo Garçom' : 'Novo Atendente'}">Novo Atendente</span>
+        </a>
+    </div>
 
-<div th:replace="menu :: menu"></div>
+    <div class="container" id="listagem">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm flex-table">
+                <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Login</th>
+                    <th>Email</th>
+                    <th class="action-column">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="atendente : ${atendentes}">
+                    <td th:text="${atendente.nome}"></td>
+                    <td th:text="${atendente.login}"></td>
+                    <td th:text="${atendente.email}"></td>
+                    <td colspan="2">
+                        <a class="btn btn-secondary btn-sm" th:href="@{'/gerente/atendentes/' + ${atendente.id} + '/editar'}" role="button">
+                            <span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
+                        </a>
+                        <button th:id="'btn_gerente' + '_atendentes_' + ${atendente.id} + '_excluir'" type="button"
+                                class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#myModal">
+                            <span class="oi oi-circle-x" title="Exclusão" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-<h1>Lista de Atendentes</h1>
+    <div th:replace="~{/modal :: modal}"></div>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Login</th>
-        <th>Email</th>
-        <th>Tipo</th>
-        <th>Ações</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="atendente : ${atendentes}">
-        <td th:text="${atendente.id}"></td>
-        <td th:text="${atendente.nome}"></td>
-        <td th:text="${atendente.login}"></td>
-        <td th:text="${atendente.email}"></td>
-        <td th:text="${atendente.tipo}"></td>
-        <td>
-            <a th:href="@{'funcionarios/' + ${atendente.id} + '/telefones'}">Telefones</a>
-            <span>|</span>
-            <a th:href="@{'atendentes/editar/' + ${atendente.id}}">Editar</a>
-            <span>|</span>
-            <a th:href="@{'atendentes/excluir/' + ${atendente.id}}" onclick="return confirm('Tem certeza que deseja excluir este atendente?')">Excluir</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-<br>
-<a href="/atendentes/novo">Adicionar Novo Atendente</a>
+</section>
 </body>
 </html>

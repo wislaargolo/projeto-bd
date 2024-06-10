@@ -49,7 +49,7 @@ public class TelefoneService {
 
     public void deletar(String telefone, Long funcionarioId) throws SQLException {
         try (Connection conn = DatabaseConfig.getConnection()){
-            telefoneDAO.deletarPorId(conn, new TelefoneKey(funcionarioId, telefone));
+            telefoneDAO.deletar(conn, new TelefoneKey(funcionarioId, telefone));
         }
     }
 }

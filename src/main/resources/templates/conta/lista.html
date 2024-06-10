@@ -26,7 +26,7 @@
     <tr th:each="conta : ${contas}">
         <td th:text="${conta.id}"></td>
         <td th:if="${conta.atendente != null}" th:text="${conta.atendente.nome}"></td>
-        <td th:text="${conta.mesa.descricao}"></td>
+        <td th:text="${conta.mesa.identificacao}"></td>
         <td th:if="${conta.caixa != null}" th:text="${conta.caixa.nome}"></td>
         <td th:text="${conta.statusConta}"></td>
         <td th:text="${conta.metodoPagamento}"></td>

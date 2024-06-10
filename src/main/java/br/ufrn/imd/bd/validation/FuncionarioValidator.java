@@ -17,12 +17,21 @@ public class FuncionarioValidator {
 
     public void validar(Connection conn, Funcionario funcionario) throws SQLException, EntidadeJaExisteException {
 
-        if(funcionarioDAO.existeFuncionarioComParametroEId(conn, "email", funcionario.getEmail(), funcionario.getId())) {
-            throw new EntidadeJaExisteException("Já existe um funcionário com esse email!");
-        }
+        Funcionario existente = funcionarioDAO.buscarPorParametros(conn, funcionario.getEmail(), funcionario.getLogin());
 
-        if(funcionarioDAO.existeFuncionarioComParametroEId(conn, "login", funcionario.getLogin(), funcionario.getId())) {
-            throw new EntidadeJaExisteException("Já existe um funcionário com esse login!");
+        if (existente != null && !existente.getId().equals(funcionario.getId())) {
+            if (existente.getAtivo()) {
+                if (existente.getEmail().equals(funcionario.getEmail())) {
+                    throw new EntidadeJaExisteException("Já existe um funcionário ativo com esse email!");
+                }
+                if (existente.getLogin().equals(funcionario.getLogin())) {
+                    throw new EntidadeJaExisteException("Já existe um funcionário ativo com esse login!");
+                }
+            } else {
+                existente.setAtivo(true);
+                funcionarioDAO.atualizar(conn, existente);
+                throw new EntidadeJaExisteException("Um funcionário inativo com esse email ou login foi reativado. Por favor, edite o funcionário reativado.");
+            }
         }
 
     }

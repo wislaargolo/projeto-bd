@@ -1,5 +1,6 @@
 package br.ufrn.imd.bd.dao;
 
+import br.ufrn.imd.bd.dao.util.ResultSetUtil;
 import br.ufrn.imd.bd.model.Mesa;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ public class MesaDAO extends AbstractDAO<Mesa, Long> {
         Mesa mesa = new Mesa();
         mesa.setId(rs.getLong("id_mesa"));
         mesa.setIdentificacao(rs.getString("identificacao"));
+        mesa.setAtivo(ResultSetUtil.getBooleanFromInteger(rs, "is_ativo", ""));
         return mesa;
     }
 
@@ -55,13 +57,14 @@ public class MesaDAO extends AbstractDAO<Mesa, Long> {
         Mesa novo = mesas[0];
 
         String sql = String.format(
-                "UPDATE %s SET identificacao = ? WHERE id_mesa = ?",
+                "UPDATE %s SET identificacao = ?, is_ativo = ? WHERE id_mesa = ?",
                 getNomeTabela()
         );
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, novo.getIdentificacao());
-            stmt.setLong(2, novo.getId());
+            stmt.setBoolean(2, novo.getAtivo());
+            stmt.setLong(3, novo.getId());
 
             int linhasAfetadas = stmt.executeUpdate();
             if (linhasAfetadas == 0) {
@@ -70,24 +73,19 @@ public class MesaDAO extends AbstractDAO<Mesa, Long> {
         }
     }
 
-    public boolean existeMesaComIdentificacao(Connection conn, String parametro, String valor, Long id) throws SQLException {
-        String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s = ?", getNomeTabela(), parametro);
-
-        if(id != null) {
-            sql += " AND id_mesa != " + id;
-        }
+    public Mesa buscarPorIdentificacao(Connection conn, String identificacao) throws SQLException {
+        String sql = String.format("SELECT * FROM %s WHERE identificacao = ?", getNomeTabela());
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, valor);
-
+            stmt.setString(1, identificacao);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    int count = rs.getInt(1);
-                    return count > 0;
+                    return mapearResultado(rs);
                 }
             }
         }
-
-        return false;
+        return null;
     }
+
 }
+

@@ -109,7 +109,7 @@ public class GerenteCozinheirosController {
 
     @GetMapping("/{id}/excluir")
     public String excluirCozinheiro(@PathVariable Long id) throws SQLException {
-        cozinheiroService.deletarPorId(id);
+        cozinheiroService.deletar(id);
         return "redirect:/cozinheiros";
     }
 }

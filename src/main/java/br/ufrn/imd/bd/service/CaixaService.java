@@ -35,7 +35,14 @@ public class CaixaService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
-            funcionarioValidator.validar(conn, caixa);
+
+            try {
+                funcionarioValidator.validar(conn, caixa);
+            } catch (EntidadeJaExisteException e) {
+                conn.commit();
+                throw e;
+            }
+
             caixa = caixaDAO.salvar(conn, caixa);
             conn.commit();
         } catch (SQLException e) {
@@ -54,7 +61,14 @@ public class CaixaService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
-            funcionarioValidator.validar(conn, caixa);
+
+            try {
+                funcionarioValidator.validar(conn, caixa);
+            } catch (EntidadeJaExisteException e) {
+                conn.commit();
+                throw e;
+            }
+
             caixaDAO.atualizar(conn, caixa);
             conn.commit();
         } catch (SQLException e) {
@@ -65,18 +79,9 @@ public class CaixaService {
         }
     }
 
-    public void deletarPorId(Long id) throws SQLException {
-        Connection conn = null;
-        try {
-            conn = DatabaseConfig.getConnection();
-            conn.setAutoCommit(false);
-            caixaDAO.deletarPorId(conn, id);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
-        } finally {
-            DatabaseConfig.close(conn);
+    public void deletar(Long id) throws SQLException {
+        try (Connection conn = DatabaseConfig.getConnection()){
+            caixaDAO.deletar(conn, id);
         }
     }
 

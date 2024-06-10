@@ -19,10 +19,20 @@ public class MesaValidator {
 
     public void validar(Connection conn, Mesa mesa) throws SQLException, EntidadeJaExisteException {
 
-        if(mesaDAO.existeMesaComIdentificacao(conn, "identificacao", mesa.getIdentificacao(), mesa.getId())) {
-            throw new EntidadeJaExisteException("Já existe uma mesa com essa identificação!");
+        Mesa existente = mesaDAO.buscarPorIdentificacao(conn, mesa.getIdentificacao());
+
+        if (existente != null && existente.getId().equals(mesa.getId())) {
+            return;
         }
 
+        if (existente != null && existente.getAtivo()) {
+            throw new EntidadeJaExisteException("Já existe uma mesa ativa com essa identificação!");
+        } else if (existente != null && !existente.getAtivo()) {
+            existente.setAtivo(true);
+            mesaDAO.atualizar(conn, existente);
+            throw new EntidadeJaExisteException("Uma mesa inativa com essa identificação foi reativada. Por favor, edite a mesa reativada.");
+        }
     }
-
 }
+
+

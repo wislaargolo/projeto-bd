@@ -111,7 +111,7 @@ public class GerenteCaixasController {
 
     @GetMapping("/{id}/excluir")
     public String excluirCaixa(@PathVariable Long id) throws SQLException {
-        caixaService.deletarPorId(id);
+        caixaService.deletar(id);
         return "redirect:/gerente/caixas";
     }
 }
