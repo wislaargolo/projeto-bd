@@ -5,6 +5,7 @@ import br.ufrn.imd.bd.dao.ContaDAO;
 import br.ufrn.imd.bd.dao.InstanciaProdutoDAO;
 import br.ufrn.imd.bd.dao.PedidoDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Conta;
 import br.ufrn.imd.bd.model.InstanciaProduto;
 import br.ufrn.imd.bd.model.Mesa;
@@ -33,6 +34,15 @@ public class PedidoService {
         return pedidoDAO.buscarTodos();
     }
 
+    public Pedido buscarPorId(Long id) throws SQLException, EntidadeNaoExisteException {
+        Pedido pedido = pedidoDAO.buscarPorChave(id);
+        if(pedido == null) {
+            throw new EntidadeNaoExisteException("Pedido não encontrado");
+        }
+
+        return pedido;
+    }
+
     public Pedido salvar(Pedido pedido) throws SQLException {
 
         Connection conn = null;
@@ -57,8 +67,12 @@ public class PedidoService {
         }
     }
 
-    public Pedido buscarPorIdComProdutos(Long id) throws SQLException {
-        return pedidoDAO.buscarPorIdComProdutos(id);
+    public Pedido buscarPorIdComProdutos(Long id) throws SQLException, EntidadeNaoExisteException {
+        Pedido pedido = pedidoDAO.buscarPorIdComProdutos(id);
+        if(pedido == null) {
+            throw new EntidadeNaoExisteException("Pedido não encontrado");
+        }
+        return pedido;
     }
 
     public List<Pedido> buscarPedidosPorTurno() throws SQLException {

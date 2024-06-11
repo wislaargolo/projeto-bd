@@ -1,6 +1,7 @@
 package br.ufrn.imd.bd.service;
 
 import br.ufrn.imd.bd.dao.FuncionarioDAO;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Funcionario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,13 @@ public class FuncionarioService {
         return funcionarioDAO.buscarTodos();
     }
 
-    public Funcionario buscarPorId(Long id) throws SQLException {
-        return funcionarioDAO.buscarPorId(id);
+    public Funcionario buscarPorId(Long id) throws SQLException, EntidadeNaoExisteException {
+        Funcionario funcionario = funcionarioDAO.buscarPorChave(id);
+
+        if(funcionario == null) {
+            throw new EntidadeNaoExisteException("Funcionário não encontrado");
+        }
+
+        return funcionario;
     }
 }

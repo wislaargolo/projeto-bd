@@ -1,6 +1,7 @@
 package br.ufrn.imd.bd.controller;
 
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Caixa;
 import br.ufrn.imd.bd.model.InstanciaProduto;
 import br.ufrn.imd.bd.model.Telefone;
@@ -52,14 +53,25 @@ public class ProdutoController {
     }
 
     @GetMapping("/{id}/editar")
-    public String editarProduto(Model model, @PathVariable Long id) throws SQLException {
-        model.addAttribute("instanciaProduto", produtoService.buscarPorId(id));
+    public String editarProduto(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
+        try {
+            model.addAttribute("instanciaProduto", produtoService.buscarPorId(id));
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/produtos";
+        }
         return "produto/formulario";
     }
 
     @GetMapping("/{id}/excluir")
-    public String excluirProduto(@PathVariable Long id, Model model) throws SQLException {
-        produtoService.deletar(id);
+    public String excluirProduto(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) throws SQLException {
+
+        try {
+            produtoService.deletar(id);
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/produtos";
+        }
         return "redirect:/produtos";
     }
 }

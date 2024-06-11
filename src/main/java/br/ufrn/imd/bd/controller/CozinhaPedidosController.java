@@ -1,6 +1,7 @@
 package br.ufrn.imd.bd.controller;
 
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Pedido;
 import br.ufrn.imd.bd.model.PedidoInstancia;
 import br.ufrn.imd.bd.model.enums.ProgressoPedido;
@@ -41,8 +42,13 @@ public class CozinhaPedidosController {
     }
 
     @GetMapping("/{id}")
-    public String buscarPedido(Model model, @PathVariable Long id) throws SQLException {
-        model.addAttribute("pedido", pedidoService.buscarPorIdComProdutos(id));
+    public String buscarPedido(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
+        try {
+            model.addAttribute("pedido", pedidoService.buscarPorIdComProdutos(id));
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/cozinha/pedidos";
+        }
         return "pedido/pedido_cozinha";
     }
 
@@ -55,10 +61,10 @@ public class CozinhaPedidosController {
             pedidoService.atualizar(pedido);
             attributes.addFlashAttribute("successMessage", "Status atualizado com sucesso!");
         } catch (EntidadeJaExisteException e) {
-            attributes.addFlashAttribute("errorMessage", "Erro ao atualizar o status.");
+            attributes.addFlashAttribute("error", "Erro ao atualizar o status.");
             throw new RuntimeException(e);
         } catch (SQLException e) {
-            attributes.addFlashAttribute("errorMessage", "Erro ao atualizar o status.");
+            attributes.addFlashAttribute("error", "Erro ao atualizar o status.");
             throw new RuntimeException(e);
         }
         return "redirect:/cozinha/pedidos";

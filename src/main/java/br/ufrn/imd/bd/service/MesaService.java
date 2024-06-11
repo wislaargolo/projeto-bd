@@ -3,6 +3,7 @@ package br.ufrn.imd.bd.service;
 import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.MesaDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Mesa;
 import br.ufrn.imd.bd.validation.MesaValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,13 @@ public class MesaService {
         return mesaDAO.buscarTodos();
     }
 
-    public Mesa buscarPorId(Long id) throws SQLException {
-        return mesaDAO.buscarPorId(id);
+    public Mesa buscarPorId(Long id) throws SQLException, EntidadeNaoExisteException {
+
+        Mesa mesa = mesaDAO.buscarPorChave(id);
+        if(mesa == null) {
+            throw new EntidadeNaoExisteException("Mesa não encontrada");
+        }
+        return mesa;
     }
 
     public Mesa salvar(Mesa mesa) throws SQLException, EntidadeJaExisteException {
@@ -82,7 +88,10 @@ public class MesaService {
         }
     }
 
-    public void deletar(Long id) throws SQLException {
+    public void deletar(Long id) throws SQLException, EntidadeNaoExisteException {
+
+        buscarPorId(id);
+
         try (Connection conn = DatabaseConfig.getConnection()){
             mesaDAO.deletar(conn, id);
         }

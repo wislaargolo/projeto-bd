@@ -4,6 +4,7 @@ import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.FuncionarioDAO;
 import br.ufrn.imd.bd.dao.TelefoneDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Funcionario;
 import br.ufrn.imd.bd.model.Telefone;
 import br.ufrn.imd.bd.model.TelefoneKey;
@@ -32,6 +33,16 @@ public class TelefoneService {
         return telefones;
     }
 
+    public Telefone buscarPorChave(TelefoneKey telefoneKey) throws SQLException, EntidadeNaoExisteException {
+        Telefone telefone = telefoneDAO.buscarPorChave(telefoneKey);
+
+        if(telefone == null) {
+            throw new EntidadeNaoExisteException("Telefone não encontrado");
+        }
+
+        return telefone;
+    }
+
     public Telefone salvar(Telefone telefone) throws SQLException, EntidadeJaExisteException {
         try (Connection conn = DatabaseConfig.getConnection()){
             telefoneValidator.validar(conn, telefone.getKey());
@@ -42,6 +53,8 @@ public class TelefoneService {
     }
 
     public void atualizar(Telefone telefoneAntigo, Telefone telefoneNovo) throws SQLException {
+
+
         try (Connection conn = DatabaseConfig.getConnection()){
             telefoneDAO.atualizar(conn, telefoneAntigo, telefoneNovo);
         }

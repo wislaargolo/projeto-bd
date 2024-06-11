@@ -3,7 +3,9 @@ package br.ufrn.imd.bd.service;
 import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.CozinheiroDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Cozinheiro;
+import br.ufrn.imd.bd.model.Funcionario;
 import br.ufrn.imd.bd.validation.FuncionarioValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +27,15 @@ public class CozinheiroService {
         return cozinheiroDAO.buscarTodos();
     }
 
-    public Cozinheiro buscarPorId(Long id) throws SQLException {
-        return cozinheiroDAO.buscarPorId(id);
+    public Cozinheiro buscarPorId(Long id) throws SQLException, EntidadeNaoExisteException {
+
+        Cozinheiro cozinheiro = cozinheiroDAO.buscarPorChave(id);
+
+        if(cozinheiro == null) {
+            throw new EntidadeNaoExisteException("Cozinheiro não encontrado");
+        }
+        return cozinheiro;
+
     }
 
     public Cozinheiro salvar(Cozinheiro cozinheiro) throws SQLException, EntidadeJaExisteException {
@@ -77,9 +86,9 @@ public class CozinheiroService {
         }
     }
 
-    public void deletar(Long id) throws SQLException {
+    public void deletar(Long id) throws SQLException, EntidadeNaoExisteException {
+        buscarPorId(id);
         try (Connection conn = DatabaseConfig.getConnection()){
-
             cozinheiroDAO.deletar(conn, id);
         }
 

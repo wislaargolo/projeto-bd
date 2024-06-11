@@ -44,7 +44,7 @@ public abstract class AbstractDAO<T, ID>{
     }
 
 
-    public T buscarPorId(ID id) throws SQLException {
+    public T buscarPorChave(ID id) throws SQLException {
         String sql = getBuscarPorIdQuery();
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

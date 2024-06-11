@@ -1,6 +1,7 @@
 package br.ufrn.imd.bd.controller;
 
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Caixa;
 import br.ufrn.imd.bd.service.CaixaService;
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import java.sql.SQLException;
@@ -41,8 +43,13 @@ public class GerenteCaixasController {
     }
 
     @GetMapping("/{id}/editar")
-    public String editarFormCaixa(Model model, @PathVariable Long id) throws SQLException {
-        model.addAttribute("caixa", caixaService.buscarPorId(id));
+    public String editarFormCaixa(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
+        try {
+            model.addAttribute("caixa", caixaService.buscarPorId(id));
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/gerente/caixas";
+        }
         return "caixa/formulario";
     }
 
@@ -110,8 +117,13 @@ public class GerenteCaixasController {
 
 
     @GetMapping("/{id}/excluir")
-    public String excluirCaixa(@PathVariable Long id) throws SQLException {
-        caixaService.deletar(id);
+    public String excluirCaixa(@PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
+        try {
+            caixaService.deletar(id);
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/gerente/caixas";
+        }
         return "redirect:/gerente/caixas";
     }
 }

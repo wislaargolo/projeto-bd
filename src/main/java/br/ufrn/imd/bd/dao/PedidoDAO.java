@@ -63,7 +63,6 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
                 "NATURAL JOIN funcionario AS f";
     }
 
-    // modifica de acordo com o que quiser
     @Override
     protected String getBuscarPorIdQuery() {
 
@@ -215,7 +214,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
                 "JOIN pedido_possui_instancia AS ppi ON p.id_pedido = ppi.id_pedido " +
                 "JOIN instancia_produto AS ip ON ppi.id_instancia_produto = ip.id_instancia_produto " +
                 "JOIN produto ON ip.id_produto = produto.id_produto WHERE p.id_pedido = ?";
-        Pedido pedido = new Pedido();
+        Pedido pedido = null;
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -223,7 +222,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                if (pedido.getId() == null) {
+                if (pedido == null) {
                     pedido = mapearResultado(rs);
                 }
 

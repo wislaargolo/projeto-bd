@@ -4,6 +4,7 @@ import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.InstanciaProdutoDAO;
 import br.ufrn.imd.bd.dao.ProdutoDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.InstanciaProduto;
 import br.ufrn.imd.bd.model.Produto;
 import br.ufrn.imd.bd.validation.ProdutoValidator;
@@ -30,11 +31,19 @@ public class ProdutoService {
         return instanciaProdutoDAO.buscarTodos();
     }
 
-    public InstanciaProduto buscarPorId(Long id) throws SQLException {
-        return instanciaProdutoDAO.buscarPorId(id);
+    public InstanciaProduto buscarPorId(Long id) throws SQLException, EntidadeNaoExisteException {
+
+        InstanciaProduto instanciaProduto = instanciaProdutoDAO.buscarPorChave(id);
+        if(instanciaProduto == null) {
+            throw new EntidadeNaoExisteException("Produto não encontrado");
+        }
+        return instanciaProduto;
     }
 
-    public void deletar(Long id) throws SQLException {
+    public void deletar(Long id) throws SQLException, EntidadeNaoExisteException {
+
+        buscarPorId(id);
+
         try (Connection conn = DatabaseConfig.getConnection()) {
             instanciaProdutoDAO.deletar(conn, id);
         }
@@ -72,7 +81,7 @@ public class ProdutoService {
             return instanciaProdutoDAO.salvar(conn, instanciaProduto);
         }
 
-        InstanciaProduto antiga = instanciaProdutoDAO.buscarPorId(instanciaProduto.getId());
+        InstanciaProduto antiga = instanciaProdutoDAO.buscarPorChave(instanciaProduto.getId());
 
         if (antiga.getValor().compareTo(instanciaProduto.getValor()) != 0) {
             instanciaProdutoDAO.deletar(conn, antiga.getId());

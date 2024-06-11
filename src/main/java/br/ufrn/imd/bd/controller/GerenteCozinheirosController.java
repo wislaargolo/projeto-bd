@@ -1,6 +1,7 @@
 package br.ufrn.imd.bd.controller;
 
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Cozinheiro;
 import br.ufrn.imd.bd.service.CozinheiroService;
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -40,8 +42,13 @@ public class GerenteCozinheirosController {
     }
 
     @GetMapping("/{id}/editar")
-    public String editarFormCozinheiro(Model model, @PathVariable Long id) throws SQLException {
-        model.addAttribute("cozinheiro", cozinheiroService.buscarPorId(id));
+    public String editarFormCozinheiro(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
+        try {
+            model.addAttribute("cozinheiro", cozinheiroService.buscarPorId(id));
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/gerente/cozinheiros";
+        }
         return "cozinheiro/formulario";
     }
 
@@ -108,8 +115,13 @@ public class GerenteCozinheirosController {
     }
 
     @GetMapping("/{id}/excluir")
-    public String excluirCozinheiro(@PathVariable Long id) throws SQLException {
-        cozinheiroService.deletar(id);
+    public String excluirCozinheiro(@PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
+        try {
+            cozinheiroService.deletar(id);
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/gerente/cozinheiros";
+        }
         return "redirect:/cozinheiros";
     }
 }

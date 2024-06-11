@@ -8,11 +8,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Erro</title>
+
+    <title th:text="${status}">Erro</title>
+
+    <!-- Bootstrap core CSS via CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/style.css}" rel="stylesheet" />
+
+    <style>
+        body {
+          margin-top: 50px;
+        }
+    </style>
+
+
 </head>
 <body class="text-center">
 <div>
-    <h2>Houve um problema!!!</h2>
+    <h1 class="h3 mb-3 font-weight-normal">
+        <i class="fas fa-exclamation-triangle"></i> <!-- Substituído por um ícone do Font Awesome -->
+        <span th:text="${status}">Status</span>
+    </h1>
+
+    <h2 th:text="${error}">Erro</h2>
 
     <div>
         <span th:text="${message}">Mensagem de erro</span><br/><br/>

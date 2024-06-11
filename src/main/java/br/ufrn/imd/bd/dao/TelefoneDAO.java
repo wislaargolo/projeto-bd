@@ -106,4 +106,19 @@ public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
         }
         return false;
     }
+
+    @Override
+    public Telefone buscarPorChave(TelefoneKey key) throws SQLException {
+        String sql = String.format("SELECT * FROM %s WHERE id_funcionario = ? AND telefone_funcionario = ?", getNomeTabela());
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setObject(1, key.getIdFuncionario());
+            stmt.setObject(2, key.getTelefoneFuncionario());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return mapearResultado(rs);
+            }
+        }
+        return null;
+    }
 }

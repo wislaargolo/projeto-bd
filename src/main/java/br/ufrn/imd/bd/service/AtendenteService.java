@@ -28,7 +28,7 @@ public class AtendenteService {
     }
 
     public Atendente buscarPorId(Long id) throws SQLException {
-        return atendenteDAO.buscarPorId(id);
+        return atendenteDAO.buscarPorChave(id);
     }
 
     public Funcionario salvar(Atendente atendente) throws SQLException, EntidadeJaExisteException {

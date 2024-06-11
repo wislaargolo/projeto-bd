@@ -1,6 +1,7 @@
 package br.ufrn.imd.bd.controller;
 
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Mesa;
 import br.ufrn.imd.bd.service.MesaService;
 import jakarta.validation.Valid;
@@ -39,8 +40,13 @@ public class GerenteMesasController {
     }
 
     @GetMapping("{id}/editar")
-    public String editarFormMesa(Model model, @PathVariable Long id) throws SQLException {
-        model.addAttribute("mesa", mesaService.buscarPorId(id));
+    public String editarFormMesa(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
+        try {
+            model.addAttribute("mesa", mesaService.buscarPorId(id));
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/gerente/mesas";
+        }
         return "mesa/formulario";
     }
 
@@ -77,8 +83,13 @@ public class GerenteMesasController {
     }
 
     @GetMapping("{id}/excluir")
-    public String excluirMesa(@PathVariable Long id) throws SQLException {
-        mesaService.deletar(id);
+    public String excluirMesa(@PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
+        try {
+            mesaService.deletar(id);
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/gerente/mesas";
+        }
         return "redirect:/gerente/mesas";
     }
 

@@ -10,7 +10,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @ControllerAdvice
 public class MvcControllerAdvice {
 
-
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e, Model model) {
         model.addAttribute("message", e.getMessage());

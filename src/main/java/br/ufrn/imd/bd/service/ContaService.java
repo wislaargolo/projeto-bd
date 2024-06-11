@@ -26,12 +26,12 @@ public class ContaService {
     }
 
     public Object buscarPorId(Long id) throws SQLException {
-        return contaDAO.buscarPorId(id);
+        return contaDAO.buscarPorChave(id);
     }
 
     public void deletar(Long id) throws SQLException {
         try (Connection conn = DatabaseConfig.getConnection()){
-            Conta conta = contaDAO.buscarPorId(id);
+            Conta conta = contaDAO.buscarPorChave(id);
             conta.setStatusConta(StatusConta.CANCELADA);
             contaDAO.atualizar(conn, conta);
         }
