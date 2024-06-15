@@ -1,10 +1,13 @@
 package br.ufrn.imd.bd.dao;
 
+import br.ufrn.imd.bd.dao.util.ResultSetUtil;
+import br.ufrn.imd.bd.model.Funcionario;
 import br.ufrn.imd.bd.model.InstanciaProduto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component
@@ -24,6 +27,7 @@ public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
         instanciaProduto.setProduto(produtoDAO.mapearResultado(rs));
         return instanciaProduto;
     }
+
 
     @Override
     public String getNomeTabela() {

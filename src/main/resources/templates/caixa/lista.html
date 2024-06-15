@@ -35,6 +35,9 @@
                     <td th:text="${caixa.login}"></td>
                     <td th:text="${caixa.email}"></td>
                     <td colspan="2">
+                        <a class="btn btn-info btn-sm" th:href="@{'/gerente/caixas/' + ${caixa.id} + '/telefones'}" role="button">
+                            <i class="fa-solid fa-phone" title="Ver Telefones" aria-hidden="true"></i>
+                        </a>
                         <a class="btn btn-secondary btn-sm" th:href="@{'/gerente/caixas/' + ${caixa.id} + '/editar'}" role="button">
                             <span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
                         </a>

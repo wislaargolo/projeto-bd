@@ -13,12 +13,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
 
-@Controller
-@RequestMapping("/funcionarios")
-public class TelefoneController {
+public abstract class TelefoneController {
+
+    public abstract String getTipo();
 
     @Autowired
     private FuncionarioService funcionarioService;
@@ -28,6 +29,8 @@ public class TelefoneController {
 
     @GetMapping("/{id}/telefones")
     public String listarTelefonesFuncionario(Model model, @PathVariable Long id) throws SQLException, EntidadeNaoExisteException {
+        model.addAttribute("tipo", getTipo());
+
         model.addAttribute("funcionario", funcionarioService.buscarPorId(id));
         model.addAttribute("telefones", telefoneService.buscarTelefonesPorFuncionarioId(id));
         return "telefone/lista";
@@ -35,38 +38,82 @@ public class TelefoneController {
 
     @GetMapping("/{id}/telefones/novo")
     public String criarFormTelefone(Model model, @PathVariable Long id) throws SQLException, EntidadeNaoExisteException {
-        model.addAttribute("telefone", new Telefone(funcionarioService.buscarPorId(id).getId()));
+        model.addAttribute("tipo", getTipo());
+        model.addAttribute("telefone", new Telefone(id));
+        model.addAttribute("edicao", false);
         return "telefone/formulario";
     }
 
-    @PostMapping("/{id}/telefones")
-    public String salvarTelefone(@ModelAttribute @Valid Telefone telefone, BindingResult bindingResult, @PathVariable Long id) throws SQLException, EntidadeJaExisteException, EntidadeJaExisteException, EntidadeNaoExisteException {
+    @PostMapping("/{id}/telefones/salvar")
+    public String salvarTelefone(@ModelAttribute @Valid Telefone telefone, BindingResult bindingResult,
+                                 @PathVariable Long id, RedirectAttributes redirectAttributes, Model model) throws SQLException, EntidadeNaoExisteException {
+
+        model.addAttribute("tipo", getTipo());
+        model.addAttribute("edicao", false);
+
         if (bindingResult.hasErrors()) {
             return "telefone/formulario";
         }
-        funcionarioService.buscarPorId(id);
-        telefoneService.salvar(telefone);
-        return String.format("redirect:/funcionarios/%s/telefones", id);
+
+        try {
+            telefoneService.salvar(telefone);
+        } catch (EntidadeJaExisteException e) {
+            model.addAttribute("error", e.getMessage());
+            return "telefone/formulario";
+        }
+        return String.format("redirect:/gerente/%s/%s/telefones", getTipo(),id);
     }
 
-    @GetMapping("/{id}/telefones/{telefone}/editar")
-    public String editarFormTelefone(Model model, @PathVariable Long id, @PathVariable String telefone) throws SQLException, EntidadeNaoExisteException {
-        telefoneService.buscarPorChave(new TelefoneKey(id, telefone));
-        model.addAttribute("telefone", new Telefone(id, telefone));
+    @GetMapping("/{id}/telefones/editar")
+    public String editarFormTelefone(Model model, @PathVariable Long id, @RequestParam("telefone") String telefone, RedirectAttributes redirectAttributes) throws SQLException {
+
+        model.addAttribute("edicao", true);
+
+        try {
+            model.addAttribute("telefone", telefoneService.buscarPorChave(new TelefoneKey(id, telefone)));
+            model.addAttribute("tipo", getTipo());
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return String.format("redirect:/gerente/%s/%s/telefones", getTipo(),id);
+        }
+
         return "telefone/formulario";
     }
+    @PostMapping("/{id}/telefones/editar")
+    public String editarTelefone(@ModelAttribute @Valid Telefone telefone, BindingResult bindingResult, @PathVariable Long id,
+                                 @RequestParam("telefoneAntigo") String telefoneAntigo, RedirectAttributes redirectAttributes, Model model) throws SQLException {
 
-    @PostMapping("/{id}/telefones/{telefoneAntigo}/editar")
-    public String editarTelefone(@ModelAttribute @Valid Telefone telefone, BindingResult bindingResult, @PathVariable Long id, @PathVariable String telefoneAntigo) throws SQLException, EntidadeNaoExisteException {
-        telefoneService.buscarPorChave(new TelefoneKey(id, telefoneAntigo));
-        telefoneService.atualizar(new Telefone(id, telefoneAntigo), telefone);
-        return String.format("redirect:/funcionarios/%s/telefones", id);
+        model.addAttribute("tipo", getTipo());
+        model.addAttribute("edicao", true);
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("telefoneAntigo", telefoneAntigo);
+            return "telefone/formulario";
+        }
+
+        try {
+            telefoneService.atualizar(new Telefone(id, telefoneAntigo), telefone);
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return String.format("redirect:/%s/%s/telefones", getTipo(),id);
+        } catch (EntidadeJaExisteException e) {
+            model.addAttribute("telefoneAntigo", telefoneAntigo);
+            model.addAttribute("error", e.getMessage());
+            return "telefone/formulario";
+        }
+        return String.format("redirect:/gerente/%s/%s/telefones", getTipo(), id);
     }
 
-    @GetMapping("/{id}/telefones/{telefone}/excluir")
-    public String excluirTelefone(@PathVariable String telefone, @PathVariable Long id) throws SQLException, EntidadeNaoExisteException {
-        telefoneService.buscarPorChave(new TelefoneKey(id, telefone));
-        telefoneService.deletar(telefone, id);
-        return String.format("redirect:/funcionarios/%s/telefones", id);
+
+    @PostMapping("/{id}/telefones/excluir")
+    public String excluirTelefone(@RequestParam("telefone") String telefone, @PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException, EntidadeNaoExisteException {
+        try {
+            telefoneService.deletar(telefone, id);
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return String.format("redirect:/gerente/%s/%s/telefones", getTipo(), id);
+        }
+        return String.format("redirect:/gerente/%s/%s/telefones", getTipo(),id);
     }
+
 }

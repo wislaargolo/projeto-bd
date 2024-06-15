@@ -1,7 +1,12 @@
 package br.ufrn.imd.bd.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
 public class Telefone {
 
+    @Pattern(regexp = "^\\([1-9]{2}\\) 9[0-9]{4}-[0-9]{4}$", message = "Telefone deve estar no formato (00) 90000-0000.")
+    @NotBlank(message = "Telefone é obrigatório.")
     private String telefone;
 
     private Funcionario funcionario;

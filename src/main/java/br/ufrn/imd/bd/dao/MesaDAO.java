@@ -1,20 +1,27 @@
 package br.ufrn.imd.bd.dao;
 
 import br.ufrn.imd.bd.dao.util.ResultSetUtil;
+import br.ufrn.imd.bd.model.Funcionario;
 import br.ufrn.imd.bd.model.Mesa;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
+import java.time.LocalDate;
 
 @Component
 public class MesaDAO extends AbstractDAO<Mesa, Long> {
 
     @Override
     public Mesa mapearResultado(ResultSet rs) throws SQLException {
+        return this.mapearResultado(rs, "");
+    }
+
+
+    public Mesa mapearResultado(ResultSet rs, String prefixo) throws SQLException {
         Mesa mesa = new Mesa();
-        mesa.setId(rs.getLong("id_mesa"));
-        mesa.setIdentificacao(rs.getString("identificacao"));
-        mesa.setAtivo(ResultSetUtil.getBooleanFromInteger(rs, "is_ativo", ""));
+        mesa.setId(rs.getLong(prefixo + "id_mesa"));
+        mesa.setIdentificacao(rs.getString(prefixo + "identificacao"));
+        mesa.setAtivo(ResultSetUtil.getBooleanFromInteger(rs,  "is_ativo", prefixo));
         return mesa;
     }
 

@@ -16,28 +16,32 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
 import java.util.List;
-@Controller
-@RequestMapping("/produtos")
-public class ProdutoController {
+public abstract class ProdutoController {
 
     @Autowired
     private ProdutoService produtoService;
 
+    public abstract String getLayout();
+
     @GetMapping
     public String listarProdutos (Model model) throws SQLException {
+        model.addAttribute("layout", getLayout() + "/layout");
         model.addAttribute("instanciaProdutoList", produtoService.buscarTodos());
         return "produto/lista";
     }
 
     @GetMapping("/novo")
     public String criarFormProduto(Model model) {
+        model.addAttribute("layout", getLayout() + "/layout");
         model.addAttribute("instanciaProduto", new InstanciaProduto());
         return "produto/formulario";
     }
 
     @PostMapping("/salvar")
     public String salvarProduto(@ModelAttribute @Valid InstanciaProduto instanciaProduto,
-                                BindingResult bindingResult, RedirectAttributes attributes, Model model) throws SQLException {
+                                BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) throws SQLException {
+        model.addAttribute("layout", getLayout() + "/layout");
+
         if (bindingResult.hasErrors()) {
             return "produto/formulario";
         }
@@ -48,17 +52,21 @@ public class ProdutoController {
             model.addAttribute("error", e.getMessage());
             return "produto/formulario";
 
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/" + getLayout() + "/produtos";
         }
-        return "redirect:/produtos";
+        return "redirect:/" + getLayout() + "/produtos";
     }
 
     @GetMapping("/{id}/editar")
     public String editarProduto(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
         try {
+            model.addAttribute("layout", getLayout() + "/layout");
             model.addAttribute("instanciaProduto", produtoService.buscarPorId(id));
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/produtos";
+            return "redirect:/" + getLayout() + "/produtos";
         }
         return "produto/formulario";
     }
@@ -70,8 +78,8 @@ public class ProdutoController {
             produtoService.deletar(id);
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/produtos";
+            return "redirect:/" + getLayout() + "/produtos";
         }
-        return "redirect:/produtos";
+        return "redirect:/" + getLayout() + "/produtos";
     }
 }

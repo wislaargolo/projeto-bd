@@ -7,10 +7,10 @@ public class Produto {
 
     private Long id;
 
-    @NotBlank(message = "Descrição é obrigatória")
+    @NotBlank(message = "Descrição é obrigatória.")
     private String descricao;
 
-    @NotNull(message = "Disponibilidade é obrigatória")
+    @NotNull(message = "Disponibilidade é obrigatória.")
     private Boolean disponivel;
 
     public Produto() {}

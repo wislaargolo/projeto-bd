@@ -23,7 +23,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/gerente/cozinheiros")
-public class GerenteCozinheirosController {
+public class GerenteCozinheirosController extends TelefoneController {
 
     @Autowired
     private CozinheiroService cozinheiroService;
@@ -62,11 +62,11 @@ public class GerenteCozinheirosController {
         }
 
         if (cozinheiro.getSenha() == null || cozinheiro.getSenha().isEmpty()) {
-            errors.add("Senha é obrigatória");
+            errors.add("Senha é obrigatória.");
         }
 
         if (!cozinheiro.getSenha().equals(confirmacaoSenha)) {
-            errors.add("As senhas não coincidem");
+            errors.add("As senhas não coincidem!");
         }
 
         if (!errors.isEmpty()) {
@@ -87,7 +87,7 @@ public class GerenteCozinheirosController {
 
     @PostMapping("/editar")
     public String editarCozinheiro(@ModelAttribute @Valid Cozinheiro cozinheiro, BindingResult bindingResult,
-                              @RequestParam String confirmacaoSenha, Model model) throws SQLException {
+                              @RequestParam String confirmacaoSenha, Model model, RedirectAttributes redirectAttributes) throws SQLException {
         List<String> errors = new ArrayList<>();
 
         if (bindingResult.hasErrors()) {
@@ -95,7 +95,7 @@ public class GerenteCozinheirosController {
         }
 
         if (!cozinheiro.getSenha().equals(confirmacaoSenha)) {
-            errors.add("As senhas não coincidem");
+            errors.add("As senhas não coincidem!");
         }
 
         if (!errors.isEmpty()) {
@@ -109,6 +109,9 @@ public class GerenteCozinheirosController {
             errors.add(e.getMessage());
             model.addAttribute("errors", errors);
             return "cozinheiro/formulario";
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/gerente/cozinheiros";
         }
 
         return "redirect:/gerente/cozinheiros";
@@ -123,5 +126,9 @@ public class GerenteCozinheirosController {
             return "redirect:/gerente/cozinheiros";
         }
         return "redirect:/cozinheiros";
+    }
+    @Override
+    public String getTipo() {
+        return "cozinheiros";
     }
 }

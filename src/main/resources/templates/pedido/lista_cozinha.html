@@ -37,16 +37,8 @@
                     <td th:text="${pedido.id}"></td>
                     <td th:text="${pedido.atendente.nome}"></td>
                     <td th:text="${pedido.conta.mesa.identificacao}"></td>
-                    <td>
-                        <form th:action="@{'/cozinha/pedidos/' + ${pedido.id} + '/status'}" method="post">
-                            <select class="form-select form-select-sm" name="progressoPedido" onchange="this.form.submit()">
-                                <option th:each="status : ${T(br.ufrn.imd.bd.model.enums.ProgressoPedido).listaCozinha()}"
-                                        th:value="${status}"
-                                        th:selected="${status.name() == pedido.progressoPedido.name()}"
-                                        th:text="${status}">Status</option>
-                            </select>
-                        </form>
-                    </td>
+                    <td th:text="${pedido.progressoPedido}"
+                        th:style="${pedido.progressoPedido.name() == 'CANCELADO' ? 'color: red;' : ''}"></td>
                     <td th:text="${#temporals.format(pedido.dataRegistro, 'dd/MM/yyyy HH:mm:ss')}"></td>
                     <td>
                         <a class="btn btn-info btn-sm" th:href="@{'/cozinha/pedidos/' + ${pedido.id}}" role="button">
@@ -55,6 +47,7 @@
                     </td>
                 </tr>
                 </tbody>
+
             </table>
         </div>
     </div>

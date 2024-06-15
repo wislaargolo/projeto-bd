@@ -16,7 +16,7 @@ public class Pedido {
     private Conta conta;
 
 
-    @NotNull(message = "Status é obrigatório")
+    @NotNull(message = "Status é obrigatório.")
     private ProgressoPedido progressoPedido;
 
     private LocalDateTime dataRegistro;

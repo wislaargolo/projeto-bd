@@ -34,6 +34,13 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
         return funcionario;
     }
 
+    public Funcionario mapearParcialmente(ResultSet rs) throws SQLException {
+        Funcionario funcionario = new Funcionario();
+        funcionario.setId(rs.getLong("id_funcionario"));
+
+        return funcionario;
+    }
+
     @Override
     public String getNomeTabela() {
         return "funcionario";
@@ -101,12 +108,11 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
         }
     }
 
-    public Funcionario buscarPorParametros(Connection conn, String email, String login) throws SQLException {
-        String sql = String.format("SELECT * FROM %s WHERE email = ? OR login = ?", getNomeTabela());
+    public Funcionario buscarPorLogin(Connection conn, String login) throws SQLException {
+        String sql = String.format("SELECT * FROM %s WHERE login = ?", getNomeTabela());
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, email);
-            stmt.setString(2, login);
+            stmt.setString(1, login);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return mapearResultado(rs);

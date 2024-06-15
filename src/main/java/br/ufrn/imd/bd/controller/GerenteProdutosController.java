@@ -15,34 +15,13 @@ import java.sql.SQLException;
 
 @Controller
 @RequestMapping("/gerente/produtos")
-public class GerenteProdutosController {
+public class GerenteProdutosController extends ProdutoController {
 
-
-    @GetMapping
-    public String listarProdutos(Model model) {
-        return "forward:/produtos?layout=gerente/layout";
+    @Override
+    public String getLayout() {
+        return "gerente";
     }
 
-    @GetMapping("/novo")
-    public String criarForm(Model model) {
-        return "forward:/produtos/novo?layout=gerente/layout";
-    }
-
-    @PostMapping("/salvar")
-    public String salvarProduto(@ModelAttribute @Valid InstanciaProduto instanciaProduto,
-                                BindingResult bindingResult, Model model) throws SQLException {
-        return "forward:/produtos/salvar?layout=gerente/layout";
-    }
-
-    @GetMapping("/{id}/editar")
-    public String editarProduto(@PathVariable Long id, Model model) throws SQLException {
-        return "forward:/produtos/" + id + "/editar?layout=gerente/layout";
-    }
-
-    @GetMapping("/{id}/excluir")
-    public String excluirProduto(@PathVariable Long id, Model model) {
-        return "forward:/produtos/" + id + "/excluir?layout=gerente/layout";
-    }
 }
 
 

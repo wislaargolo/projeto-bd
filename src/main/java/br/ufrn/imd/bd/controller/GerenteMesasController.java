@@ -67,7 +67,8 @@ public class GerenteMesasController {
     }
 
     @PostMapping("/editar")
-    public String editarMesa(@ModelAttribute @Valid Mesa mesa, BindingResult bindingResult, Model model) throws SQLException {
+    public String editarMesa(@ModelAttribute @Valid Mesa mesa, BindingResult bindingResult,
+                             Model model, RedirectAttributes redirectAttributes) throws SQLException {
         if (bindingResult.hasErrors()) {
             return "mesa/formulario";
         }
@@ -77,6 +78,9 @@ public class GerenteMesasController {
         } catch (EntidadeJaExisteException e) {
             model.addAttribute("error", e.getMessage());
             return "mesa/formulario";
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/gerente/mesas";
         }
 
         return "redirect:/gerente/mesas";

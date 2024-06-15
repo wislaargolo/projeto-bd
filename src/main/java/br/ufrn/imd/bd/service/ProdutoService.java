@@ -7,7 +7,6 @@ import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.InstanciaProduto;
 import br.ufrn.imd.bd.model.Produto;
-import br.ufrn.imd.bd.validation.ProdutoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +23,6 @@ public class ProdutoService {
     @Autowired
     private ProdutoDAO produtoDAO;
 
-    @Autowired
-    private ProdutoValidator produtoValidator;
-
     public List<InstanciaProduto> buscarTodos() throws SQLException {
         return instanciaProdutoDAO.buscarTodos();
     }
@@ -35,7 +31,7 @@ public class ProdutoService {
 
         InstanciaProduto instanciaProduto = instanciaProdutoDAO.buscarPorChave(id);
         if(instanciaProduto == null) {
-            throw new EntidadeNaoExisteException("Produto não encontrado");
+            throw new EntidadeNaoExisteException("Produto não encontrado.");
         }
         return instanciaProduto;
     }
@@ -49,34 +45,34 @@ public class ProdutoService {
         }
     }
 
-    public InstanciaProduto salvar(InstanciaProduto instanciaProduto) throws SQLException, EntidadeJaExisteException {
+    public InstanciaProduto salvar(InstanciaProduto instanciaProduto) throws SQLException, EntidadeJaExisteException, EntidadeNaoExisteException {
         Connection conn = null;
-
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
 
             try {
-                produtoValidator.validar(conn, instanciaProduto);
-            } catch (EntidadeJaExisteException e) {
+                instanciaProduto.setProduto(this.salvarProduto(conn, instanciaProduto.getProduto()));
+                instanciaProduto = this.salvarInstanciaProduto(conn, instanciaProduto);
                 conn.commit();
-                throw e;
+                return instanciaProduto;
+            } catch (SQLException e) {
+                DatabaseConfig.rollback(conn);
+                if (e.getErrorCode() == 1062) {
+                    reativarSeInativo(conn, instanciaProduto);
+                    throw new EntidadeJaExisteException("Um produto inativo com essa descrição foi reativado.");
+                } else {
+                    throw e;
+                }
             }
-
-            instanciaProduto.setProduto(this.salvarProduto(conn, instanciaProduto.getProduto()));
-            instanciaProduto = this.salvarInstanciaProduto(conn, instanciaProduto);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
         } finally {
             DatabaseConfig.close(conn);
         }
-
-        return instanciaProduto;
     }
 
-    private InstanciaProduto salvarInstanciaProduto(Connection conn, InstanciaProduto instanciaProduto) throws SQLException {
+
+
+    private InstanciaProduto salvarInstanciaProduto(Connection conn, InstanciaProduto instanciaProduto) throws SQLException, EntidadeNaoExisteException {
         if (instanciaProduto.getId() == null) {
             return instanciaProdutoDAO.salvar(conn, instanciaProduto);
         }
@@ -87,6 +83,7 @@ public class ProdutoService {
             instanciaProdutoDAO.deletar(conn, antiga.getId());
             instanciaProdutoDAO.salvar(conn, instanciaProduto);
         } else {
+            this.buscarPorId(instanciaProduto.getId());
             instanciaProdutoDAO.atualizar(conn, instanciaProduto);
         }
 
@@ -102,5 +99,17 @@ public class ProdutoService {
         }
 
         return produto;
+    }
+
+    private void reativarSeInativo(Connection conn, InstanciaProduto instanciaProduto) throws SQLException, EntidadeJaExisteException {
+        InstanciaProduto existente = instanciaProdutoDAO.buscarUltimaInstanciaPorDescricao(conn, instanciaProduto.getProduto().getDescricao());
+
+        if (existente != null && existente.getAtivo()) {
+            throw new EntidadeJaExisteException("Já existe um produto ativo com essa descrição!");
+        } else if (existente != null && !existente.getAtivo()) {
+            existente.setAtivo(true);
+            instanciaProdutoDAO.atualizar(conn, existente);
+            conn.commit();
+        }
     }
 }

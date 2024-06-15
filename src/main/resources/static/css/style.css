@@ -94,3 +94,44 @@ h1 {
     }
 }
 
+ .main .info-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    .main .info-container {
+        flex-direction: column;
+    }
+
+}
+
+.main .btn-and-select {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.main .form-inline {
+    width: 100%;
+}
+
+.main .form-control {
+    flex-grow: 1; /* Permite que o select expanda para ocupar o espaço disponível */
+}
+
+
+@media (max-width: 576px) {
+    .main .btn-and-select {
+        flex-direction: row;
+        gap: 3px;
+    }
+
+
+}
+
+
+

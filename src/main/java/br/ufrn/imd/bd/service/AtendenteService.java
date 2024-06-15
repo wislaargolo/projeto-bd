@@ -4,9 +4,7 @@ import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.AtendenteDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.model.Atendente;
-import br.ufrn.imd.bd.model.Funcionario;
 import br.ufrn.imd.bd.model.enums.TipoAtendente;
-import br.ufrn.imd.bd.validation.FuncionarioValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +18,6 @@ public class AtendenteService {
     @Autowired
     private AtendenteDAO atendenteDAO;
 
-    @Autowired
-    private FuncionarioValidator funcionarioValidator;
-
     public List<Atendente> buscarPorTipo(TipoAtendente tipo) throws SQLException {
         return atendenteDAO.buscarPorTipo(tipo);
     }
@@ -31,35 +26,53 @@ public class AtendenteService {
         return atendenteDAO.buscarPorChave(id);
     }
 
-    public Funcionario salvar(Atendente atendente) throws SQLException, EntidadeJaExisteException {
+    public Atendente salvar(Atendente atendente) throws SQLException, EntidadeJaExisteException {
         Connection conn = null;
+
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
-            funcionarioValidator.validar(conn, atendente);
-            atendente = atendenteDAO.salvar(conn, atendente);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
+
+            try {
+                atendente = atendenteDAO.salvar(conn, atendente);
+                conn.commit();
+                return atendente;
+            } catch (SQLException e) {
+                DatabaseConfig.rollback(conn);
+                if (e.getErrorCode() == 1062) {
+                    if(atendente.getTipo().equals(TipoAtendente.GARCOM)) throw new EntidadeJaExisteException("Já existe um garçom com esse login.");
+                    else throw new EntidadeJaExisteException("Já existe um gerente com esse login.");
+                } else {
+                    throw e;
+                }
+            }
         } finally {
             DatabaseConfig.close(conn);
         }
-
-        return atendente;
     }
 
     public void atualizar(Atendente atendente) throws EntidadeJaExisteException, SQLException {
+
+        buscarPorId(atendente.getId());
+
         Connection conn = null;
+
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
-            funcionarioValidator.validar(conn, atendente);
-            atendenteDAO.atualizar(conn, atendente);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
+
+            try {
+                atendenteDAO.atualizar(conn, atendente);
+                conn.commit();
+            } catch (SQLException e) {
+                DatabaseConfig.rollback(conn);
+                if (e.getErrorCode() == 1062) {
+                    if(atendente.getTipo().equals(TipoAtendente.GARCOM)) throw new EntidadeJaExisteException("Já existe um garçom com esse login.");
+                    else throw new EntidadeJaExisteException("Já existe um gerente com esse login.");
+                } else {
+                    throw e;
+                }
+            }
         } finally {
             DatabaseConfig.close(conn);
         }

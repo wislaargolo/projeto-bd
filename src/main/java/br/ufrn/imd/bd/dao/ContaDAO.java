@@ -38,12 +38,12 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
     @Override
     public Conta mapearResultado(ResultSet rs) throws SQLException {
         Conta conta = new Conta();
-        conta.setId(Long.valueOf(ResultSetUtil.getValue(rs, "id_conta", Integer.class)));
+        conta.setId(rs.getLong("id_conta"));
         conta.setStatusConta(ResultSetUtil.getEnumValue(rs, "status", StatusConta.class));
         conta.setDataFinalizacao(ResultSetUtil.getValue(rs, "data_hora_finalizacao", LocalDateTime.class));
         conta.setCaixa(ResultSetUtil.getEntity(rs, caixaDAO, "caixa_", "id_funcionario"));
         conta.setAtendente(ResultSetUtil.getEntity(rs, atendenteDAO, "atendente_", "id_funcionario"));
-        conta.setMesa(ResultSetUtil.getEntity(rs, mesaDAO, "id_mesa"));
+        conta.setMesa(ResultSetUtil.getEntity(rs, mesaDAO, "mesa_", "id_mesa"));
         conta.setMetodoPagamento(ResultSetUtil.getEnumValue(rs, "metodo_pagamento", MetodoPagamento.class));
 
         return conta;

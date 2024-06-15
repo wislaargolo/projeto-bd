@@ -6,7 +6,6 @@ import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Caixa;
 import br.ufrn.imd.bd.model.Funcionario;
-import br.ufrn.imd.bd.validation.FuncionarioValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +19,6 @@ public class CaixaService {
     @Autowired
     private CaixaDAO caixaDAO;
 
-    @Autowired
-    private FuncionarioValidator funcionarioValidator;
-
     public List<Caixa> buscarTodos() throws SQLException {
         return caixaDAO.buscarTodos();
     }
@@ -35,50 +31,51 @@ public class CaixaService {
         return caixa;
     }
 
-    public Funcionario salvar(Caixa caixa) throws SQLException, EntidadeJaExisteException {
+    public Caixa salvar(Caixa caixa) throws SQLException, EntidadeJaExisteException {
         Connection conn = null;
+
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
 
             try {
-                funcionarioValidator.validar(conn, caixa);
-            } catch (EntidadeJaExisteException e) {
+                caixa = caixaDAO.salvar(conn, caixa);
                 conn.commit();
-                throw e;
+                return caixa;
+            } catch (SQLException e) {
+                DatabaseConfig.rollback(conn);
+                if (e.getErrorCode() == 1062) {
+                    throw new EntidadeJaExisteException("Já existe um caixa com esse login.");
+                } else {
+                    throw e;
+                }
             }
-
-            caixa = caixaDAO.salvar(conn, caixa);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
         } finally {
             DatabaseConfig.close(conn);
         }
-
-        return caixa;
     }
 
-    public void atualizar(Caixa caixa) throws EntidadeJaExisteException, SQLException {
+    public void atualizar(Caixa caixa) throws EntidadeJaExisteException, SQLException, EntidadeNaoExisteException {
+
+        buscarPorId(caixa.getId());
 
         Connection conn = null;
+
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
 
             try {
-                funcionarioValidator.validar(conn, caixa);
-            } catch (EntidadeJaExisteException e) {
+                caixaDAO.atualizar(conn, caixa);
                 conn.commit();
-                throw e;
+            } catch (SQLException e) {
+                DatabaseConfig.rollback(conn);
+                if (e.getErrorCode() == 1062) {
+                    throw new EntidadeJaExisteException("Já existe um caixa com esse login.");
+                } else {
+                    throw e;
+                }
             }
-
-            caixaDAO.atualizar(conn, caixa);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
         } finally {
             DatabaseConfig.close(conn);
         }

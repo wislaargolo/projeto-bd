@@ -2,17 +2,39 @@
 <html layout:decorate="~{cozinha/layout}" xmlns="http://www.w3.org/1999/xhtml">
 <body>
 <section class="main p-4" layout:fragment="corpo">
-
     <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
         <a th:href="@{/cozinha/pedidos}" class="btn btn-primary" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
             <i class="fa fa-arrow-left" style="font-size: 16px;"></i>
         </a>
         <h1>Pedido #<span th:text="${pedido.id}"></span></h1>
     </div>
-    <div class="container mt-4" id="listagem">
 
-        <p><strong>Atendente:</strong> <span th:text="${pedido.atendente.nome}"></span></p>
-        <p><strong>Mesa:</strong> <span th:text="${pedido.conta.mesa.identificacao}"></span></p>
+    <div class="container mt-4" id="listagem">
+        <div class="info-container">
+            <p><strong>Atendente:</strong> <span th:text="${pedido.atendente.nome}"></span></p>
+            <p><strong>Mesa:</strong> <span th:text="${pedido.conta.mesa.identificacao}"></span></p>
+
+            <div th:if="${pedido.progressoPedido.name()} == 'CANCELADO'">
+                <p><strong>Status:</strong> <span style="color: red;" th:text="${pedido.progressoPedido}"></span></p>
+            </div>
+
+            <div th:if="${pedido.progressoPedido.name()} != 'CANCELADO'">
+                <form th:action="@{'/cozinha/pedidos/' + ${pedido.id} + '/status'}" method="post" class="form-inline">
+                    <label for="progressoPedido" class="mr-sm-2"><strong>Status:</strong></label>
+                    <div class="btn-and-select">
+                        <select id="progressoPedido" class="form-control mb-2 mr-sm-2" name="progressoPedido">
+                            <option th:each="status : ${T(br.ufrn.imd.bd.model.enums.ProgressoPedido).listaCozinha()}"
+                                    th:value="${status}"
+                                    th:selected="${status.name() == pedido.progressoPedido.name()}"
+                                    th:text="${status}"></option>
+                        </select>
+                        <button type="submit" class="btn btn-primary mb-2">
+                            <i class="fa fa-check" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         <div class="items-card">
             <h5>Itens do Pedido</h5>
@@ -27,19 +49,6 @@
                 </div>
             </div>
         </div>
-
-        <div th:if="${pedido.progressoPedido.name()} == 'SOLICITADO'" class="btn-pedidos">
-            <form th:action="@{'/cozinha/pedidos/' + ${pedido.id} + '/status'}" method="post" class="d-inline-block">
-                <input type="hidden" name="progressoPedido" value="PREPARANDO"/>
-                <button type="submit" class="btn btn-success">Preparar</button>
-            </form>
-            <form th:action="@{'/cozinha/pedidos/' + ${pedido.id} + '/status'}" method="post" class="d-inline-block">
-                <input type="hidden" name="progressoPedido" value="REJEITADO"/>
-                <button type="submit" class="btn btn-danger">Rejeitar</button>
-            </form>
-        </div>
-
-
     </div>
 </section>
 </body>

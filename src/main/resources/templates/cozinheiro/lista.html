@@ -34,13 +34,16 @@
                     <td th:text="${cozinheiro.nome}"></td>
                     <td th:text="${cozinheiro.login}"></td>
                     <td th:text="${cozinheiro.email}"></td>
-                    <td colspan="2">
+                    <td>
+                        <a class="btn btn-info btn-sm" th:href="@{'/gerente/cozinheiros/' + ${cozinheiro.id} + '/telefones'}" role="button">
+                            <i class="fa-solid fa-phone" title="Ver Telefones" aria-hidden="true"></i>
+                        </a>
                         <a class="btn btn-secondary btn-sm" th:href="@{'/gerente/cozinheiros/' + ${cozinheiro.id} + '/editar'}" role="button">
-                            <span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
+                            <i class="oi oi-brush" title="Editar" aria-hidden="true"></i>
                         </a>
                         <button th:id="'btn_gerente' + '_cozinheiros_' + ${cozinheiro.id} + '_excluir'" type="button"
                                 class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#myModal">
-                            <span class="oi oi-circle-x" title="Exclusão" aria-hidden="true"></span>
+                            <i class="oi oi-circle-x" title="Exclusão" aria-hidden="true"></i>
                         </button>
                     </td>
                 </tr>

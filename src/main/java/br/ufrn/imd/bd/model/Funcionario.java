@@ -10,16 +10,16 @@ public class Funcionario {
 
     private Long id;
 
-    @NotBlank(message = "Nome é obrigatório")
+    @NotBlank(message = "Nome é obrigatório.")
     private String nome;
 
-    @NotBlank(message = "Login é obrigatório")
+    @NotBlank(message = "Login é obrigatório.")
     private String login;
 
     private String senha;
 
-    @NotBlank(message = "Email é obrigatório")
-    @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "Email com formato inválido")
+    @NotBlank(message = "Email é obrigatório.")
+    @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "Email com formato inválido.")
     private String email;
     private LocalDate dataCadastro;
 

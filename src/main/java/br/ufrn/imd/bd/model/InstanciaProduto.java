@@ -10,7 +10,7 @@ public class InstanciaProduto {
     private Long id;
 
 
-    @NotNull(message = "Valor é obrigatório")
+    @NotNull(message = "Valor é obrigatório.")
     private Double valor;
 
     private Boolean isAtivo;

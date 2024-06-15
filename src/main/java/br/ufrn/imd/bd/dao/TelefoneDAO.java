@@ -1,5 +1,6 @@
 package br.ufrn.imd.bd.dao;
 
+import br.ufrn.imd.bd.dao.util.ResultSetUtil;
 import br.ufrn.imd.bd.model.Telefone;
 import br.ufrn.imd.bd.model.TelefoneKey;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,19 @@ public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
         return telefone;
     }
 
+    public Telefone mapearParcialmente(ResultSet rs) throws SQLException {
+        Telefone telefone = new Telefone();
+        telefone.setFuncionario(funcionarioDAO.mapearParcialmente(rs));
+        telefone.setTelefone(rs.getString("telefone_funcionario"));
+        return telefone;
+    }
+
+
     @Override
     public String getNomeTabela() {
         return "telefone";
     }
+
 
     @Override
     public Telefone salvar(Connection conn, Telefone telefone) throws SQLException {
@@ -94,19 +104,6 @@ public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
         return resultados;
     }
 
-    public boolean existeTelefone(Connection conn, TelefoneKey key) throws SQLException {
-        String sql = String.format("SELECT * FROM %s WHERE id_funcionario = ? AND telefone_funcionario = ?", getNomeTabela());
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, key.getIdFuncionario());
-            stmt.setObject(2, key.getTelefoneFuncionario());
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public Telefone buscarPorChave(TelefoneKey key) throws SQLException {
         String sql = String.format("SELECT * FROM %s WHERE id_funcionario = ? AND telefone_funcionario = ?", getNomeTabela());
@@ -116,7 +113,7 @@ public class TelefoneDAO extends AbstractDAO<Telefone, TelefoneKey> {
             stmt.setObject(2, key.getTelefoneFuncionario());
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return mapearResultado(rs);
+                return mapearParcialmente(rs);
             }
         }
         return null;

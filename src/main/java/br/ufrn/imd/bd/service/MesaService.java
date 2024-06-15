@@ -5,7 +5,6 @@ import br.ufrn.imd.bd.dao.MesaDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Mesa;
-import br.ufrn.imd.bd.validation.MesaValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +18,6 @@ public class MesaService {
     @Autowired
     private MesaDAO mesaDAO;
 
-    @Autowired
-    private MesaValidator mesaValidator;
 
     public List<Mesa> buscarTodos() throws SQLException {
         return mesaDAO.buscarTodos();
@@ -30,61 +27,42 @@ public class MesaService {
 
         Mesa mesa = mesaDAO.buscarPorChave(id);
         if(mesa == null) {
-            throw new EntidadeNaoExisteException("Mesa não encontrada");
+            throw new EntidadeNaoExisteException("Mesa não encontrada.");
         }
         return mesa;
     }
 
     public Mesa salvar(Mesa mesa) throws SQLException, EntidadeJaExisteException {
-
-        Connection conn = null;
-
-        try {
-            conn = DatabaseConfig.getConnection();
-            conn.setAutoCommit(false);
-
+        try (Connection conn = DatabaseConfig.getConnection()) {
             try {
-                mesaValidator.validar(conn, mesa);
-            } catch (EntidadeJaExisteException e) {
-                conn.commit();
-                throw e;
+                mesa = mesaDAO.salvar(conn, mesa);
+                return mesa;
+            } catch (SQLException e) {
+                if (e.getErrorCode() == 1062) {
+                    reativarSeInativo(conn, mesa);
+                    throw new EntidadeJaExisteException("Uma mesa inativa com essa identificação foi reativada.");
+                } else {
+                    throw e;
+                }
             }
-
-            mesa = mesaDAO.salvar(conn, mesa);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
-        } finally {
-            DatabaseConfig.close(conn);
         }
-
-        return mesa;
     }
 
-    // nao sei se precisa de transacao!!
-    public void atualizar(Mesa mesa) throws EntidadeJaExisteException, SQLException {
+    public void atualizar(Mesa mesa) throws EntidadeJaExisteException, SQLException, EntidadeNaoExisteException {
 
-        Connection conn = null;
+        buscarPorId(mesa.getId());
 
-        try {
-            conn = DatabaseConfig.getConnection();
-            conn.setAutoCommit(false);
-
+        try (Connection conn = DatabaseConfig.getConnection()) {
             try {
-                mesaValidator.validar(conn, mesa);
-            } catch (EntidadeJaExisteException e) {
-                conn.commit();
-                throw e;
+                mesaDAO.atualizar(conn, mesa);
+            } catch (SQLException e) {
+                if (e.getErrorCode() == 1062) {
+                    reativarSeInativo(conn, mesa);
+                    throw new EntidadeJaExisteException("Uma mesa inativa com essa identificação foi reativada.");
+                } else {
+                    throw e;
+                }
             }
-
-            mesaDAO.atualizar(conn, mesa);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
-        } finally {
-            DatabaseConfig.close(conn);
         }
     }
 
@@ -96,4 +74,15 @@ public class MesaService {
             mesaDAO.deletar(conn, id);
         }
     }
+
+    private void reativarSeInativo(Connection conn, Mesa mesa) throws SQLException, EntidadeJaExisteException {
+        Mesa existente = mesaDAO.buscarPorIdentificacao(conn, mesa.getIdentificacao());
+        if (existente != null && !existente.getAtivo()) {
+            existente.setAtivo(true);
+            mesaDAO.atualizar(conn, existente);
+        } else if (existente != null) {
+            throw new EntidadeJaExisteException("Já existe uma mesa ativa com essa identificação!");
+        }
+    }
+
 }

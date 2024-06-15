@@ -24,7 +24,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/gerente/caixas")
-public class GerenteCaixasController {
+public class GerenteCaixasController extends TelefoneController {
 
     @Autowired
     private CaixaService caixaService;
@@ -88,7 +88,7 @@ public class GerenteCaixasController {
 
     @PostMapping("/editar")
     public String editarCaixa(@ModelAttribute @Valid Caixa caixa, BindingResult bindingResult,
-                              @RequestParam String confirmacaoSenha, Model model) throws SQLException {
+                              @RequestParam String confirmacaoSenha, Model model, RedirectAttributes redirectAttributes) throws SQLException {
         List<String> errors = new ArrayList<>();
 
         if (bindingResult.hasErrors()) {
@@ -110,6 +110,9 @@ public class GerenteCaixasController {
             errors.add(e.getMessage());
             model.addAttribute("errors", errors);
             return "caixa/formulario";
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/gerente/caixas";
         }
 
         return "redirect:/gerente/caixas";
@@ -125,5 +128,10 @@ public class GerenteCaixasController {
             return "redirect:/gerente/caixas";
         }
         return "redirect:/gerente/caixas";
+    }
+
+    @Override
+    public String getTipo() {
+        return "caixas";
     }
 }

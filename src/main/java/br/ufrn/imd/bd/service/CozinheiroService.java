@@ -5,8 +5,6 @@ import br.ufrn.imd.bd.dao.CozinheiroDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Cozinheiro;
-import br.ufrn.imd.bd.model.Funcionario;
-import br.ufrn.imd.bd.validation.FuncionarioValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +17,6 @@ public class CozinheiroService {
 
     @Autowired
     private CozinheiroDAO cozinheiroDAO;
-
-    @Autowired
-    private FuncionarioValidator funcionarioValidator;
 
     public List<Cozinheiro> buscarTodos() throws SQLException {
         return cozinheiroDAO.buscarTodos();
@@ -40,47 +35,49 @@ public class CozinheiroService {
 
     public Cozinheiro salvar(Cozinheiro cozinheiro) throws SQLException, EntidadeJaExisteException {
         Connection conn = null;
+
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
 
             try {
-                funcionarioValidator.validar(conn, cozinheiro);
-            } catch (EntidadeJaExisteException e) {
+                cozinheiro = cozinheiroDAO.salvar(conn, cozinheiro);
                 conn.commit();
-                throw e;
+                return cozinheiro;
+            } catch (SQLException e) {
+                DatabaseConfig.rollback(conn);
+                if (e.getErrorCode() == 1062) {
+                    throw new EntidadeJaExisteException("Já existe um cozinheiro com esse login.");
+                } else {
+                    throw e;
+                }
             }
-
-            cozinheiro = cozinheiroDAO.salvar(conn, cozinheiro);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
         } finally {
             DatabaseConfig.close(conn);
         }
-
-        return cozinheiro;
     }
 
-    public void atualizar(Cozinheiro cozinheiro) throws EntidadeJaExisteException, SQLException {
+    public void atualizar(Cozinheiro cozinheiro) throws EntidadeJaExisteException, SQLException, EntidadeNaoExisteException {
+
+        buscarPorId(cozinheiro.getId());
+
         Connection conn = null;
+
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
 
             try {
-                funcionarioValidator.validar(conn, cozinheiro);
-            } catch (EntidadeJaExisteException e) {
+                cozinheiroDAO.atualizar(conn, cozinheiro);
                 conn.commit();
-                throw e;
+            } catch (SQLException e) {
+                DatabaseConfig.rollback(conn);
+                if (e.getErrorCode() == 1062) {
+                    throw new EntidadeJaExisteException("Já existe um cozinheiro com esse login.");
+                } else {
+                    throw e;
+                }
             }
-
-            cozinheiroDAO.atualizar(conn, cozinheiro);
-            conn.commit();
-        } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
-            throw e;
         } finally {
             DatabaseConfig.close(conn);
         }

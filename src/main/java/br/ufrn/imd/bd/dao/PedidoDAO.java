@@ -33,7 +33,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     public Pedido mapearResultado(ResultSet rs) throws SQLException {
         Pedido pedido = new Pedido();
         pedido.setId(rs.getLong("id_pedido"));
-        pedido.setAtendente(atendenteDAO.mapearResultado(rs, "atendente_"));
+        pedido.setAtendente(atendenteDAO.mapearResultado(rs, "atendente_pedido_"));
         pedido.setConta(contaDAO.mapearResultado(rs));
         pedido.setProgressoPedido(ProgressoPedido.valueOf(rs.getString("progresso")));
         pedido.setDataRegistro(rs.getObject("data_hora_registro", LocalDateTime.class));
@@ -173,15 +173,16 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     public List<Pedido> buscarPedidoPorPeriodo(Connection conn, LocalDateTime inicio, LocalDateTime fim) throws SQLException {
         List<Pedido> pedidos = new ArrayList<>();
 
-        String sql = "SELECT p.*, m.*, " +
-                "f.is_ativo AS atendente_is_ativo, " +
-                "f.nome AS atendente_nome, " +
-                "f.email AS atendente_email, " +
-                "f.login AS atendente_login, " +
-                "f.senha AS atendente_senha, " +
-                "a.tipo AS atendente_tipo, " +
-                "f.data_cadastro AS atendente_data_cadastro, " +
-                "f.id_funcionario AS atendente_id_funcionario " +
+        String sql = "SELECT p.*, c.*, " +
+                "f.is_ativo AS atendente_pedido_is_ativo, " +
+                "f.nome AS atendente_pedido_nome, " +
+                "f.email AS atendente_pedido_email, " +
+                "f.login AS atendente_pedido_login, " +
+                "f.senha AS atendente_pedido_senha, " +
+                "a.tipo AS atendente_pedido_tipo, " +
+                "f.data_cadastro AS atendente_pedido_data_cadastro, " +
+                "f.id_funcionario AS atendente_pedido_id_funcionario, " +
+                "m.id_mesa AS mesa_id_mesa, m.identificacao AS mesa_identificacao " +
                 "FROM pedido AS p " +
                 "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
                 "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario " +
@@ -206,14 +207,25 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     }
 
     public Pedido buscarPorIdComProdutos(Long id) throws SQLException {
-        String sql = "SELECT * FROM pedido p " +
+        String sql = "SELECT p.*, ppi.*, ip.*, produto.*, " +
+                "f.is_ativo AS atendente_pedido_is_ativo, " +
+                "f.nome AS atendente_pedido_nome, " +
+                "f.email AS atendente_pedido_email, " +
+                "f.login AS atendente_pedido_login, " +
+                "f.senha AS atendente_pedido_senha, " +
+                "a.tipo AS atendente_pedido_tipo, " +
+                "f.data_cadastro AS atendente_pedido_data_cadastro, " +
+                "f.id_funcionario AS atendente_pedido_id_funcionario, " +
+                "m.id_mesa AS mesa_id_mesa, " +
+                "m.is_ativo AS mesa_is_ativo, m.identificacao AS mesa_identificacao " +
+                "FROM pedido p " +
                 "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
                 "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario " +
                 "JOIN conta AS c ON p.id_conta = c.id_conta " +
                 "JOIN mesa AS m ON c.id_mesa = m.id_mesa " +
-                "JOIN pedido_possui_instancia AS ppi ON p.id_pedido = ppi.id_pedido " +
-                "JOIN instancia_produto AS ip ON ppi.id_instancia_produto = ip.id_instancia_produto " +
-                "JOIN produto ON ip.id_produto = produto.id_produto WHERE p.id_pedido = ?";
+                "LEFT JOIN pedido_possui_instancia AS ppi ON p.id_pedido = ppi.id_pedido " +
+                "LEFT JOIN instancia_produto AS ip ON ppi.id_instancia_produto = ip.id_instancia_produto " +
+                "LEFT JOIN produto ON ip.id_produto = produto.id_produto WHERE p.id_pedido = ?";
         Pedido pedido = null;
 
         try (Connection conn = getConnection();

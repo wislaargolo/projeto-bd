@@ -1,29 +1,51 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Cadastrar Telefone</title>
-    <style>
-        .error-message {
-            color: red;
-        }
-    </style>
-</head>
+<html layout:decorate="~{gerente/layout}" xmlns="http://www.w3.org/1999/xhtml">
 <body>
-<h2 th:text="${telefone.telefone == null ? 'Cadastrar Telefone' : 'Editar Telefone'}">Cadastrar Telefone</h2>
-<div th:if="${error}">
-    <p th:text="${error}"></p>
-</div>
-<form th:action="${telefone.telefone} == null ?
-                    @{'/funcionarios/' + ${telefone.funcionario.id} + '/telefones'} :
-                    @{'/funcionarios/' + ${telefone.funcionario.id} + '/telefones/' + ${telefone.telefone} + '/editar'}" th:object="${telefone}" method="post">
-    <input type="hidden" th:field="*{funcionario.id}" />
 
-    <label for="telefone">Telefone:</label>
-    <input type="text" th:field="*{telefone}" id="telefone" />
-    <br/>
+<section class="main p-4" layout:fragment="corpo">
+    <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
+        <a th:href="@{'/gerente/'  + ${tipo} + '/' + ${telefone.funcionario.id} + '/telefones'}" class="btn btn-primary" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
+            <i class="fa fa-arrow-left" style="font-size: 16px;"></i>
+        </a>
+        <h1 th:text="${telefone.telefone == null ? 'Cadastrar Telefone' : 'Editar Telefone'}"></h1>
+    </div>
 
-    <input type="submit" value="Submit" />
-</form>
+    <div class="container mt-4">
+
+        <form th:action="@{${edicao} ? '/gerente/' + ${tipo} + '/' + ${telefone.funcionario.id} + '/telefones/editar' : '/gerente/' + ${tipo} + '/' + ${telefone.funcionario.id} + '/telefones/salvar'}"
+              th:object="${telefone}"
+              method="post"
+              class="needs-validation"
+              novalidate>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div th:if="${#fields.hasErrors()}" class="alert alert-danger alert-dismissible fade show" role="alert" >
+                <span th:each="err : ${#fields.allErrors()}" th:utext="${err + '<br/>'}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <input type="hidden" th:field="*{funcionario.id}" />
+            <input type="hidden" name="telefoneAntigo" th:value="${#strings.isEmpty(telefoneAntigo) ? telefone.telefone : telefoneAntigo}" />
+            <input type="hidden" name="tipo" th:value="${tipo}" />
+            <input type="hidden" name="edicao" th:value="${edicao}" />
+
+            <div class="mb-3">
+                <label for="telefone" class="form-label">Telefone:</label>
+                <input type="text" th:field="*{telefone}" id="telefone" class="form-control" required th:value="${telefone.telefone == null ? '' : telefone.telefone}" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+    </div>
+</section>
+
 </body>
 </html>
+
