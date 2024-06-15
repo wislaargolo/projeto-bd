@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 
 public class Atendente extends Funcionario {
 
-    @NotNull
     private TipoAtendente tipo;
 
     public Atendente(Funcionario funcionario) {
@@ -16,6 +15,7 @@ public class Atendente extends Funcionario {
         this.setSenha(funcionario.getSenha());
         this.setEmail(funcionario.getEmail());
         this.setDataCadastro(funcionario.getDataCadastro());
+        this.setAtivo(funcionario.getAtivo());
     }
 
     public Atendente() {}

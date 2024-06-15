@@ -10,6 +10,7 @@ public class Cozinheiro extends Funcionario {
         this.setSenha(funcionario.getSenha());
         this.setEmail(funcionario.getEmail());
         this.setDataCadastro(funcionario.getDataCadastro());
+        this.setAtivo(funcionario.getAtivo());
     }
 
     public Cozinheiro() {}

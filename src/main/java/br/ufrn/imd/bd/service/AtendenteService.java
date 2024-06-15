@@ -3,7 +3,9 @@ package br.ufrn.imd.bd.service;
 import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.AtendenteDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Atendente;
+import br.ufrn.imd.bd.model.Caixa;
 import br.ufrn.imd.bd.model.enums.TipoAtendente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,9 +23,12 @@ public class AtendenteService {
     public List<Atendente> buscarPorTipo(TipoAtendente tipo) throws SQLException {
         return atendenteDAO.buscarPorTipo(tipo);
     }
-
-    public Atendente buscarPorId(Long id) throws SQLException {
-        return atendenteDAO.buscarPorChave(id);
+    public Atendente buscarPorId(Long id) throws SQLException, EntidadeNaoExisteException {
+        Atendente atendente = atendenteDAO.buscarPorChave(id);
+        if(atendente == null) {
+            throw new EntidadeNaoExisteException("Atendente não encontrado.");
+        }
+        return atendente;
     }
 
     public Atendente salvar(Atendente atendente) throws SQLException, EntidadeJaExisteException {
@@ -40,8 +45,7 @@ public class AtendenteService {
             } catch (SQLException e) {
                 DatabaseConfig.rollback(conn);
                 if (e.getErrorCode() == 1062) {
-                    if(atendente.getTipo().equals(TipoAtendente.GARCOM)) throw new EntidadeJaExisteException("Já existe um garçom com esse login.");
-                    else throw new EntidadeJaExisteException("Já existe um gerente com esse login.");
+                    throw new EntidadeJaExisteException("Já existe um funcionário com esse login.");
                 } else {
                     throw e;
                 }
@@ -51,7 +55,7 @@ public class AtendenteService {
         }
     }
 
-    public void atualizar(Atendente atendente) throws EntidadeJaExisteException, SQLException {
+    public void atualizar(Atendente atendente) throws EntidadeJaExisteException, SQLException, EntidadeNaoExisteException {
 
         buscarPorId(atendente.getId());
 
@@ -67,8 +71,7 @@ public class AtendenteService {
             } catch (SQLException e) {
                 DatabaseConfig.rollback(conn);
                 if (e.getErrorCode() == 1062) {
-                    if(atendente.getTipo().equals(TipoAtendente.GARCOM)) throw new EntidadeJaExisteException("Já existe um garçom com esse login.");
-                    else throw new EntidadeJaExisteException("Já existe um gerente com esse login.");
+                    throw new EntidadeJaExisteException("Já existe um funcionário com esse login.");
                 } else {
                     throw e;
                 }
@@ -78,7 +81,8 @@ public class AtendenteService {
         }
     }
 
-    public void deletar(Long id) throws SQLException {
+    public void deletar(Long id) throws SQLException, EntidadeNaoExisteException {
+        buscarPorId(id);
         try (Connection conn = DatabaseConfig.getConnection()){
             atendenteDAO.deletar(conn, id);
         }

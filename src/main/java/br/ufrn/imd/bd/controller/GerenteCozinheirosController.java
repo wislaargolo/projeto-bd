@@ -31,84 +31,91 @@ public class GerenteCozinheirosController extends TelefoneController {
     @GetMapping
     public String listarCozinheiros(Model model) throws SQLException {
         List<Cozinheiro> cozinheiros = cozinheiroService.buscarTodos();
-        model.addAttribute("cozinheiros", cozinheiros);
-        return "cozinheiro/lista";
+        model.addAttribute("url", getUrl());
+        model.addAttribute("funcionarios", cozinheiros);
+        return "funcionario/lista";
     }
 
     @GetMapping("/novo")
     public String criarFormCozinheiro(Model model) {
-        model.addAttribute("cozinheiro", new Cozinheiro());
-        return "cozinheiro/formulario";
+        model.addAttribute("url", getUrl());
+        model.addAttribute("funcionario", new Cozinheiro());
+        return "funcionario/formulario";
     }
 
     @GetMapping("/{id}/editar")
     public String editarFormCozinheiro(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
+        model.addAttribute("url", getUrl());
         try {
-            model.addAttribute("cozinheiro", cozinheiroService.buscarPorId(id));
+            model.addAttribute("funcionario", cozinheiroService.buscarPorId(id));
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/gerente/cozinheiros";
         }
-        return "cozinheiro/formulario";
+        return "funcionario/formulario";
     }
 
     @PostMapping("/salvar")
-    public String salvarCozinheiro(@ModelAttribute @Valid Cozinheiro cozinheiro, BindingResult bindingResult,
-                              @RequestParam("confirmacaoSenha") String confirmacaoSenha, Model model) throws SQLException {
+    public String salvarCozinheiro(@ModelAttribute("funcionario") @Valid Cozinheiro funcionario, BindingResult bindingResult,
+                                   @RequestParam("confirmacaoSenha") String confirmacaoSenha, Model model) throws SQLException {
         List<String> errors = new ArrayList<>();
+
+        model.addAttribute("url", getUrl());
 
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
         }
 
-        if (cozinheiro.getSenha() == null || cozinheiro.getSenha().isEmpty()) {
+        if (funcionario.getSenha() == null || funcionario.getSenha().isEmpty()) {
             errors.add("Senha é obrigatória.");
         }
 
-        if (!cozinheiro.getSenha().equals(confirmacaoSenha)) {
+        if (!funcionario.getSenha().equals(confirmacaoSenha)) {
             errors.add("As senhas não coincidem!");
         }
 
         if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
-            return "cozinheiro/formulario";
+            return "funcionario/formulario";
         }
 
         try {
-            cozinheiroService.salvar(cozinheiro);
+            cozinheiroService.salvar(funcionario);
         } catch (EntidadeJaExisteException e) {
             errors.add(e.getMessage());
             model.addAttribute("errors", errors);
-            return "cozinheiro/formulario";
+            return "funcionario/formulario";
         }
 
         return "redirect:/gerente/cozinheiros";
     }
 
     @PostMapping("/editar")
-    public String editarCozinheiro(@ModelAttribute @Valid Cozinheiro cozinheiro, BindingResult bindingResult,
-                              @RequestParam String confirmacaoSenha, Model model, RedirectAttributes redirectAttributes) throws SQLException {
+    public String editarCozinheiro(@ModelAttribute("funcionario") @Valid Cozinheiro funcionario, BindingResult bindingResult,
+                                   @RequestParam String confirmacaoSenha, Model model, RedirectAttributes redirectAttributes) throws SQLException {
         List<String> errors = new ArrayList<>();
+
+        model.addAttribute("url", getUrl());
 
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
         }
 
-        if (!cozinheiro.getSenha().equals(confirmacaoSenha)) {
+        if (!funcionario.getSenha().equals(confirmacaoSenha)) {
             errors.add("As senhas não coincidem!");
         }
 
         if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
-            return "cozinheiro/formulario";
+            return "funcionario/formulario";
         }
 
         try {
-            cozinheiroService.atualizar(cozinheiro);
+            cozinheiroService.atualizar(funcionario);
         } catch (EntidadeJaExisteException e) {
             errors.add(e.getMessage());
             model.addAttribute("errors", errors);
-            return "cozinheiro/formulario";
+            return "funcionario/formulario";
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/gerente/cozinheiros";
@@ -128,7 +135,7 @@ public class GerenteCozinheirosController extends TelefoneController {
         return "redirect:/cozinheiros";
     }
     @Override
-    public String getTipo() {
+    public String getUrl() {
         return "cozinheiros";
     }
 }

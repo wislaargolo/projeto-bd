@@ -4,18 +4,19 @@
 
 <section class="main p-4" layout:fragment="corpo">
     <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
-        <a th:href="@{/gerente/caixas}" class="btn btn-primary" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
+        <a th:href="@{'/gerente/' + ${url}}" class="btn btn-primary" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
             <i class="fa fa-arrow-left" style="font-size: 16px;"></i>
         </a>
-        <h1 th:text="${caixa.id == null ? 'Cadastrar Caixa' :'Editar Caixa'}"></h1>
+        <h1 th:text="${funcionario.id == null ? 'Cadastrar' : 'Editar'}">Cadastrar</h1>
     </div>
 
     <div class="container mt-4">
 
-        <form th:action="@{${caixa.id == null ? '/gerente/caixas/salvar' : '/gerente/caixas/editar'}}" th:object="${caixa}" method="post" class="needs-validation" novalidate>
+        <form th:action="${funcionario.id == null ? '/gerente/' + url + '/salvar' : '/gerente/' + url + '/editar'}" th:object="${funcionario}" method="post" class="needs-validation" novalidate>
 
-        <input type="hidden" th:field="*{id}" />
+            <input type="hidden" th:field="*{id}" />
             <input type="hidden" th:field="*{ativo}" />
+
 
             <div th:if="${not #lists.isEmpty(errors)}" class="alert alert-danger alert-dismissible fade show" role="alert">
                 <span th:each="error, iterStat : ${errors}" th:utext="${error + '<br/>'}">
@@ -46,8 +47,8 @@
             <div class="mb-3">
                 <label for="senha" class="form-label">Senha:</label>
                 <input type="password" th:field="*{senha}" id="senha" class="form-control"
-                       th:required="${caixa.id == null}">
-                <small id="senhaHelp" class="form-text text-muted" th:if="${caixa.id != null}">
+                       th:required="${funcionario.id == null}">
+                <small id="senhaHelp" class="form-text text-muted" th:if="${funcionario.id != null}">
                     Preencha este campo apenas se desejar alterar a senha.
                 </small>
             </div>
@@ -55,13 +56,12 @@
             <div class="mb-3">
                 <label for="confirmacaoSenha" class="form-label">Confirmar Senha:</label>
                 <input type="password" id="confirmacaoSenha" name="confirmacaoSenha" class="form-control"
-                       th:required="${caixa.id == null}">
-                <div class="invalid-feedback" th:if="${senhaErro}">
-                    As senhas não correspondem.
-                </div>
+                       th:required="${funcionario.id == null}">
             </div>
 
-            <button type="submit" class="btn btn-primary">Enviar</button>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </div>
         </form>
     </div>
 </section>

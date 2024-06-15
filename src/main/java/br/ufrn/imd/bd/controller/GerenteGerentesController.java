@@ -14,18 +14,20 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Controller
-@RequestMapping("/gerente/atendentes")
-public class GerenteAtendentesController {
+@RequestMapping("/gerente/gerentes")
+public class GerenteGerentesController extends AtendenteController{
 
     @Autowired
     private AtendenteService atendenteService;
 
-    @GetMapping("/{tipo}")
-    public String listarAtendentes(@PathVariable("tipo") String tipo, Model model) throws SQLException {
-        List<Atendente> atendentes = atendenteService.buscarPorTipo(TipoAtendente.valueOf(tipo.toUpperCase()));
-        model.addAttribute("atendentes", atendentes);
-        model.addAttribute("tipo", tipo);
-        return "atendente/lista";
+
+    @Override
+    public String getUrl() {
+        return "gerentes";
     }
 
+    @Override
+    public TipoAtendente getTipo() {
+        return TipoAtendente.GERENTE;
+    }
 }

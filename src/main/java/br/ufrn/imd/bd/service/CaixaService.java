@@ -45,7 +45,7 @@ public class CaixaService {
             } catch (SQLException e) {
                 DatabaseConfig.rollback(conn);
                 if (e.getErrorCode() == 1062) {
-                    throw new EntidadeJaExisteException("Já existe um caixa com esse login.");
+                    throw new EntidadeJaExisteException("Já existe um funcionário com esse login.");
                 } else {
                     throw e;
                 }
@@ -71,7 +71,7 @@ public class CaixaService {
             } catch (SQLException e) {
                 DatabaseConfig.rollback(conn);
                 if (e.getErrorCode() == 1062) {
-                    throw new EntidadeJaExisteException("Já existe um caixa com esse login.");
+                    throw new EntidadeJaExisteException("Já existe um funcionário com esse login.");
                 } else {
                     throw e;
                 }

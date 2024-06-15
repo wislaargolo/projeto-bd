@@ -39,7 +39,7 @@
                     <td th:text="${pedido.conta.mesa.identificacao}"></td>
                     <td th:text="${pedido.progressoPedido}"
                         th:style="${pedido.progressoPedido.name() == 'CANCELADO' ? 'color: red;' : ''}"></td>
-                    <td th:text="${#temporals.format(pedido.dataRegistro, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                    <td th:text="${#temporals.format(pedido.dataRegistro, 'HH:mm:ss')}"></td>
                     <td>
                         <a class="btn btn-info btn-sm" th:href="@{'/cozinha/pedidos/' + ${pedido.id}}" role="button">
                             <span class="oi oi-eye" title="Ver Detalhes" aria-hidden="true"></span>

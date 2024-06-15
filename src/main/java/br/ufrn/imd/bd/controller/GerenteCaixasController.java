@@ -3,6 +3,7 @@ package br.ufrn.imd.bd.controller;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Caixa;
+import br.ufrn.imd.bd.model.Cozinheiro;
 import br.ufrn.imd.bd.service.CaixaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,31 +33,37 @@ public class GerenteCaixasController extends TelefoneController {
     @GetMapping
     public String listarCaixas (Model model) throws SQLException {
         List<Caixa> caixas = caixaService.buscarTodos();
-        model.addAttribute("caixas", caixas);
-        return "caixa/lista";
+        model.addAttribute("url", getUrl());
+        model.addAttribute("funcionarios", caixas);
+        return "funcionario/lista";
     }
 
     @GetMapping("/novo")
     public String criarFormCaixa(Model model) {
-        model.addAttribute("caixa", new Caixa());
-        return "caixa/formulario";
+        model.addAttribute("url", getUrl());
+        model.addAttribute("funcionario", new Caixa());
+        return "funcionario/formulario";
     }
 
     @GetMapping("/{id}/editar")
     public String editarFormCaixa(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
+        model.addAttribute("url", getUrl());
+
         try {
             model.addAttribute("caixa", caixaService.buscarPorId(id));
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/gerente/caixas";
         }
-        return "caixa/formulario";
+        return "funcionario/formulario";
     }
 
     @PostMapping("/salvar")
-    public String salvarCaixa(@ModelAttribute @Valid Caixa caixa, BindingResult bindingResult,
+    public String salvarCaixa(@ModelAttribute("funcionario") @Valid Caixa caixa, BindingResult bindingResult,
                               @RequestParam("confirmacaoSenha") String confirmacaoSenha, Model model) throws SQLException {
         List<String> errors = new ArrayList<>();
+
+        model.addAttribute("url", getUrl());
 
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
@@ -72,7 +79,7 @@ public class GerenteCaixasController extends TelefoneController {
 
         if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
-            return "caixa/formulario";
+            return "funcionario/formulario";
         }
 
         try {
@@ -80,16 +87,17 @@ public class GerenteCaixasController extends TelefoneController {
         } catch (EntidadeJaExisteException e) {
             errors.add(e.getMessage());
             model.addAttribute("errors", errors);
-            return "caixa/formulario";
+            return "funcionario/formulario";
         }
 
         return "redirect:/gerente/caixas";
     }
 
     @PostMapping("/editar")
-    public String editarCaixa(@ModelAttribute @Valid Caixa caixa, BindingResult bindingResult,
+    public String editarCaixa(@ModelAttribute("funcionario") @Valid Caixa caixa, BindingResult bindingResult,
                               @RequestParam String confirmacaoSenha, Model model, RedirectAttributes redirectAttributes) throws SQLException {
         List<String> errors = new ArrayList<>();
+        model.addAttribute("url", getUrl());
 
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
@@ -101,7 +109,7 @@ public class GerenteCaixasController extends TelefoneController {
 
         if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
-            return "caixa/formulario";
+            return "funcionario/formulario";
         }
 
         try {
@@ -109,7 +117,7 @@ public class GerenteCaixasController extends TelefoneController {
         } catch (EntidadeJaExisteException e) {
             errors.add(e.getMessage());
             model.addAttribute("errors", errors);
-            return "caixa/formulario";
+            return "funcionario/formulario";
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/gerente/caixas";
@@ -131,7 +139,7 @@ public class GerenteCaixasController extends TelefoneController {
     }
 
     @Override
-    public String getTipo() {
+    public String getUrl() {
         return "caixas";
     }
 }

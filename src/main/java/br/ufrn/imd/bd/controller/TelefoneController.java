@@ -19,7 +19,7 @@ import java.sql.SQLException;
 
 public abstract class TelefoneController {
 
-    public abstract String getTipo();
+    public abstract String getUrl();
 
     @Autowired
     private FuncionarioService funcionarioService;
@@ -29,7 +29,7 @@ public abstract class TelefoneController {
 
     @GetMapping("/{id}/telefones")
     public String listarTelefonesFuncionario(Model model, @PathVariable Long id) throws SQLException, EntidadeNaoExisteException {
-        model.addAttribute("tipo", getTipo());
+        model.addAttribute("url", getUrl());
 
         model.addAttribute("funcionario", funcionarioService.buscarPorId(id));
         model.addAttribute("telefones", telefoneService.buscarTelefonesPorFuncionarioId(id));
@@ -38,7 +38,7 @@ public abstract class TelefoneController {
 
     @GetMapping("/{id}/telefones/novo")
     public String criarFormTelefone(Model model, @PathVariable Long id) throws SQLException, EntidadeNaoExisteException {
-        model.addAttribute("tipo", getTipo());
+        model.addAttribute("url", getUrl());
         model.addAttribute("telefone", new Telefone(id));
         model.addAttribute("edicao", false);
         return "telefone/formulario";
@@ -48,7 +48,7 @@ public abstract class TelefoneController {
     public String salvarTelefone(@ModelAttribute @Valid Telefone telefone, BindingResult bindingResult,
                                  @PathVariable Long id, RedirectAttributes redirectAttributes, Model model) throws SQLException, EntidadeNaoExisteException {
 
-        model.addAttribute("tipo", getTipo());
+        model.addAttribute("url", getUrl());
         model.addAttribute("edicao", false);
 
         if (bindingResult.hasErrors()) {
@@ -61,7 +61,7 @@ public abstract class TelefoneController {
             model.addAttribute("error", e.getMessage());
             return "telefone/formulario";
         }
-        return String.format("redirect:/gerente/%s/%s/telefones", getTipo(),id);
+        return String.format("redirect:/gerente/%s/%s/telefones", getUrl(),id);
     }
 
     @GetMapping("/{id}/telefones/editar")
@@ -71,10 +71,10 @@ public abstract class TelefoneController {
 
         try {
             model.addAttribute("telefone", telefoneService.buscarPorChave(new TelefoneKey(id, telefone)));
-            model.addAttribute("tipo", getTipo());
+            model.addAttribute("url", getUrl());
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return String.format("redirect:/gerente/%s/%s/telefones", getTipo(),id);
+            return String.format("redirect:/gerente/%s/%s/telefones", getUrl(),id);
         }
 
         return "telefone/formulario";
@@ -83,7 +83,7 @@ public abstract class TelefoneController {
     public String editarTelefone(@ModelAttribute @Valid Telefone telefone, BindingResult bindingResult, @PathVariable Long id,
                                  @RequestParam("telefoneAntigo") String telefoneAntigo, RedirectAttributes redirectAttributes, Model model) throws SQLException {
 
-        model.addAttribute("tipo", getTipo());
+        model.addAttribute("url", getUrl());
         model.addAttribute("edicao", true);
 
         if (bindingResult.hasErrors()) {
@@ -95,13 +95,13 @@ public abstract class TelefoneController {
             telefoneService.atualizar(new Telefone(id, telefoneAntigo), telefone);
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return String.format("redirect:/%s/%s/telefones", getTipo(),id);
+            return String.format("redirect:/%s/%s/telefones", getUrl(),id);
         } catch (EntidadeJaExisteException e) {
             model.addAttribute("telefoneAntigo", telefoneAntigo);
             model.addAttribute("error", e.getMessage());
             return "telefone/formulario";
         }
-        return String.format("redirect:/gerente/%s/%s/telefones", getTipo(), id);
+        return String.format("redirect:/gerente/%s/%s/telefones", getUrl(), id);
     }
 
 
@@ -111,9 +111,9 @@ public abstract class TelefoneController {
             telefoneService.deletar(telefone, id);
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return String.format("redirect:/gerente/%s/%s/telefones", getTipo(), id);
+            return String.format("redirect:/gerente/%s/%s/telefones", getUrl(), id);
         }
-        return String.format("redirect:/gerente/%s/%s/telefones", getTipo(),id);
+        return String.format("redirect:/gerente/%s/%s/telefones", getUrl(),id);
     }
 
 }
