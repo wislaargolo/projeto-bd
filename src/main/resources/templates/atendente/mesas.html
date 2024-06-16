@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html th:with="layout=${layout}" layout:decorate="${layout}" xmlns="http://www.w3.org/1999/xhtml">
+
+<body>
+<section class="main p-4" layout:fragment="corpo">
+    <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
+        <h1 >Mesas</h1>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row g-3">
+            <div th:each="mesa : ${mesas}" class="col-md-3 col-sm-3 d-flex align-items-stretch">
+                <div class="card mb-4 shadow-sm w-100 rounded-lg">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <div class="icon-wrapper" style="margin:auto; margin-bottom: 10px;">
+                            <i class="fa-solid fa-chair" aria-hidden="true"></i>
+                        </div>
+                        <span style="margin:auto;" class="card-title" th:text="${mesa.identificacao}"></span>
+                        <a th:href="@{'/' + ${#strings.substringBefore(layout, '/')}  + '/pedidos/mesas/' + ${mesa.id}}" class="stretched-link"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

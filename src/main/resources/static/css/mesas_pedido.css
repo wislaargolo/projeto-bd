@@ -1,0 +1,14 @@
+
+.main .card-icon {
+    font-size: 1rem;
+}
+.main .card-title {
+    font-size: 14px;
+}
+.main .card {
+    transition: background-color 0.3s ease, box-shadow 0.3s;
+}
+.main .card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    background-color: #f8f9fa;
+}

@@ -29,13 +29,13 @@
 
 .sidebar-logo {
     margin: auto 0;
+    white-space: nowrap;
 }
 
 .sidebar-logo a {
     color: #FFF;
     font-size: 1.15rem;
     font-weight: 600;
-    white-space: nowrap;
 }
 
 #sidebar:not(.expand) .sidebar-logo,
