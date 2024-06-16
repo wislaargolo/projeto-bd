@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html th:with="layout=${layout}, cargo=${#strings.substringBefore(layout, '/')}" layout:decorate="${layout}" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <style>
+
+        .card{
+            border:none;
+            position:relative;
+            border-radius:8px;
+            width: 100%;
+        }
+        .card:hover {
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        .card:before{
+            content:"";
+            position:absolute;
+            left:0;
+            top:0;
+            width:4px;
+            height:100%;
+            background-color:#007BFF;
+        }
+
+        .fonts{
+            font-size:14px;
+        }
+
+        .buttons button:nth-child(1){
+               border:1px solid #007BFF !important;
+               color:#007BFF;
+               height:40px;
+        }
+
+        .buttons button:nth-child(1):hover{
+               border:1px solid #007BFF !important;
+               color:#fff;
+               height:40px;
+               background-color:#007BFF;
+        }
+
+        .buttons button:nth-child(2){
+               border:1px solid #007BFF !important;
+               background-color:#007BFF;
+               color:#fff;
+               height:40px;
+        }
+
+        p {
+            margin-bottom: 0.5rem;
+        }
+
+         .icon-container {
+            background: #007BFF;
+            color: white;
+            border-radius: 50%;
+            padding: 10px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: -25px auto 10px;
+            margin-top: 10px;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .telefone-item {
+            margin-right: 15px;
+        }
+    </style>
+</head>
+<body>
+<section class="main p-4" layout:fragment="corpo">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-12">
+            <div class="card p-3 py-4">
+                <div class="text-center">
+                    <div class="icon-container">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <span class="bg-secondary p-1 px-4 rounded text-white" th:switch="${cargo}">
+                            <span th:case="'gerente'">GERENTE</span>
+                            <span th:case="'garcom'">GARCOM</span>
+                            <span th:case="'cozinha'">COZINHA</span>
+                            <span th:case="'caixa'">CAIXA</span>
+                            <span th:case="*">Pro</span>
+                    </span>
+                    <h5 class="mt-2" th:text="${funcionario.nome}" style="margin-bottom: 30px;">Nome</h5>
+
+                    <div class="px-4" style="margin-bottom: 30px;">
+                        <p class="fonts" th:text="'Login: ' + ${funcionario.login}"></p>
+                        <p class="fonts" th:text="'Email: ' + ${funcionario.email}"></p>
+                        <p class="fonts" th:text="'Data de cadastro: ' + ${#temporals.format(funcionario.dataCadastro, 'dd/MM/yyyy')}"></p>
+                        <div th:if="${not #lists.isEmpty(telefones)}">
+                            <p class="fonts">Telefones: </p>
+                            <p th:each="telefone : ${telefones}" th:text="${telefone.telefone}" class="fonts telefone-item"></p>
+                        </div>
+                    </div>
+
+<!--                    <div class="buttons">-->
+<!--                        <a th:href="@{'/gerente/gerentes/' + ${funcionario.id} + '/editar' + '?returnUrl=' + ${returnUrl}}"-->
+<!--                           class="btn btn-outline-primary px-4"-->
+<!--                           th:if="${cargo} == 'gerente'">-->
+<!--                            Editar-->
+<!--                        </a>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+</body>
+</html>

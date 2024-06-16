@@ -41,7 +41,8 @@ public abstract class AtendenteController extends TelefoneController {
     }
 
     @GetMapping("/{id}/editar")
-    public String editarFormAtendente(@PathVariable Long id, RedirectAttributes redirectAttributes, Model model) throws SQLException {
+    public String editarFormAtendente(@PathVariable Long id,
+                                      RedirectAttributes redirectAttributes, Model model) throws SQLException {
         model.addAttribute("url", getUrl());
 
         try {

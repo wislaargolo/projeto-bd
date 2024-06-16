@@ -6,8 +6,10 @@
             <button class="toggle-btn" type="button">
                 <i class="fa-solid fa-bars"></i>
             </button>
-            <div class="sidebar-logo">
-                <a href="#"></a>
+            <div class="sidebar-logo" style="">
+                <!--            <a href="#"></a>-->
+                <img src="../static/images/logo2.svg" th:src="@{/images/logo-side.svg}" style="width: 35px;">
+                <span style="font-family: 'Montserrat', sans-serif; color: white; font-weight: 600;">serviserve</span>
             </div>
         </div>
         <ul class="sidebar-nav">
@@ -24,7 +26,7 @@
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
+                <a th:href="@{/perfil}"  class="sidebar-link">
                     <i class="fa-solid fa-user"></i>
                     <span>Conta</span>
                 </a>
