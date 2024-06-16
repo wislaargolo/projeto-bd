@@ -1,7 +1,9 @@
 package br.ufrn.imd.bd.dao;
 
+import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.util.ResultSetUtil;
 import br.ufrn.imd.bd.model.Funcionario;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 
@@ -120,5 +122,45 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
             }
         }
         return null;
+    }
+
+
+    public Funcionario carregarPorLogin(String login) throws SQLException {
+        try (Connection conn = DatabaseConfig.getConnection()) {
+            String sql = "SELECT f.*, " +
+                    "EXISTS (SELECT * FROM caixa WHERE id_funcionario = f.id_funcionario) AS is_caixa, " +
+                    "EXISTS (SELECT * FROM cozinheiro WHERE id_funcionario = f.id_funcionario) AS is_cozinheiro, " +
+                    "(SELECT tipo FROM atendente WHERE id_funcionario = f.id_funcionario) AS tipo_atendente " +
+                    "FROM funcionario f WHERE f.login = ? AND f.is_ativo = TRUE";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, login);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new UsernameNotFoundException("Usuário não encontrado: " + login);
+                    }
+
+                    Funcionario funcionario = mapearResultado(rs);
+
+
+                    if (rs.getBoolean("is_caixa")) {
+                        funcionario.adicionaAutoridade("CAIXA");
+                    }
+                    if (rs.getBoolean("is_cozinheiro")) {
+                        funcionario.adicionaAutoridade("COZINHEIRO");
+                    }
+                    String tipoAtendente = rs.getString("tipo_atendente");
+                    if ("GERENTE".equals(tipoAtendente)) {
+                        funcionario.adicionaAutoridade("GERENTE");
+                    } else if ("GARCOM".equals(tipoAtendente)) {
+                        funcionario.adicionaAutoridade("GARCOM");
+                    }
+
+                    return funcionario;
+                }
+            }
+
+
+        }
+
     }
 }
