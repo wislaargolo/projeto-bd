@@ -6,6 +6,7 @@ import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Cozinheiro;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -14,6 +15,8 @@ import java.util.List;
 
 @Service
 public class CozinheiroService {
+
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     private CozinheiroDAO cozinheiroDAO;
@@ -39,6 +42,9 @@ public class CozinheiroService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
+
+            String criptografada = passwordEncoder.encode(cozinheiro.getSenha());
+            cozinheiro.setSenha(criptografada);
 
             try {
                 cozinheiro = cozinheiroDAO.salvar(conn, cozinheiro);
@@ -66,6 +72,11 @@ public class CozinheiroService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
+
+            if(!cozinheiro.getSenha().isEmpty()) {
+                String criptografada = passwordEncoder.encode(cozinheiro.getSenha());
+                cozinheiro.setSenha(criptografada);
+            }
 
             try {
                 cozinheiroDAO.atualizar(conn, cozinheiro);

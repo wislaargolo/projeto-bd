@@ -7,6 +7,7 @@ import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Caixa;
 import br.ufrn.imd.bd.model.Funcionario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -18,6 +19,8 @@ public class CaixaService {
 
     @Autowired
     private CaixaDAO caixaDAO;
+
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public List<Caixa> buscarTodos() throws SQLException {
         return caixaDAO.buscarTodos();
@@ -37,6 +40,9 @@ public class CaixaService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
+
+            String criptografada = passwordEncoder.encode(caixa.getSenha());
+            caixa.setSenha(criptografada);
 
             try {
                 caixa = caixaDAO.salvar(conn, caixa);
@@ -64,6 +70,11 @@ public class CaixaService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
+
+            if(!caixa.getSenha().isEmpty()) {
+                String criptografada = passwordEncoder.encode(caixa.getSenha());
+                caixa.setSenha(criptografada);
+            }
 
             try {
                 caixaDAO.atualizar(conn, caixa);

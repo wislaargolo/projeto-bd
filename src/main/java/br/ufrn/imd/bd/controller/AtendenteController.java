@@ -45,7 +45,7 @@ public abstract class AtendenteController extends TelefoneController {
         model.addAttribute("url", getUrl());
 
         try {
-            model.addAttribute("atendente", atendenteService.buscarPorId(id));
+            model.addAttribute("funcionario", atendenteService.buscarPorId(id));
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/gerente/" + getUrl();
@@ -107,6 +107,7 @@ public abstract class AtendenteController extends TelefoneController {
         }
 
         try {
+            atendente.setTipo(getTipo());
             atendenteService.atualizar(atendente);
         } catch (EntidadeJaExisteException e) {
             errors.add(e.getMessage());
@@ -116,7 +117,7 @@ public abstract class AtendenteController extends TelefoneController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/gerente/" + getUrl();
         }
-        return "redirect:/gerente" + getUrl();
+        return "redirect:/gerente/" + getUrl();
     }
 
     @GetMapping("/{id}/excluir")

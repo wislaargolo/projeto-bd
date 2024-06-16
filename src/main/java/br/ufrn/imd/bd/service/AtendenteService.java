@@ -8,6 +8,7 @@ import br.ufrn.imd.bd.model.Atendente;
 import br.ufrn.imd.bd.model.Caixa;
 import br.ufrn.imd.bd.model.enums.TipoAtendente;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -19,6 +20,8 @@ public class AtendenteService {
 
     @Autowired
     private AtendenteDAO atendenteDAO;
+
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public List<Atendente> buscarPorTipo(TipoAtendente tipo) throws SQLException {
         return atendenteDAO.buscarPorTipo(tipo);
@@ -37,6 +40,9 @@ public class AtendenteService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
+
+            String criptografada = passwordEncoder.encode(atendente.getSenha());
+            atendente.setSenha(criptografada);
 
             try {
                 atendente = atendenteDAO.salvar(conn, atendente);
@@ -64,6 +70,11 @@ public class AtendenteService {
         try {
             conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
+
+            if(!atendente.getSenha().isEmpty()) {
+                String encriptada = passwordEncoder.encode(atendente.getSenha());
+                atendente.setSenha(encriptada);
+            }
 
             try {
                 atendenteDAO.atualizar(conn, atendente);
