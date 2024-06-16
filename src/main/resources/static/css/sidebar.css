@@ -1,4 +1,4 @@
-
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 #sidebar {
     width: 70px;
     min-width: 70px;
@@ -35,6 +35,7 @@
     color: #FFF;
     font-size: 1.15rem;
     font-weight: 600;
+    white-space: nowrap;
 }
 
 #sidebar:not(.expand) .sidebar-logo,
