@@ -65,7 +65,6 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
 
     @Override
     protected String getBuscarPorIdQuery() {
-
         return  "SELECT * FROM pedido WHERE p.id_pedido = ?";
     }
 

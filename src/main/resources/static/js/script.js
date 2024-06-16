@@ -31,26 +31,31 @@ document.addEventListener("DOMContentLoaded", function() {
   const currentPath = window.location.pathname;
 
   function isActive(linkPath) {
-    return currentPath.startsWith(linkPath);
+    const regex = new RegExp(`^${linkPath}(/|$)`);
+    return regex.test(currentPath);
   }
 
   sidebarLinks.forEach(link => {
     const linkPath = link.getAttribute('href');
-
-    if (isActive(linkPath)) {
+    if (isActive(linkPath) && (currentPath === linkPath || currentPath === linkPath + '/')) {
       link.classList.add('active');
     }
   });
 
-  const funcionariosSublinks = document.querySelectorAll('#auth a.sidebar-link');
-  let funcionariosActive = Array.from(funcionariosSublinks).some(sublink => {
-    return isActive(sublink.getAttribute('href'));
-  });
+  function checkSublinksActive(sublinksSelector, dropdownTarget) {
+    const sublinks = document.querySelectorAll(sublinksSelector);
+    const isActiveSublink = Array.from(sublinks).some(sublink => {
+      return isActive(sublink.getAttribute('href'));
+    });
 
-  if (funcionariosActive) {
-    const funcionariosMainLink = document.querySelector('a.has-dropdown[data-bs-target="#auth"]');
-    funcionariosMainLink.classList.add('active');
+    if (isActiveSublink) {
+      const mainLink = document.querySelector(`a.has-dropdown[data-bs-target="${dropdownTarget}"]`);
+      mainLink.classList.add('active');
+    }
   }
+
+  checkSublinksActive('#auth a.sidebar-link', '#auth');
+  checkSublinksActive('#orders a.sidebar-link', '#orders');
 });
 
 
