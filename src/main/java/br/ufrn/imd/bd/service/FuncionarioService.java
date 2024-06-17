@@ -41,7 +41,6 @@ public class FuncionarioService implements UserDetailsService  {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
 }

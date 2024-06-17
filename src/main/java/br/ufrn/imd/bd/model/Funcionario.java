@@ -19,6 +19,7 @@ public class Funcionario implements UserDetails {
     @NotBlank(message = "Nome é obrigatório.")
     private String nome;
 
+    @Size(min = 6, max = 15, message = "O login deve ter entre 6 e 15 caracteres.")
     @NotBlank(message = "Login é obrigatório.")
     private String login;
 

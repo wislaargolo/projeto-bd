@@ -77,6 +77,10 @@ public class GerenteCaixasController extends TelefoneController {
             errors.add("As senhas não coincidem");
         }
 
+        if (caixa.getSenha().length() < 6 || caixa.getSenha().length() > 15 ) {
+            errors.add("A senha deve ter entre 6 e 15 caracteres.");
+        }
+
         if (!errors.isEmpty()) {
             model.addAttribute("errors", errors);
             return "funcionario/formulario";
@@ -103,8 +107,12 @@ public class GerenteCaixasController extends TelefoneController {
             bindingResult.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
         }
 
-        if (!caixa.getSenha().equals(confirmacaoSenha)) {
-            errors.add("As senhas não coincidem");
+        if(!caixa.getSenha().isEmpty()) {
+            if (!caixa.getSenha().equals(confirmacaoSenha)) {
+                errors.add("As senhas não coincidem");
+            } else if (caixa.getSenha().length() < 6 || caixa.getSenha().length() > 15) {
+                errors.add("A senha deve ter entre 6 e 15 caracteres.");
+            }
         }
 
         if (!errors.isEmpty()) {

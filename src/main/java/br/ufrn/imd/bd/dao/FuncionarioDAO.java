@@ -2,6 +2,7 @@ package br.ufrn.imd.bd.dao;
 
 import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.util.ResultSetUtil;
+import br.ufrn.imd.bd.model.Cozinheiro;
 import br.ufrn.imd.bd.model.Funcionario;
 import org.springframework.cglib.core.Local;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +16,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Map;
 
 @Component
 public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
@@ -112,21 +115,6 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
         }
     }
 
-    public Funcionario buscarPorLogin(Connection conn, String login) throws SQLException {
-        String sql = String.format("SELECT * FROM %s WHERE login = ?", getNomeTabela());
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, login);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapearResultado(rs);
-                }
-            }
-        }
-        return null;
-    }
-
-
     public Funcionario carregarPorLogin(String login) throws SQLException {
         try (Connection conn = DatabaseConfig.getConnection()) {
             String sql = "SELECT f.*, " +
@@ -142,7 +130,6 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
                     }
 
                     Funcionario funcionario = mapearResultado(rs);
-
 
                     if (rs.getBoolean("is_caixa")) {
                         funcionario.adicionaAutoridade("CAIXA");
@@ -165,4 +152,38 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
         }
 
     }
+
+    public Map<Funcionario, String> buscarPorLogin(Connection conn, String login) throws SQLException {
+        String sql = "SELECT f.*, " +
+                "EXISTS (SELECT * FROM caixa WHERE id_funcionario = f.id_funcionario) AS is_caixa, " +
+                "EXISTS (SELECT * FROM cozinheiro WHERE id_funcionario = f.id_funcionario) AS is_cozinheiro, " +
+                "(SELECT tipo FROM atendente WHERE id_funcionario = f.id_funcionario) AS tipo_atendente " +
+                "FROM funcionario f WHERE f.login = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, login);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Funcionario funcionario = mapearResultado(rs);
+                    String papel = determinarPapel(rs);
+                    return Collections.singletonMap(funcionario, papel);
+                }
+            }
+        }
+        return null;
+    }
+
+    private String determinarPapel(ResultSet rs) throws SQLException {
+        if ("GERENTE".equals(rs.getString("tipo_atendente"))) {
+            return "GERENTE";
+        } else if ("GARCOM".equals(rs.getString("tipo_atendente"))) {
+            return "GARCOM";
+        } else if (rs.getBoolean("is_caixa")) {
+            return "CAIXA";
+        } else if (rs.getBoolean("is_cozinheiro")) {
+            return "COZINHEIRO";
+        }
+        return "FUNCIONARIO";
+    }
+
 }

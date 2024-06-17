@@ -62,4 +62,9 @@ public class CozinheiroDAO extends AbstractDAO<Cozinheiro, Long> {
     public void deletar(Connection conn, Long id) throws SQLException {
         funcionarioDAO.deletar(conn, id);
     }
+
+//    public Cozinheiro buscarPorLogin(Connection conn, String login) throws SQLException {
+//        String sql = String.format("SELECT f.* FROM %s AS f NATURAL JOIN %s WHERE f.login = ?", funcionarioDAO.getNomeTabela(), getNomeTabela());
+//        return new Cozinheiro(funcionarioDAO.buscarPorLogin(conn, sql, login));
+//    }
 }

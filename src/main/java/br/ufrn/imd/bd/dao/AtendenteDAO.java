@@ -1,6 +1,7 @@
 package br.ufrn.imd.bd.dao;
 
 import br.ufrn.imd.bd.model.Atendente;
+import br.ufrn.imd.bd.model.Cozinheiro;
 import br.ufrn.imd.bd.model.enums.TipoAtendente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -67,24 +68,27 @@ public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
             throw new IllegalArgumentException("ERRO >> Apenas um atendente para atualização.");
         }
 
-        String sql = String.format(
-                "UPDATE %s SET tipo = ? WHERE id_funcionario = ?",
-                getNomeTabela()
-        );
-
         Atendente atendente = atendentes[0];
         funcionarioDAO.atualizar(conn, atendente);
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, atendente.getTipo().toString());
-            stmt.setLong(2, atendente.getId());
+        if (atendente.getTipo() != null) {
+            String sql = String.format(
+                    "UPDATE %s SET tipo = ? WHERE id_funcionario = ?",
+                    getNomeTabela()
+            );
 
-            int linhasAfetadas = stmt.executeUpdate();
-            if (linhasAfetadas == 0) {
-                throw new SQLException("ERRO >> Atualização falhou.");
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, atendente.getTipo().toString());
+                stmt.setLong(2, atendente.getId());
+
+                int linhasAfetadas = stmt.executeUpdate();
+                if (linhasAfetadas == 0) {
+                    throw new SQLException("ERRO >> Atualização falhou, nenhum registro afetado.");
+                }
             }
         }
     }
+
 
     @Override
     public void deletar(Connection conn, Long id) throws SQLException {
@@ -106,5 +110,10 @@ public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
         }
         return resultados;
     }
+
+//    public Atendente buscarPorLogin(Connection conn, String login) throws SQLException {
+//        String sql = String.format("SELECT f.* FROM %s AS f NATURAL JOIN %s WHERE f.login = ?", funcionarioDAO.getNomeTabela(), getNomeTabela());
+//        return new Atendente(funcionarioDAO.buscarPorLogin(conn, sql, login));
+//    }
 
 }

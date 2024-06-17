@@ -2,6 +2,7 @@ package br.ufrn.imd.bd.dao;
 
 import br.ufrn.imd.bd.model.Atendente;
 import br.ufrn.imd.bd.model.Caixa;
+import br.ufrn.imd.bd.model.Cozinheiro;
 import br.ufrn.imd.bd.model.enums.TipoAtendente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -68,4 +69,9 @@ public class CaixaDAO extends AbstractDAO<Caixa,Long> {
     public void deletar(Connection conn, Long id) throws SQLException {
         funcionarioDAO.deletar(conn, id);
     }
+
+//    public Caixa buscarPorLogin(Connection conn, String login) throws SQLException {
+//        String sql = String.format("SELECT f.* FROM %s AS f NATURAL JOIN %s WHERE f.login = ?", funcionarioDAO.getNomeTabela(), getNomeTabela());
+//        return new Caixa(funcionarioDAO.buscarPorLogin(conn, sql, login));
+//    }
 }

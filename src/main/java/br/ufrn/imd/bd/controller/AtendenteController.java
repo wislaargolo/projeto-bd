@@ -65,11 +65,15 @@ public abstract class AtendenteController extends TelefoneController {
         }
 
         if (atendente.getSenha() == null || atendente.getSenha().isEmpty()) {
-            errors.add("Senha é obrigatória.");
+            errors.add("Senha é obrigatória");
         }
 
         if (!atendente.getSenha().equals(confirmacaoSenha)) {
-            errors.add("As senhas não coincidem!");
+            errors.add("As senhas não coincidem");
+        }
+
+        if (atendente.getSenha().length() < 6 || atendente.getSenha().length() > 15 ) {
+            errors.add("A senha deve ter entre 6 e 15 caracteres.");
         }
 
         if (!errors.isEmpty()) {
@@ -98,8 +102,12 @@ public abstract class AtendenteController extends TelefoneController {
             bindingResult.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
         }
 
-        if (!atendente.getSenha().equals(confirmacaoSenha)) {
-            errors.add("As senhas não coincidem");
+        if(!atendente.getSenha().isEmpty()) {
+            if (!atendente.getSenha().equals(confirmacaoSenha)) {
+                errors.add("As senhas não coincidem");
+            } else if (atendente.getSenha().length() < 6 || atendente.getSenha().length() > 15) {
+                errors.add("A senha deve ter entre 6 e 15 caracteres.");
+            }
         }
 
         if (!errors.isEmpty()) {

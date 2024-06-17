@@ -2,10 +2,12 @@ package br.ufrn.imd.bd.service;
 
 import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.AtendenteDAO;
+import br.ufrn.imd.bd.dao.FuncionarioDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Atendente;
 import br.ufrn.imd.bd.model.Caixa;
+import br.ufrn.imd.bd.model.Funcionario;
 import br.ufrn.imd.bd.model.enums.TipoAtendente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,12 +16,15 @@ import org.springframework.stereotype.Service;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AtendenteService {
 
     @Autowired
     private AtendenteDAO atendenteDAO;
+    @Autowired
+    private FuncionarioDAO funcionarioDAO;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -45,13 +50,14 @@ public class AtendenteService {
             atendente.setSenha(criptografada);
 
             try {
-                atendente = atendenteDAO.salvar(conn, atendente);
+                Atendente novo = atendenteDAO.salvar(conn, atendente);
                 conn.commit();
-                return atendente;
+                return novo;
             } catch (SQLException e) {
                 DatabaseConfig.rollback(conn);
                 if (e.getErrorCode() == 1062) {
-                    throw new EntidadeJaExisteException("Já existe um funcionário com esse login.");
+                    reativarSeInativo(atendente);
+                    throw new EntidadeJaExisteException("Um funcionário com esse login foi reativado.");
                 } else {
                     throw e;
                 }
@@ -82,7 +88,8 @@ public class AtendenteService {
             } catch (SQLException e) {
                 DatabaseConfig.rollback(conn);
                 if (e.getErrorCode() == 1062) {
-                    throw new EntidadeJaExisteException("Já existe um funcionário com esse login.");
+                    reativarSeInativo(atendente);
+                    throw new EntidadeJaExisteException("Um funcionário com esse login foi reativado.");
                 } else {
                     throw e;
                 }
@@ -97,6 +104,24 @@ public class AtendenteService {
         try (Connection conn = DatabaseConfig.getConnection()){
             atendenteDAO.deletar(conn, id);
         }
+    }
 
+    private void reativarSeInativo(Atendente atendente) throws SQLException, EntidadeJaExisteException {
+        try (Connection conn = DatabaseConfig.getConnection()) {
+            Map<Funcionario, String> resultado = funcionarioDAO.buscarPorLogin(conn, atendente.getLogin());
+
+            Map.Entry<Funcionario, String> entry = resultado.entrySet().iterator().next();
+            Funcionario existente = entry.getKey();
+            String papel = entry.getValue();
+
+            if (existente.getAtivo()) {
+                throw new EntidadeJaExisteException("Já existe um funcionário ativo com esse login!");
+            } else if (!existente.getAtivo() && !papel.equals(atendente.getTipo().name())) {
+                throw new EntidadeJaExisteException("Existe um funcionário inativo com esse login em outro cargo! Não pode ser reativado.");
+            }
+
+            existente.setAtivo(true);
+            atendenteDAO.atualizar(conn, new Atendente(existente));
+        }
     }
 }

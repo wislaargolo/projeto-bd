@@ -67,11 +67,15 @@ public class GerenteCozinheirosController extends TelefoneController {
         }
 
         if (funcionario.getSenha() == null || funcionario.getSenha().isEmpty()) {
-            errors.add("Senha é obrigatória.");
+            errors.add("Senha é obrigatória");
         }
 
         if (!funcionario.getSenha().equals(confirmacaoSenha)) {
-            errors.add("As senhas não coincidem!");
+            errors.add("As senhas não coincidem");
+        }
+
+        if (funcionario.getSenha().length() < 6 || funcionario.getSenha().length() > 15 ) {
+            errors.add("A senha deve ter entre 6 e 15 caracteres.");
         }
 
         if (!errors.isEmpty()) {
@@ -101,8 +105,12 @@ public class GerenteCozinheirosController extends TelefoneController {
             bindingResult.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
         }
 
-        if (!funcionario.getSenha().equals(confirmacaoSenha)) {
-            errors.add("As senhas não coincidem!");
+        if(!funcionario.getSenha().isEmpty()) {
+            if (!funcionario.getSenha().equals(confirmacaoSenha)) {
+                errors.add("As senhas não coincidem");
+            } else if (funcionario.getSenha().length() < 6 || funcionario.getSenha().length() > 15) {
+                errors.add("A senha deve ter entre 6 e 15 caracteres.");
+            }
         }
 
         if (!errors.isEmpty()) {
@@ -132,7 +140,7 @@ public class GerenteCozinheirosController extends TelefoneController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/gerente/cozinheiros";
         }
-        return "redirect:/cozinheiros";
+        return "redirect:/gerente/cozinheiros";
     }
     @Override
     public String getUrl() {

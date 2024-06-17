@@ -30,7 +30,7 @@ public class ProdutoService {
     public InstanciaProduto buscarPorId(Long id) throws SQLException, EntidadeNaoExisteException {
 
         InstanciaProduto instanciaProduto = instanciaProdutoDAO.buscarPorChave(id);
-        if(instanciaProduto == null) {
+        if (instanciaProduto == null) {
             throw new EntidadeNaoExisteException("Produto não encontrado.");
         }
         return instanciaProduto;
@@ -59,7 +59,7 @@ public class ProdutoService {
             } catch (SQLException e) {
                 DatabaseConfig.rollback(conn);
                 if (e.getErrorCode() == 1062) {
-                    reativarSeInativo(conn, instanciaProduto);
+                    reativarSeInativo(instanciaProduto);
                     throw new EntidadeJaExisteException("Um produto inativo com essa descrição foi reativado.");
                 } else {
                     throw e;
@@ -69,7 +69,6 @@ public class ProdutoService {
             DatabaseConfig.close(conn);
         }
     }
-
 
 
     private InstanciaProduto salvarInstanciaProduto(Connection conn, InstanciaProduto instanciaProduto) throws SQLException, EntidadeNaoExisteException {
@@ -101,15 +100,17 @@ public class ProdutoService {
         return produto;
     }
 
-    private void reativarSeInativo(Connection conn, InstanciaProduto instanciaProduto) throws SQLException, EntidadeJaExisteException {
-        InstanciaProduto existente = instanciaProdutoDAO.buscarUltimaInstanciaPorDescricao(conn, instanciaProduto.getProduto().getDescricao());
+    private void reativarSeInativo(InstanciaProduto instanciaProduto) throws SQLException, EntidadeJaExisteException {
+        try (Connection conn = DatabaseConfig.getConnection()) {
+            InstanciaProduto existente = instanciaProdutoDAO.buscarUltimaInstanciaPorDescricao(conn, instanciaProduto.getProduto().getDescricao());
 
-        if (existente != null && existente.getAtivo()) {
-            throw new EntidadeJaExisteException("Já existe um produto ativo com essa descrição!");
-        } else if (existente != null && !existente.getAtivo()) {
-            existente.setAtivo(true);
-            instanciaProdutoDAO.atualizar(conn, existente);
-            conn.commit();
+            if (existente != null && existente.getAtivo()) {
+                throw new EntidadeJaExisteException("Já existe um produto ativo com essa descrição!");
+            } else if (existente != null && !existente.getAtivo()) {
+                existente.setAtivo(true);
+                instanciaProdutoDAO.atualizar(conn, existente);
+            }
         }
     }
+
 }
