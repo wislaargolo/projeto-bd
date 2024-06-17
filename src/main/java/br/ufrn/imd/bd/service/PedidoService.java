@@ -19,7 +19,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PedidoService {
@@ -28,7 +30,7 @@ public class PedidoService {
     private PedidoDAO pedidoDAO;
 
     @Autowired
-    private ContaDAO contaDAO;
+    private MesaService mesaService;
 
     public List<Pedido> buscarTodos() throws SQLException {
         return pedidoDAO.buscarTodos();
@@ -76,6 +78,20 @@ public class PedidoService {
     }
 
     public List<Pedido> buscarPedidosPorTurno() throws SQLException {
+        Map<String, LocalDateTime> turnos = obterTurno();
+        return pedidoDAO.buscarPedidoPorPeriodo(turnos.get("inicioTurno"), turnos.get("fimTurno"));
+    }
+
+    public List<Pedido> buscarPedidosPorMesa(Long idMesa) throws SQLException, EntidadeNaoExisteException {
+
+        mesaService.buscarPorId(idMesa);
+
+        Map<String, LocalDateTime> turnos = obterTurno();
+        return pedidoDAO.buscarPedidosPorMesa(turnos.get("inicioTurno"), turnos.get("fimTurno"), idMesa);
+    }
+
+
+    public Map<String, LocalDateTime> obterTurno() {
         LocalDateTime inicioTurno;
         LocalDateTime fimTurno;
 
@@ -96,9 +112,11 @@ public class PedidoService {
             fimTurno = now.with(LocalTime.MAX);
         }
 
-        try (Connection conn = DatabaseConfig.getConnection()) {
-            return pedidoDAO.buscarPedidoPorPeriodo(conn, inicioTurno, fimTurno);
-        }
+        Map<String, LocalDateTime> turnos = new HashMap<>();
+        turnos.put("inicioTurno", inicioTurno);
+        turnos.put("fimTurno", fimTurno);
+
+        return turnos;
     }
 
 }

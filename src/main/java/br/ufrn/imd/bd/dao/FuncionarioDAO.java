@@ -3,6 +3,7 @@ package br.ufrn.imd.bd.dao;
 import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.util.ResultSetUtil;
 import br.ufrn.imd.bd.model.Funcionario;
+import org.springframework.cglib.core.Local;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 
 @Component
@@ -27,10 +29,10 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
         Funcionario funcionario = new Funcionario();
         funcionario.setId(rs.getLong(prefixo + "id_funcionario"));
         funcionario.setNome(rs.getString(prefixo + "nome"));
-        funcionario.setLogin(rs.getString(prefixo + "login"));
-        funcionario.setSenha(rs.getString(prefixo + "senha"));
-        funcionario.setEmail(rs.getString(prefixo + "email"));
-        funcionario.setDataCadastro(rs.getObject(prefixo + "data_cadastro", LocalDate.class));
+        funcionario.setLogin(ResultSetUtil.getValue(rs, prefixo + "login", String.class));
+        funcionario.setSenha(ResultSetUtil.getValue(rs, prefixo + "senha", String.class));
+        funcionario.setEmail(ResultSetUtil.getValue(rs, prefixo + "email", String.class));
+        funcionario.setDataCadastro(ResultSetUtil.getLocalDate(rs, prefixo + "data_cadastro"));
         funcionario.setAtivo(ResultSetUtil.getBooleanFromInteger(rs, "is_ativo", prefixo));
 
         return funcionario;

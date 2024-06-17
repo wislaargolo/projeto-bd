@@ -1,5 +1,4 @@
 // mascara de valor
-
 $(document).ready(function(){
     var valorInicial = $('#valor').val();
     if (valorInicial) {
@@ -72,5 +71,26 @@ $(document).ready(function(){
  $(document).ready(function(){
            $('#telefone').mask('(00) 00000-0000');
 });
+
+// tela de pedidos para atendentes
+ function toggleProducts(pedidoId) {
+     var productList = document.getElementById('products-' + pedidoId);
+     console.log('Toggle function called for: ', pedidoId); // Adicione isso para confirmar que a função é chamada
+     if (productList) {
+         console.log('Found element: ', productList); // Confirma que o elemento foi encontrado
+         productList.style.display = (productList.style.display === 'none' || productList.style.display === '') ? 'table-row' : 'none';
+     } else {
+         console.error('Elemento não encontrado: products-' + pedidoId);
+     }
+ }
+
+ $(window).on('load', function() {
+     $('.btn-visualizar').on('click', function() {
+         var pedidoId = $(this).data('pedido-id');
+         toggleProducts(pedidoId);
+     });
+ });
+
+
 
 

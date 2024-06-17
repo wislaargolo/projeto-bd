@@ -9,13 +9,12 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-
+    <!-- FontAwesome -->
     <script src="https://kit.fontawesome.com/af46ebb8cd.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" rel="stylesheet">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" rel="stylesheet">
+
     <link th:href="@{/css/style.css}" rel="stylesheet" />
     <link th:href="@{/css/sidebar.css}" rel="stylesheet" />
     <link th:href="@{/css/lista.css}" rel="stylesheet" />
@@ -37,46 +36,33 @@
         </div>
     </section>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
-        crossorigin="anonymous"></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
 <!-- jQuery Mask Plugin -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
-<!-- Popper.js (necessário para Bootstrap) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Bootstrap JS -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
-
-<script type="text/javascript">
-    var url = '';
-
-   $('button[id^="btn_"]').click(function() {
-        var pathParts = $(this).attr('id').split('_');
-        var basePath = pathParts[1];
-        var entity = pathParts[2];
-        var entityId = pathParts[3];
-
-     url = `http://localhost:8080/${basePath}/${entity}/${entityId}/excluir`;
-
-    });
-
-    $('#ok_confirm').click(function() {
-        document.location.href = url;
-    });
-
-</script>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-
 <!-- Nosso JS -->
 <script th:src="@{/js/script.js}"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var url = '';
+
+        $('button[id^="btn_"]').click(function() {
+            var pathParts = $(this).attr('id').split('_');
+            var basePath = pathParts[1];
+            var entity = pathParts[2];
+            var entityId = pathParts[3];
+            url = `http://localhost:8080/${basePath}/${entity}/${entityId}/excluir`;
+        });
+
+        $('#ok_confirm').click(function() {
+            document.location.href = url;
+        });
+    });
+</script>
 
 </body>
 </html>

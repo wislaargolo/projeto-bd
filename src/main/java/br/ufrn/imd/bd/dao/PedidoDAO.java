@@ -169,54 +169,44 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
         }
     }
 
-    public List<Pedido> buscarPedidoPorPeriodo(Connection conn, LocalDateTime inicio, LocalDateTime fim) throws SQLException {
+    public List<Pedido> buscarPedidoPorPeriodo(LocalDateTime inicio, LocalDateTime fim) throws SQLException {
         List<Pedido> pedidos = new ArrayList<>();
 
-        String sql = "SELECT p.*, c.*, " +
-                "f.is_ativo AS atendente_pedido_is_ativo, " +
+        String sql = "SELECT p.*, c.*, m.*, " +
                 "f.nome AS atendente_pedido_nome, " +
-                "f.email AS atendente_pedido_email, " +
                 "f.login AS atendente_pedido_login, " +
-                "f.senha AS atendente_pedido_senha, " +
                 "a.tipo AS atendente_pedido_tipo, " +
-                "f.data_cadastro AS atendente_pedido_data_cadastro, " +
-                "f.id_funcionario AS atendente_pedido_id_funcionario, " +
-                "m.id_mesa AS mesa_id_mesa, m.identificacao AS mesa_identificacao " +
+                "f.id_funcionario AS atendente_pedido_id_funcionario " +
                 "FROM pedido AS p " +
                 "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
                 "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario " +
                 "JOIN conta AS c ON c.id_conta = p.id_conta " +
                 "JOIN mesa AS m ON c.id_mesa = m.id_mesa " +
                 "WHERE p.data_hora_registro >= ? " +
-                "AND p.data_hora_registro < ? " +
+                "AND p.data_hora_registro <= ? " +
                 "ORDER BY p.progresso = 'SOLICITADO' DESC, p.data_hora_registro DESC";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setObject(1, inicio);
             stmt.setObject(2, fim);
-            ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()) {
-                Pedido pedido = mapearResultado(rs);
-                pedidos.add(pedido);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Pedido pedido = mapearResultado(rs);
+                    pedidos.add(pedido);
+                }
             }
         }
 
         return pedidos;
     }
-
     public Pedido buscarPorIdComProdutos(Long id) throws SQLException {
-        String sql = "SELECT p.*, ppi.*, ip.*, produto.*, " +
-                "f.is_ativo AS atendente_pedido_is_ativo, " +
+        String sql = "SELECT p.*, ppi.*, ip.*, produto.*, m.*, " +
                 "f.nome AS atendente_pedido_nome, " +
-                "f.email AS atendente_pedido_email, " +
-                "f.login AS atendente_pedido_login, " +
-                "f.senha AS atendente_pedido_senha, " +
                 "a.tipo AS atendente_pedido_tipo, " +
-                "f.data_cadastro AS atendente_pedido_data_cadastro, " +
-                "f.id_funcionario AS atendente_pedido_id_funcionario, " +
-                "m.id_mesa AS mesa_id_mesa, " +
-                "m.is_ativo AS mesa_is_ativo, m.identificacao AS mesa_identificacao " +
+                "f.id_funcionario AS atendente_pedido_id_funcionario " +
                 "FROM pedido p " +
                 "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
                 "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario " +
@@ -229,22 +219,81 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, id);
-            ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()) {
-                if (pedido == null) {
-                    pedido = mapearResultado(rs);
-                }
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    if (pedido == null) {
+                        pedido = mapearResultado(rs);
+                    }
 
-                PedidoInstancia pedidoInstancia = mapearPedidoInstancia(rs);
-                if (pedidoInstancia != null && pedidoInstancia.getInstanciaProduto() != null) {
-                    pedido.getProdutos().add(pedidoInstancia);
+                    PedidoInstancia pedidoInstancia = mapearPedidoInstancia(rs);
+                    if (pedidoInstancia != null && pedidoInstancia.getInstanciaProduto() != null) {
+                        pedido.getProdutos().add(pedidoInstancia);
+                    }
                 }
             }
         }
 
         return pedido;
+    }
+
+    public List<Pedido> buscarPedidosPorMesa(LocalDateTime inicio, LocalDateTime fim, Long idMesa) throws SQLException {
+        List<Pedido> pedidos = new ArrayList<>();
+
+        String sql = "SELECT p.*, m.*, c.status, " +
+                "f.nome AS atendente_pedido_nome, " +
+                "f.id_funcionario AS atendente_pedido_id_funcionario, " +
+                "f.login AS atendente_pedido_login, " +
+                "a.tipo AS atendente_pedido_tipo " +
+                "FROM mesa AS m " +
+                "JOIN conta AS c ON c.id_mesa = m.id_mesa " +
+                "JOIN pedido AS p ON p.id_conta = c.id_conta " +
+                "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
+                "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario " +
+                "WHERE p.data_hora_registro >= ? " +
+                "AND p.data_hora_registro <= ? AND m.id_mesa = ? AND c.status != 'FINALIZADA' " +
+                "ORDER BY p.data_hora_registro DESC";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setObject(1, inicio);
+            stmt.setObject(2, fim);
+            stmt.setLong(3, idMesa);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Pedido pedido = mapearResultado(rs);
+                    List<PedidoInstancia> produtos = buscaProdutosPedido(conn, pedido.getId());
+                    pedido.setProdutos(produtos);
+                    pedidos.add(pedido);
+                }
+            }
+        }
+
+        return pedidos;
+    }
+
+    public List<PedidoInstancia> buscaProdutosPedido(Connection conn, Long idPedido) throws SQLException {
+        List<PedidoInstancia> produtos = new ArrayList<>();
+
+        String sql = "SELECT * FROM pedido " +
+                "NATURAL JOIN pedido_possui_instancia " +
+                "NATURAL JOIN instancia_produto " +
+                "NATURAL JOIN produto WHERE id_pedido = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, idPedido);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    PedidoInstancia produto = mapearPedidoInstancia(rs);
+                    produtos.add(produto);
+                }
+            }
+        }
+
+        return produtos;
     }
 
 }

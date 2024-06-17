@@ -4,53 +4,70 @@
 <section class="main p-4" layout:fragment="corpo">
     <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
         <h1>Lista de Pedidos</h1>
+        <a class="btn btn-primary btn-md" th:href="@{/gerente/pedidos/novo}" role="button">
+            <i class="fa-solid fa-plus"></i>
+            <span>Novo Pedido</span>
+        </a>
     </div>
-    <div class="container" id="listagem">
-        <!-- Mensagem de Sucesso -->
-        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <span th:text="${successMessage}"></span>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
 
+    <div class="container" id="listagem">
         <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
             <span th:text="${error}"></span>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <div class="table-responsive">
-            <table class="table table-striped table-hover table-sm">
+
+        <div th:if="${pedidos == null or #lists.isEmpty(pedidos)}" class="alert alert-info" role="alert">
+            Nenhum pedido encontrado.
+        </div>
+
+        <div class="table-responsive" th:if="${pedidos != null and !#lists.isEmpty(pedidos)}">
+            <table class="table table-striped table-hover table-sm flex-table">
                 <thead>
                 <tr>
-                    <th>#</th>
+                    <th>ID</th>
                     <th>Atendente</th>
-                    <th>Mesa</th>
-                    <th>Status</th>
-                    <th>Momento do Registro</th>
-                    <th>Ações</th>
+                    <th>Data</th>
+                    <th class="action-column">Ações</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="pedido : ${pedidos}">
                     <td th:text="${pedido.id}"></td>
                     <td th:text="${pedido.atendente.nome}"></td>
-                    <td th:text="${pedido.conta.mesa.identificacao}"></td>
-                    <td th:text="${pedido.progressoPedido}"
-                        th:style="${pedido.progressoPedido.name() == 'CANCELADO' ? 'color: red;' : ''}"></td>
-                    <td th:text="${#temporals.format(pedido.dataRegistro, 'HH:mm:ss')}"></td>
+                    <td th:text="${#temporals.format(pedido.dataRegistro, 'dd/MM/yyyy HH:mm')}"></td>
                     <td>
-                        <a class="btn btn-info btn-sm" th:href="@{'/cozinha/pedidos/' + ${pedido.id}}" role="button">
-                            <span class="oi oi-eye" title="Ver Detalhes" aria-hidden="true"></span>
-                        </a>
+                        <button class="btn btn-secondary btn-sm" th:onclick="'toggleProducts(' + ${pedido.id} + ')'">
+                            <span class="oi oi-eye" title="Ver Produtos" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                </tr>
+                <tr th:if="${pedido.produtos != null and !#lists.isEmpty(pedido.produtos)}" id="products-[[${pedido.id}]]" class="product-list">
+                    <td colspan="4">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Quantidade</th>
+                                <th>Valor</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="produto : ${pedido.produtos}">
+                                <td th:text="${produto.instanciaProduto.produto.nome}"></td>
+                                <td th:text="${produto.quantidade}"></td>
+                                <td th:text="${produto.instanciaProduto.valor}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </td>
                 </tr>
                 </tbody>
-
             </table>
         </div>
     </div>
+
 </section>
 </body>
 </html>

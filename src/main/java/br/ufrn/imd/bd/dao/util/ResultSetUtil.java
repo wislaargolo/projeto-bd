@@ -4,6 +4,9 @@ import br.ufrn.imd.bd.dao.AbstractDAO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 
 public class ResultSetUtil {
@@ -54,6 +57,14 @@ public class ResultSetUtil {
     public static boolean getBooleanFromInteger(ResultSet rs, String columnName, String prefixo) throws SQLException {
         Integer value = getValue(rs, prefixo + columnName, Integer.class);
         return value != null && value == 1;
+    }
+
+    public static LocalDate getLocalDate(ResultSet rs, String columnName) throws SQLException {
+        if (!hasColumn(rs, columnName) || rs.getObject(columnName) == null) {
+            return null;
+        }
+        Timestamp timestamp = rs.getTimestamp(columnName);
+        return timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 }
 

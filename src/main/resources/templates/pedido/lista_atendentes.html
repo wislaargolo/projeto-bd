@@ -1,0 +1,75 @@
+<html layout:decorate="~{gerente/layout}" xmlns="http://www.w3.org/1999/xhtml">
+
+<body>
+<section class="main p-4" layout:fragment="corpo">
+    <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Lista de Pedidos</h1>
+        <a class="btn btn-primary btn-md" th:href="@{/gerente/pedidos/novo}" role="button">
+            <i class="fa-solid fa-plus"></i>
+            <span>Novo Pedido</span>
+        </a>
+    </div>
+
+    <div class="container" id="listagem">
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div th:if="${#lists.isEmpty(pedidos)}" class="alert alert-info" role="alert">
+            Nenhum pedido encontrado.
+        </div>
+
+        <div class="table-responsive" th:if="${!#lists.isEmpty(pedidos)}">
+            <table class="table table-striped table-hover table-sm flex-table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Atendente</th>
+                    <th>Horário</th>
+                    <th class="action-column">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="pedido : ${pedidos}">
+                    <tr>
+                        <td th:text="${pedido.id}"></td>
+                        <td th:text="${pedido.atendente.nome}"></td>
+                        <td th:text="${#temporals.format(pedido.dataRegistro, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm" th:onclick="'toggleProducts(' + ${pedido.id} + ');'">
+                                <span class="oi oi-eye" title="Ver Produtos" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:id="'products-' + ${pedido.id}" class="product-list" style="display: none;">
+                        <td colspan="4">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Quantidade</th>
+                                    <th>Valor</th>
+                                </tr>
+                                </thead>
+                                <tbody th:if="${pedido.produtos != null and !#lists.isEmpty(pedido.produtos)}">
+                                <tr th:each="produto : ${pedido.produtos}">
+                                    <td th:text="${produto.instanciaProduto.produto.descricao}"></td>
+                                    <td th:text="${produto.quantidade}"></td>
+                                    <td th:text="${produto.instanciaProduto.valor}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+</body>
+</html>
