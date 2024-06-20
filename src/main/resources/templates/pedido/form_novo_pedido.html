@@ -9,6 +9,7 @@
         </a>
     </div>
 
+    <div class="container mt-4">
     <div class="table-responsive" th:if="${!#lists.isEmpty(todosProdutos)}">
         <table class="table table-striped table-hover table-sm table-main">
             <thead>
@@ -78,21 +79,8 @@
             </div>
         </form>
     </div>
+    </div>
 </section>
 
 </body>
 </html>
-
-
-
-<!--<td th:text="${instancia.quantidade}">
-                               &lt;!&ndash; <div class="mb-3">
-                                    <input type="number" th:field="*{produtos[__${iterStat.index}__].quantidade}" id="quantidade" class="form-control" required>
-                                </div>&ndash;&gt;
-                                &lt;!&ndash;<input type="number" th:field="*{produtos[__${iterStat.index}__].quantidade}" id="quantidade" class="form-control" required>&ndash;&gt;
-
-
-
-
-                            </td>-->
-<!--<input type="number" name="quantidade" value="1" min="0" />-->

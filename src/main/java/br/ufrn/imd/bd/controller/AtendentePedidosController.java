@@ -105,14 +105,14 @@ public abstract class AtendentePedidosController {
         /*for (PedidoInstancia item : pedido.getProdutos()) {
             System.out.println(item.getQuantidade());
         }*/
-        try {
+        /*try {
             Funcionario funcionario = (Funcionario) authentication.getPrincipal() ;
             Atendente atendente = funcionario.getId();
             Conta conta = new Conta();
             conta.setAtendente();
 
         }
-
+*/
         return "redirect:/" + getLayout() + "/pedidos/mesas";
     }
 }
