@@ -63,6 +63,22 @@ public class PedidoService {
         return pedido;
     }
 
+    //perguntar a wisla se o catch está certo
+    public void addProdutoEmPedido(Pedido pedido) throws SQLException {
+        Connection conn = null;
+        try {
+            conn = DatabaseConfig.getConnection();
+            conn.setAutoCommit(false);
+            pedidoDAO.salvarInstanciaEmPedido(conn, pedido);
+            conn.commit();
+        } catch (SQLException e) {
+            DatabaseConfig.rollback(conn);
+            throw e;
+        } finally {
+            DatabaseConfig.close(conn);
+        }
+    }
+
     public void atualizar(Pedido pedido) throws EntidadeJaExisteException, SQLException {
         try (Connection conn = DatabaseConfig.getConnection()){
             pedidoDAO.atualizar(conn, pedido);

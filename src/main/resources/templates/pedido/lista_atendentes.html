@@ -39,7 +39,7 @@
 <section class="main p-4" layout:fragment="corpo">
     <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
         <h1>Lista de Pedidos</h1>
-        <a class="btn btn-primary btn-md" th:href="@{/gerente/pedidos/novo}" role="button">
+        <a class="btn btn-primary btn-md" th:href="@{'/gerente/pedidos/novo/' + ${mesa.id}}" role="button">
             <i class="fa-solid fa-plus"></i>
             <span>Novo Pedido</span>
         </a>

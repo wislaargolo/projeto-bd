@@ -39,8 +39,18 @@ public class ContaService {
 
     public Conta salvar(Conta conta) throws SQLException {
 
-        try (Connection conn = DatabaseConfig.getConnection()){
+        Connection conn = null;
+
+        try {
+            conn = DatabaseConfig.getConnection();
+            conn.setAutoCommit(false);
             conta = contaDAO.salvar(conn, conta);
+            conn.commit();
+        } catch (SQLException e) {
+            DatabaseConfig.rollback(conn);
+            throw e;
+        } finally {
+            DatabaseConfig.close(conn);
         }
 
         return conta;
