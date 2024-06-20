@@ -37,6 +37,10 @@ public class Pedido {
         this.produtos = produtos;
     }
 
+    public void addProduto(PedidoInstancia pedidoInstancia) {
+        produtos.add(pedidoInstancia);
+    }
+
     public Long getId() {
         return id;
     }
