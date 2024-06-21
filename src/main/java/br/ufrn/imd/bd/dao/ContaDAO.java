@@ -79,7 +79,7 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
 
     @Override
     protected String getBuscarPorIdQuery() {
-        return "SELECT * FROM conta WHERE id_conta = ?";
+        return "SELECT * FROM conta NATURAL JOIN mesa WHERE id_conta = ?";
     }
 
 
@@ -129,8 +129,8 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, novo.getMesa().getId());
-            stmt.setLong(2, novo.getAtendente().getId());
-            stmt.setLong(3, novo.getCaixa().getId());
+            stmt.setObject(2, novo.getAtendente() != null ? novo.getAtendente().getId() : null);
+            stmt.setObject(3, novo.getCaixa() != null ? novo.getCaixa().getId() : null);
             stmt.setString(4, novo.getMetodoPagamento() != null ? novo.getMetodoPagamento().toString() : null);
             stmt.setString(5, novo.getStatusConta().toString());
             stmt.setLong(6, novo.getId());

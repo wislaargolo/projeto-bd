@@ -11,6 +11,7 @@ import br.ufrn.imd.bd.service.ProdutoService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -124,8 +125,14 @@ public abstract class AtendentePedidosController {
     @PostMapping("/conta/{id}/solicitar")
     public String solicitarConta(@PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException{
         try {
-            Conta conta = contaService.buscarPorId(id);
+            Conta conta = new Conta();
             conta.setStatusConta(StatusConta.SOLICITADA);
+            conta.setId(id);
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Funcionario funcionarioLogado = (Funcionario) auth.getPrincipal();
+            conta.setAtendente(new Atendente(funcionarioLogado.getId()));
+
             contaService.atualizar(conta);
 
             redirectAttributes.addFlashAttribute("sucesso","Conta solicitada com sucesso!");

@@ -58,7 +58,11 @@ public class CaixaContasController {
         if (bindingResult.hasErrors()) {
             return "conta/formulario";
         }
-        contaService.atualizar(conta);
+        try {
+            contaService.atualizar(conta);
+        } catch (EntidadeNaoExisteException e) {
+            throw new RuntimeException(e); // tratar corretamente, veja GerenteMesasController
+        }
         return "redirect:/contas";
     }
 }

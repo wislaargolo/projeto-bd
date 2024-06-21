@@ -75,7 +75,12 @@ public class ContaService {
         return conta;
     }
 
-    public void atualizar(Conta conta) throws SQLException {
+    public void atualizar(Conta conta) throws SQLException, EntidadeNaoExisteException {
+        Conta existente = buscarPorId(conta.getId());
+
+        if(conta.getMesa() == null) {
+            conta.setMesa(existente.getMesa());
+        }
 
         if ("ABERTA".equals(conta.getStatusConta().name())) {
             conta.setMetodoPagamento(null);
@@ -85,4 +90,6 @@ public class ContaService {
             contaDAO.atualizar(conn,conta);
         }
     }
+
+
 }
