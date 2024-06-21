@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 
@@ -59,12 +60,12 @@ public class ResultSetUtil {
         return value != null && value == 1;
     }
 
-    public static LocalDate getLocalDate(ResultSet rs, String columnName) throws SQLException {
+    public static LocalDateTime getLocalDate(ResultSet rs, String columnName) throws SQLException {
         if (!hasColumn(rs, columnName) || rs.getObject(columnName) == null) {
             return null;
         }
         Timestamp timestamp = rs.getTimestamp(columnName);
-        return timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 }
 

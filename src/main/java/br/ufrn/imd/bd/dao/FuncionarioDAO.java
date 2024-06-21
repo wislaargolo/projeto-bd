@@ -31,7 +31,7 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
     public Funcionario mapearResultado(ResultSet rs, String prefixo) throws SQLException {
         Funcionario funcionario = new Funcionario();
         funcionario.setId(rs.getLong(prefixo + "id_funcionario"));
-        funcionario.setNome(rs.getString(prefixo + "nome"));
+        funcionario.setNome(ResultSetUtil.getValue(rs,prefixo + "nome", String.class));
         funcionario.setLogin(ResultSetUtil.getValue(rs, prefixo + "login", String.class));
         funcionario.setSenha(ResultSetUtil.getValue(rs, prefixo + "senha", String.class));
         funcionario.setEmail(ResultSetUtil.getValue(rs, prefixo + "email", String.class));

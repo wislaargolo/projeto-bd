@@ -33,8 +33,8 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     public Pedido mapearResultado(ResultSet rs) throws SQLException {
         Pedido pedido = new Pedido();
         pedido.setId(rs.getLong("id_pedido"));
-        pedido.setAtendente(atendenteDAO.mapearResultado(rs, "atendente_pedido_"));
-        pedido.setConta(contaDAO.mapearResultado(rs));
+        pedido.setAtendente(ResultSetUtil.getEntity(rs, atendenteDAO, "atendente_pedido_", "id_funcionario"));
+        pedido.setConta(ResultSetUtil.getEntity(rs, contaDAO, "id_conta"));
         pedido.setProgressoPedido(ProgressoPedido.valueOf(rs.getString("progresso")));
         pedido.setDataRegistro(rs.getObject("data_hora_registro", LocalDateTime.class));
 
@@ -65,7 +65,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
 
     @Override
     protected String getBuscarPorIdQuery() {
-        return  "SELECT * FROM pedido WHERE p.id_pedido = ?";
+        return  "SELECT id_pedido, progresso, data_hora_registro FROM pedido WHERE id_pedido = ?";
     }
 
 

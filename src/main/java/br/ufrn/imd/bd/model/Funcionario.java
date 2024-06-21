@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +29,7 @@ public class Funcionario implements UserDetails {
     @NotBlank(message = "Email é obrigatório.")
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "Email com formato inválido.")
     private String email;
-    private LocalDate dataCadastro;
+    private LocalDateTime dataCadastro;
 
     private Boolean isAtivo;
 
@@ -82,11 +83,11 @@ public class Funcionario implements UserDetails {
         this.email = email;
     }
 
-    public LocalDate getDataCadastro() {
+    public LocalDateTime getDataCadastro() {
         return dataCadastro;
     }
 
-    public void setDataCadastro(LocalDate dataCadastro) {
+    public void setDataCadastro(LocalDateTime dataCadastro) {
         this.dataCadastro = dataCadastro;
     }
 

@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component
@@ -40,7 +41,7 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
         Conta conta = new Conta();
         conta.setId(rs.getLong("id_conta"));
         conta.setStatusConta(ResultSetUtil.getEnumValue(rs, "status", StatusConta.class));
-        conta.setDataFinalizacao(ResultSetUtil.getValue(rs, "data_hora_finalizacao", LocalDateTime.class));
+        conta.setDataFinalizacao(ResultSetUtil.getLocalDate(rs, "data_hora_finalizacao"));
         conta.setCaixa(ResultSetUtil.getEntity(rs, caixaDAO, "caixa_", "id_funcionario"));
         conta.setAtendente(ResultSetUtil.getEntity(rs, atendenteDAO, "atendente_", "id_funcionario"));
         conta.setMesa(ResultSetUtil.getEntity(rs, mesaDAO,"id_mesa"));
