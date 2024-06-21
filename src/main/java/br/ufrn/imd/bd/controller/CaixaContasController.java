@@ -1,9 +1,7 @@
 package br.ufrn.imd.bd.controller;
 
-import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Conta;
-import br.ufrn.imd.bd.model.Cozinheiro;
-import br.ufrn.imd.bd.model.Mesa;
 import br.ufrn.imd.bd.service.ContaService;
 import br.ufrn.imd.bd.service.MesaService;
 import jakarta.validation.Valid;
@@ -21,8 +19,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Controller
-@RequestMapping("/contas")
-public class ContaController {
+@RequestMapping("/caixa/contas")
+public class CaixaContasController {
 
     @Autowired
     private ContaService contaService;
@@ -46,7 +44,11 @@ public class ContaController {
 
     @GetMapping("/editar/{id}")
     public String editarFormConta(Model model, @PathVariable Long id) throws SQLException {
-        model.addAttribute("conta", contaService.buscarPorId(id));
+        try {
+            model.addAttribute("conta", contaService.buscarPorId(id));
+        } catch (EntidadeNaoExisteException e) {
+            throw new RuntimeException(e); // tem que tratar isso direito, veja os outros controllers
+        }
         model.addAttribute("mesas", mesaService.buscarTodos());
         return "conta/formulario";
     }

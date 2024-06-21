@@ -2,7 +2,9 @@ package br.ufrn.imd.bd.controller;
 
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.*;
+import br.ufrn.imd.bd.model.enums.StatusConta;
 import br.ufrn.imd.bd.service.AtendenteService;
+import br.ufrn.imd.bd.service.ContaService;
 import br.ufrn.imd.bd.service.MesaService;
 import br.ufrn.imd.bd.service.PedidoService;
 import br.ufrn.imd.bd.service.ProdutoService;
@@ -25,6 +27,9 @@ public abstract class AtendentePedidosController {
 
     @Autowired
     private AtendenteService atendenteService;
+
+    @Autowired
+    private ContaService contaService;
 
     @Autowired
     private ProdutoService produtoService;
@@ -114,5 +119,21 @@ public abstract class AtendentePedidosController {
         }
 */
         return "redirect:/" + getLayout() + "/pedidos/mesas";
+    }
+
+    @PostMapping("/conta/{id}/solicitar")
+    public String solicitarConta(@PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException{
+        try {
+            Conta conta = contaService.buscarPorId(id);
+            conta.setStatusConta(StatusConta.SOLICITADA);
+            contaService.atualizar(conta);
+
+            redirectAttributes.addFlashAttribute("sucesso","Conta solicitada com sucesso!");
+            return "redirect:/" + getLayout() + "/pedidos/mesas/" + conta.getMesa().getId();
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/" + getLayout() + "/pedidos/mesas";
+        }
+
     }
 }
