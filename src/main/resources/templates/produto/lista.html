@@ -38,6 +38,7 @@
                         <a class="btn btn-secondary btn-sm" th:href="@{'/' + ${#strings.substringBefore(layout, '/')} + '/produtos/' + ${instanciaProduto.id} + '/editar'}" role="button">
                             <span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
                         </a>
+
                         <button th:id="'btn_' + ${#strings.substringBefore(layout, '/')} + '_produtos_' + ${instanciaProduto.id} + '_excluir'" type="button"
                                 class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#myModal">
                             <span class="oi oi-circle-x" title="Exclusão" aria-hidden="true"></span>
