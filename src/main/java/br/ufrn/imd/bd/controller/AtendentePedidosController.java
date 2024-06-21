@@ -4,6 +4,7 @@ import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.*;
 import br.ufrn.imd.bd.model.enums.StatusConta;
 import br.ufrn.imd.bd.service.AtendenteService;
+import br.ufrn.imd.bd.service.CancelamentoService;
 import br.ufrn.imd.bd.service.ContaService;
 import br.ufrn.imd.bd.service.MesaService;
 import br.ufrn.imd.bd.service.PedidoService;
@@ -34,6 +35,9 @@ public abstract class AtendentePedidosController {
 
     @Autowired
     private ProdutoService produtoService;
+
+    @Autowired
+    private CancelamentoService cancelamentoService;
 
 
     public abstract String getLayout();
@@ -142,5 +146,17 @@ public abstract class AtendentePedidosController {
             return "redirect:/" + getLayout() + "/pedidos/mesas";
         }
 
+    }
+
+    @PostMapping("/{id}/cancelar")
+    public String cancelarPedido(@PathVariable Long id, @RequestParam Long mesaId, RedirectAttributes redirectAttributes) throws SQLException {
+        try {
+            cancelamentoService.cancelarPedido(id);
+            redirectAttributes.addFlashAttribute("sucesso", "Pedido cancelado com sucesso!");
+            return "redirect:/" + getLayout() + "/pedidos/mesas/" + mesaId;
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/" + getLayout() + "/pedidos/mesas";
+        }
     }
 }

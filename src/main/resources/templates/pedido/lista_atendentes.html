@@ -12,18 +12,59 @@
         .card-header {
             font-size: 1.2em;
             font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        p {
+            margin-bottom:0;
+        }
+        .card-header .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
         .card-body {
             font-size: 0.9em;
         }
         .info-and-actions {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 0.6rem;
+            width: 100%;
+        }
+
+        .info-section {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
         }
         .card-actions {
             display: flex;
+            flex-wrap: wrap;
             gap: 0.5rem;
+            width: 100%;
+        }
+        .card-actions .btn {
+            flex: 1 1 48%;
+        }
+        @media (min-width: 634px) {
+            .info-section {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .card-actions {
+                flex-wrap: nowrap;
+                width: auto;
+            }
+            .card-actions .btn {
+                flex: 1 1 auto;
+            }
+
         }
         .product-list {
             background-color: #f8f9fa;
@@ -46,20 +87,23 @@
             flex: 1 1 100%;
             text-align: left;
         }
-        @media (min-width: 576px) {
+        @media (min-width: 634px) {
             .product-info {
                 flex: 1 1 20%;
                 text-align: left;
             }
         }
-        @media (max-width: 575px) {
+        @media (max-width: 633px) {
             .product-info {
                 text-align: center;
             }
+            #atendente {
+                margin-bottom: 1rem;
+            }
         }
-
         .header-area {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
         }
@@ -70,7 +114,24 @@
         }
         .button-group {
             display: flex;
+            flex-direction: column;
             gap: 0.5rem;
+            width: 100%;
+        }
+        @media (min-width: 634px) {
+            .button-group {
+                flex-direction: row;
+                width: auto;
+            }
+        }
+        .button-group .btn {
+            flex: 1 1 auto;
+        }
+        .progress-status {
+            font-size: 0.9em;
+        }
+        .progress-status.cancelled {
+            color: red;
         }
     </style>
 </head>
@@ -90,7 +151,7 @@
             </a>
             <div th:if="${!#lists.isEmpty(pedidos)}">
                 <form th:action="@{'/gerente/pedidos/conta/' + ${pedidos[0].conta.id} + '/solicitar'}" method="post" style="display: inline;">
-                    <button type="submit" class="btn btn-success btn-md">
+                    <button type="submit" class="btn btn-success btn-md" style="width: 100%;">
                         <i class="fa-solid fa-receipt"></i>
                         <span>Solicitar Conta</span>
                     </button>
@@ -122,21 +183,31 @@
         <div th:each="pedido : ${pedidos}" th:if="${!#lists.isEmpty(pedidos)}">
             <div class="card">
                 <div class="card-header">
-                    Pedido #<span th:text="${pedido.id}"></span> - Atendente: <span th:text="${pedido.atendente.nome}"></span>
+                    <div class="header-left">
+                        Pedido<span th:text="'#' + ${pedido.id}"></span> -
+                        <div class="progress-status" th:classappend="${pedido.progressoPedido.name() == 'CANCELADO'} ? ' cancelled'">
+                            Status: <span th:text="${pedido.progressoPedido.name()}"></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="info-and-actions">
-                        <p>Horário: <span th:text="${#temporals.format(pedido.dataRegistro, 'HH:mm:ss')}"></span></p>
-                        <div class="card-actions">
-                            <button class="btn btn-secondary btn-sm" th:attr="data-bs-toggle='collapse', data-bs-target='#' + 'products-' + ${pedido.id}">
-                                <i class="fa-solid fa-drumstick-bite" title="Ver Produtos"></i>
-                            </button>
-                            <a th:href="@{/gerente/pedidos/(id=${pedido.id})}" class="btn btn-info btn-sm">
-                                <i class="oi oi-eye" title="Ver Pedido"></i>
-                            </a>
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" th:attr="data-bs-target='#cancelaPedido-' + ${pedido.id}" th:data-id="${pedido.id}">
-                                <i class="oi oi-circle-x"  title="Cancelar" aria-hidden="true"></i>
-                            </button>
+                        <div class="info-section">
+                            <p>Horário: <span th:text="${#temporals.format(pedido.dataRegistro, 'HH:mm:ss')}"></span></p>
+                        </div>
+                        <div class="info-section">
+                            <p id="atendente">Atendente: <span th:text="${pedido.atendente.nome}"></span></p>
+                            <div class="card-actions">
+                                <button class="btn btn-secondary btn-sm" th:attr="data-bs-toggle='collapse', data-bs-target='#' + 'products-' + ${pedido.id}">
+                                    <i class="fa-solid fa-drumstick-bite" title="Ver Produtos"></i>
+                                </button>
+                                <a th:href="@{/gerente/pedidos/(id=${pedido.id})}" class="btn btn-info btn-sm">
+                                    <i class="oi oi-eye" title="Ver Pedido"></i>
+                                </a>
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" th:attr="data-bs-target='#cancelaPedido-' + ${pedido.id}" th:data-id="${pedido.id}" th:data-mesa-id="${mesa.id}" th:if="${pedido.progressoPedido.name() != 'CANCELADO'}">
+                                    <i class="oi oi-circle-x" title="Cancelar" aria-hidden="true"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div th:id="'products-' + ${pedido.id}" class="collapse product-list">
@@ -151,7 +222,7 @@
                 </div>
             </div>
 
-            <div th:replace="~{pedido/modal :: cancelaPedido(${layout}, ${pedido.id})}"></div>
+            <div th:replace="~{pedido/modal :: cancelaPedido(${layout}, ${pedido.id}, ${mesa.id})}"></div>
         </div>
     </div>
 </section>

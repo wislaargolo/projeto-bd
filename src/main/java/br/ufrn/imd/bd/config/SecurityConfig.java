@@ -17,30 +17,30 @@ public class SecurityConfig {
     //comentei so pra testar
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeHttpRequests(requests -> requests
-//                        .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**").permitAll()
-//                        .requestMatchers("/gerente/**").hasAnyRole("GERENTE")
-//                        .requestMatchers("/cozinha/**").hasAnyRole("COZINHEIRO")
-//                        .requestMatchers("/caixa/**").hasAnyRole("CAIXA")
-//                        .requestMatchers("/garcom/**").hasAnyRole("GARCOM")
-//                        .anyRequest().authenticated())
-//                .formLogin(formLogin -> formLogin
-//                        .loginPage("/login")
-//                        .successHandler(new CustomAuthenticationSuccessHandler())
-//                        .permitAll())
-//                .logout(logout -> logout
-//                        .logoutUrl("/logout")
-//                        .logoutSuccessUrl("/login?logout")
-//                        .invalidateHttpSession(true)
-//                        .deleteCookies("JSESSIONID")
-//                        .permitAll())
-//                .exceptionHandling(exceptionHandling -> exceptionHandling
-//                    .accessDeniedHandler(accessDeniedHandler()));
-//        return http.build();
-        http.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll());
-
+        http
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**").permitAll()
+                        .requestMatchers("/gerente/**").hasAnyRole("GERENTE")
+                        .requestMatchers("/cozinha/**").hasAnyRole("COZINHEIRO")
+                        .requestMatchers("/caixa/**").hasAnyRole("CAIXA")
+                        .requestMatchers("/garcom/**").hasAnyRole("GARCOM")
+                        .anyRequest().authenticated())
+                .formLogin(formLogin -> formLogin
+                        .loginPage("/login")
+                        .successHandler(new CustomAuthenticationSuccessHandler())
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll())
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                    .accessDeniedHandler(accessDeniedHandler()));
         return http.build();
+//        http.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll());
+//
+//        return http.build();
     }
 
     @Bean
