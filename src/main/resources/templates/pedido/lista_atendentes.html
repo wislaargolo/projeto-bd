@@ -2,39 +2,63 @@
 <html th:with="layout=${layout}" layout:decorate="${layout}" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <style>
-        .table-main {
-            margin-bottom: 0;
+        .card {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
         }
-        .table-secondary {
+        .card-header {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .card-body {
             font-size: 0.9em;
-            background-color: white !important;
-            border-top: none;
         }
-        .table-secondary th, .table-secondary td {
-            border-top: none;
-             border-bottom: none !important;
-              border-collapse: collapse;
+        .info-and-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .collapse-row {
-            padding: 0 !important;
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
         }
-
-
-        .no-hover-effect tr:hover, .no-hover-effect td:hover, .no-hover-effect th:hover {
-        background-color: inherit !important;
-        cursor: default !important;
-    }
-
-
-        .no-hover-effect-collapse {
-            pointer-events: none;
+        .product-list {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
         }
-        .no-hover-effect-collapse tr:hover, .no-hover-effect-collapse td:hover, .no-hover-effect-collapse th:hover {
-            background-color: inherit !important;
+        .product-card {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .product-info {
+            flex: 1 1 100%;
+            text-align: left;
+        }
+        @media (min-width: 576px) {
+            .product-info {
+                flex: 1 1 20%;
+                text-align: left;
+            }
+        }
+        @media (max-width: 575px) {
+            .product-info {
+                text-align: center;
+            }
         }
     </style>
 </head>
-
 <body>
 <section class="main p-4" layout:fragment="corpo">
     <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
@@ -57,60 +81,39 @@
             Nenhum pedido encontrado.
         </div>
 
-        <div class="table-responsive" th:if="${!#lists.isEmpty(pedidos)}">
-            <table class="table table-striped table-hover table-sm table-main">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Atendente</th>
-                    <th>Horário</th>
-                    <th class="action-column">Ações</th>
-                </tr>
-                </thead>
-                <tbody>
-                <th:block th:each="pedido : ${pedidos}">
-                    <tr>
-                        <td th:text="${pedido.id}"></td>
-                        <td th:text="${pedido.atendente.nome}"></td>
-                        <td th:text="${#temporals.format(pedido.dataRegistro, 'dd/MM/yyyy HH:mm')}"></td>
-                        <td>
+        <div th:each="pedido : ${pedidos}" th:if="${!#lists.isEmpty(pedidos)}">
+            <div class="card">
+                <div class="card-header">
+                    Pedido #<span th:text="${pedido.id}"></span> - Atendente: <span th:text="${pedido.atendente.nome}"></span>
+                </div>
+                <div class="card-body">
+                    <div class="info-and-actions">
+                        <p>Horário: <span th:text="${#temporals.format(pedido.dataRegistro, 'HH:mm:ss')}"></span></p>
+                        <div class="card-actions">
                             <button class="btn btn-secondary btn-sm" th:attr="data-bs-toggle='collapse', data-bs-target='#' + 'products-' + ${pedido.id}">
                                 <i class="fa-solid fa-drumstick-bite" title="Ver Produtos"></i>
                             </button>
-
                             <a th:href="@{/gerente/pedidos/(id=${pedido.id})}" class="btn btn-info btn-sm">
                                 <i class="oi oi-eye" title="Ver Pedido"></i>
                             </a>
-                        </td>
-                    </tr>
-                    <tr th:id="'products-' + ${pedido.id}"  class="collapse no-hover-effect-collapse" style="padding: 0;">
-                        <td colspan="4" class="no-border" style="padding: 0 .3rem;">
-                            <table class="table table-secondary no-hover-effect">
-                                <thead>
-                                <tr>
-                                    <th>Produto</th>
-                                    <th>Quantidade</th>
-                                    <th>Valor unitário</th>
-                                    <th>Total</th>
-                                </tr>
-                                </thead>
-                                <tbody th:if="${pedido.produtos != null and !#lists.isEmpty(pedido.produtos)}">
-                                <tr th:each="produto : ${pedido.produtos}">
-                                    <td th:text="${produto.instanciaProduto.produto.descricao}"></td>
-                                    <td th:text="${produto.quantidade}"></td>
-                                    <td th:text="${#numbers.formatCurrency(produto.instanciaProduto.valor)}"></td>
-                                    <td th:text="${#numbers.formatCurrency(produto.quantidade * produto.instanciaProduto.valor)}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                </th:block>
-                </tbody>
-            </table>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelaPedido" th:data-id="${pedido.id}">
+                            <i class="fa fa-times" title="Cancelar" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div th:id="'products-' + ${pedido.id}" class="collapse product-list">
+                        <div th:if="${pedido.produtos != null and !#lists.isEmpty(pedido.produtos)}">
+                            <div th:each="produto : ${pedido.produtos}" class="product-card">
+                                <span class="product-info" th:text="${produto.instanciaProduto.produto.descricao}">Descrição</span>
+                                <span class="product-info" th:text="'&#215; ' + ${produto.quantidade}">Quantidade</span>
+                                <span class="product-info unit-price" th:text="${#numbers.formatCurrency(produto.instanciaProduto.valor)} + ' /cada'">Valor Unitário</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
 </section>
 </body>
 </html>
