@@ -6,7 +6,6 @@ import br.ufrn.imd.bd.dao.PedidoDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Atendente;
 import br.ufrn.imd.bd.model.Cancelamento;
-import br.ufrn.imd.bd.model.Conta;
 import br.ufrn.imd.bd.model.Funcionario;
 import br.ufrn.imd.bd.model.Pedido;
 import br.ufrn.imd.bd.model.PedidoInstancia;
@@ -18,7 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CancelamentoService {
@@ -41,6 +43,23 @@ public class CancelamentoService {
         }
         return cancelamento;
 
+    }
+
+    public List<Cancelamento> buscarTodos() throws SQLException {
+        return cancelamentoDAO.buscarTodos();
+    }
+
+    public Map<Long, List<Cancelamento>> agruparCancelamentosPorPedido() throws SQLException {
+        Map<Long, List<Cancelamento>> agrupadosPorPedido = new HashMap<>();
+
+        for (Cancelamento cancelamento : buscarTodos()) {
+            Long pedidoId = cancelamento.getPedido().getId();
+            List<Cancelamento> listaCancelados = agrupadosPorPedido.getOrDefault(pedidoId, new ArrayList<>());
+            listaCancelados.add(cancelamento);
+            agrupadosPorPedido.put(pedidoId, listaCancelados);
+        }
+
+        return agrupadosPorPedido;
     }
 
     public Pedido cancelarPedido(Long id) throws SQLException, EntidadeNaoExisteException {

@@ -80,4 +80,5 @@ public class Pedido {
     public void setDataRegistro(LocalDateTime dataRegistro) {
         this.dataRegistro = dataRegistro;
     }
+
 }

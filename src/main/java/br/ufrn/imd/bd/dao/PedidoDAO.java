@@ -36,7 +36,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
         pedido.setAtendente(ResultSetUtil.getEntity(rs, atendenteDAO, "atendente_pedido_", "id_funcionario"));
         pedido.setConta(ResultSetUtil.getEntity(rs, contaDAO, "id_conta"));
         pedido.setProgressoPedido(ProgressoPedido.valueOf(rs.getString("progresso")));
-        pedido.setDataRegistro(rs.getObject("data_hora_registro", LocalDateTime.class));
+        pedido.setDataRegistro(ResultSetUtil.getLocalDate(rs, "data_registro"));
 
         return pedido;
     }

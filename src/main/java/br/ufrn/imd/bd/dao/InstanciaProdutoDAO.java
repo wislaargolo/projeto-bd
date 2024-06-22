@@ -21,9 +21,9 @@ public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
 
         InstanciaProduto instanciaProduto = new InstanciaProduto();
         instanciaProduto.setId(rs.getLong("id_instancia_produto"));
-        instanciaProduto.setValor(rs.getDouble("valor"));
-        instanciaProduto.setAtivo(rs.getBoolean("is_ativo"));
-        instanciaProduto.setData(rs.getObject("data", LocalDateTime.class));
+        instanciaProduto.setValor(ResultSetUtil.getDouble(rs, "valor"));
+        instanciaProduto.setAtivo(ResultSetUtil.getBooleanFromInteger(rs, "is_ativo", ""));
+        instanciaProduto.setData(ResultSetUtil.getLocalDate(rs, "data"));
         instanciaProduto.setProduto(produtoDAO.mapearResultado(rs));
         return instanciaProduto;
     }

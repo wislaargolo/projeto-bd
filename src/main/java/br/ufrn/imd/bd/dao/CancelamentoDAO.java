@@ -47,6 +47,22 @@ public class CancelamentoDAO extends AbstractDAO<Cancelamento, Long> {
         return  "SELECT * FROM cancelamento WHERE id_cancelamento = ?";
     }
 
+    @Override
+    protected String getBuscarTodosQuery() {
+        return "SELECT p.progresso, pr.descricao, pr.id_produto, m.*, c.id_conta, " +
+                "ca.*, f.id_funcionario, f.nome " +
+                "FROM cancelamento AS ca " +
+                "JOIN funcionario AS f ON ca.id_atendente = f.id_funcionario " +
+                "JOIN pedido AS p ON ca.id_pedido = p.id_pedido " +
+                "JOIN instancia_produto AS ip ON ca.id_instancia_produto = ip.id_instancia_produto " +
+                "JOIN produto AS pr ON ip.id_produto = pr.id_produto " +
+                "JOIN conta AS c ON p.id_conta = c.id_conta " +
+                "JOIN mesa AS m ON c.id_mesa = m.id_mesa " +
+                "WHERE DATE(ca.data_hora) = CURDATE() " +
+                "ORDER BY ca.data_hora DESC;";
+    }
+
+
 
     @Override
     public Cancelamento salvar(Connection conn, Cancelamento cancelamento) throws SQLException {

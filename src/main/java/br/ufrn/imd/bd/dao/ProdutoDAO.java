@@ -1,5 +1,6 @@
 package br.ufrn.imd.bd.dao;
 
+import br.ufrn.imd.bd.dao.util.ResultSetUtil;
 import br.ufrn.imd.bd.model.Mesa;
 import br.ufrn.imd.bd.model.Produto;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,7 @@ public class ProdutoDAO extends AbstractDAO<Produto, Long> {
         Produto produto = new Produto();
         produto.setId(rs.getLong("id_produto"));
         produto.setDescricao(rs.getString("descricao"));
-        produto.setDisponivel(rs.getBoolean("disponibilidade"));
+        produto.setDisponivel(ResultSetUtil.getBooleanFromInteger(rs, "disponibilidade", ""));
         return produto;
     }
 
