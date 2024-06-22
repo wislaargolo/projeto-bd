@@ -37,7 +37,7 @@ public class CozinhaPedidosController {
 
     @GetMapping
     public String listarPedidos(Model model) throws SQLException {
-        model.addAttribute("pedidos", pedidoService.buscarPedidosPorTurno());
+        model.addAttribute("pedidos", pedidoService.buscarPedidosAbertos());
         return "pedido/lista_cozinha";
     }
 
