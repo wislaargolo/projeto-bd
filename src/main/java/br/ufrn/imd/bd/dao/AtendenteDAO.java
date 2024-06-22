@@ -1,5 +1,6 @@
 package br.ufrn.imd.bd.dao;
 
+import br.ufrn.imd.bd.dao.util.ResultSetUtil;
 import br.ufrn.imd.bd.model.Atendente;
 import br.ufrn.imd.bd.model.Cozinheiro;
 import br.ufrn.imd.bd.model.enums.TipoAtendente;
@@ -21,14 +22,12 @@ public class AtendenteDAO extends AbstractDAO<Atendente, Long> {
 
     @Override
     public Atendente mapearResultado(ResultSet rs) throws SQLException {
-        Atendente atendente = new Atendente(funcionarioDAO.mapearResultado(rs));
-        atendente.setTipo(TipoAtendente.valueOf(rs.getString("tipo")));
-        return atendente;
+        return mapearResultado(rs, "");
     }
 
     public Atendente mapearResultado(ResultSet rs, String prefixo) throws SQLException {
         Atendente atendente = new Atendente(funcionarioDAO.mapearResultado(rs, prefixo));
-        atendente.setTipo(TipoAtendente.valueOf(rs.getString(prefixo + "tipo")));
+        atendente.setTipo(ResultSetUtil.getEnumValue(rs, prefixo + "tipo", TipoAtendente.class));
         return atendente;
     }
 

@@ -19,6 +19,10 @@ public class ResultSetUtil {
         return type.cast(rs.getObject(columnName));
     }
 
+    public static Double getDouble(ResultSet rs, String columnName) throws SQLException {
+        return hasColumn(rs, columnName) ? rs.getObject(columnName, Double.class) : null;
+    }
+
     public static <T> T getEntity(ResultSet rs, AbstractDAO<T, Long> dao, String prefix, String idColumnName) throws SQLException {
         String fullColumnName = prefix + idColumnName;
         if (!hasColumn(rs, fullColumnName) || rs.getObject(fullColumnName) == null) {
