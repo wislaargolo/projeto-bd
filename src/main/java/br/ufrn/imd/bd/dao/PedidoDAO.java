@@ -170,7 +170,8 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     }
 
     public Pedido buscarPorIdComProdutos(Long id) throws SQLException {
-        String sql = "SELECT p.*, ppi.*, ip.*, produto.*, m.*, " +
+        String sql = "SELECT p.id_conta, p.id_pedido, p.progresso, " +
+                "ppi.quantidade, ip.*, produto.descricao, m.*, " +
                 "f.nome AS atendente_pedido_nome, " +
                 "a.tipo AS atendente_pedido_tipo, " +
                 "f.id_funcionario AS atendente_pedido_id_funcionario " +
