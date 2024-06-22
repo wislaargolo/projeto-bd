@@ -179,4 +179,22 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
             }
         }
     }
+
+    public Double obterTotalConta(Long id) throws SQLException {
+        String sql = "SELECT SUM(ppi.quantidade * ip.valor) AS total_conta FROM conta AS c " +
+                "JOIN pedido AS p ON c.id_conta = p.id_conta " +
+                "JOIN pedido_possui_instancia AS ppi ON p.id_pedido = ppi.id_pedido " +
+                "JOIN instancia_produto AS ip ON ip.id_instancia_produto = ppi.id_instancia_produto " +
+                "WHERE c.id_conta = ? AND p.progresso != 'CANCELADO' " +
+                "GROUP BY c.id_conta";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setObject(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("total_conta");
+            }
+        }
+        return null;
+    }
 }

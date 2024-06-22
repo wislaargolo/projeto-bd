@@ -50,9 +50,14 @@ public abstract class AtendentePedidosController {
     @GetMapping("/mesas/{id}")
     public String listarPedidosPorMesa(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) throws SQLException {
         try {
-            model.addAttribute("pedidos", pedidoService.buscarPedidosPorMesa(id));
-            model.addAttribute("layout", getLayout() + "/layout");
             model.addAttribute("mesa", mesaService.buscarPorId(id));
+
+            List<Pedido> pedidos = pedidoService.buscarPedidosPorMesa(id);
+            if(pedidos != null && !pedidos.isEmpty()) {
+                model.addAttribute("total", contaService.obterTotal(pedidos.get(0).getConta().getId()));
+            }
+            model.addAttribute("pedidos",pedidos);
+            model.addAttribute("layout", getLayout() + "/layout");
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/" + getLayout() + "/pedidos/mesas";
