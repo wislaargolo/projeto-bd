@@ -52,10 +52,14 @@
             <a class="btn btn-secondary btn-sm" th:href="@{'/gerente/' + ${url} + '/' + ${funcionario.id} + '/editar'}" role="button">
               <i class="oi oi-brush" title="Editar" aria-hidden="true"></i>
             </a>
-            <button th:id="${'btn_gerente_' + url + '_' + funcionario.id + '_excluir'}" type="button"
-                    class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#myModal">
-              <i class="oi oi-circle-x" title="Exclusão" aria-hidden="true"></i>
+            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#myModal"
+                    th:data-entity-id="${funcionario.id}" th:data-base-path="${'gerente'}">
+              <span class="oi oi-circle-x" title="Exclusão" aria-hidden="true"></span>
             </button>
+            <form th:id="'form_' + ${funcionario.id}" th:action="@{'/gerente/' + ${url} + '/' + ${funcionario.id} + '/excluir'}" method="post" style="display:none;">
+              <input type="hidden" name="_method" value="delete"/>
+            </form>
+
           </td>
         </tr>
         </tbody>

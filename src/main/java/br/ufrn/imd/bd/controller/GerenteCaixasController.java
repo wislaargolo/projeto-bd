@@ -135,7 +135,7 @@ public class GerenteCaixasController extends TelefoneController {
     }
 
 
-    @GetMapping("/{id}/excluir")
+    @PostMapping("/{id}/excluir")
     public String excluirCaixa(@PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
         try {
             caixaService.deletar(id);

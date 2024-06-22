@@ -18,7 +18,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_GARCOM"))) {
             response.sendRedirect("/garcom");
         } else {
-            response.sendRedirect("/gerente/produtos");
+            response.sendRedirect("/gerente/pedidos/mesas");
         }
     }
 

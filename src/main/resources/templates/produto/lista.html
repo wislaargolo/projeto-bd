@@ -39,10 +39,15 @@
                             <span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
                         </a>
 
-                        <button th:id="'btn_' + ${#strings.substringBefore(layout, '/')} + '_produtos_' + ${instanciaProduto.id} + '_excluir'" type="button"
-                                class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#myModal">
+                        <!-- Botão que abre o modal -->
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#myModal"
+                                th:data-entity-id="${instanciaProduto.id}" th:data-base-path="${#strings.substring(layout, 0, #strings.indexOf(layout, '/'))}">
                             <span class="oi oi-circle-x" title="Exclusão" aria-hidden="true"></span>
                         </button>
+                        <form th:id="'form_' + ${instanciaProduto.id}" th:action="@{'/' + ${#strings.substring(layout, 0, #strings.indexOf(layout, '/'))} + '/produtos/' + ${instanciaProduto.id} + '/excluir'}" method="post" style="display:none;">
+                            <input type="hidden" name="_method" value="delete"/>
+                        </form>
+
                     </td>
                 </tr>
                 </tbody>
