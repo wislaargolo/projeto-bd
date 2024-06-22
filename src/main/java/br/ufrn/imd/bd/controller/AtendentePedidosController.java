@@ -2,13 +2,9 @@ package br.ufrn.imd.bd.controller;
 
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.*;
+import br.ufrn.imd.bd.model.enums.ProgressoPedido;
 import br.ufrn.imd.bd.model.enums.StatusConta;
-import br.ufrn.imd.bd.service.AtendenteService;
-import br.ufrn.imd.bd.service.CancelamentoService;
-import br.ufrn.imd.bd.service.ContaService;
-import br.ufrn.imd.bd.service.MesaService;
-import br.ufrn.imd.bd.service.PedidoService;
-import br.ufrn.imd.bd.service.ProdutoService;
+import br.ufrn.imd.bd.service.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public abstract class AtendentePedidosController {
 
@@ -67,10 +64,13 @@ public abstract class AtendentePedidosController {
     public String mostrarFormParaAddPedido(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes, HttpSession session) throws SQLException{
         try {
             Pedido pedido = new Pedido();
-            //pedido.setAtendente(atendenteService.buscarPorId(1L));
-            Conta conta = new Conta();
-            conta.setMesa(mesaService.buscarPorId(id));
-            pedido.setConta(conta);
+            Conta conta = contaService.buscarPorMesa(id);
+            if (conta != null) {
+                pedido.setConta(conta);
+            }else {
+                pedido.getConta().setMesa(mesaService.buscarPorId(id));
+            }
+
             session.setAttribute("pedido", pedido);
             model.addAttribute("pedido", pedido);
             model.addAttribute("todosProdutos", produtoService.buscarTodos());
@@ -85,10 +85,9 @@ public abstract class AtendentePedidosController {
 
     @PostMapping("/add/instancia/{id}")
     public String addInstanciaEmPedido(@PathVariable Long id,
-                                     Model model,
-                                     RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
+                                       Model model,
+                                       RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
         try {
-
             Pedido pedido = (Pedido) session.getAttribute("pedido");
             if (pedido == null) {
                 throw new IllegalStateException("Pedido not found in session");
@@ -110,19 +109,38 @@ public abstract class AtendentePedidosController {
     }
 
     @PostMapping("/novo/salvar")
-    public String salvarNovoPedido(@ModelAttribute("pedido") Pedido pedido, Authentication authentication, Model model) throws SQLException{
+    public String salvarNovoPedido(Authentication authentication,
+                                   Model model,
+                                   HttpSession session,
+                                   @ModelAttribute Pedido pedidoAtualizado,
+                                   RedirectAttributes redirectAttributes) throws SQLException {
 
-        /*for (PedidoInstancia item : pedido.getProdutos()) {
-            System.out.println(item.getQuantidade());
-        }*/
-        /*try {
-            Funcionario funcionario = (Funcionario) authentication.getPrincipal() ;
-            Atendente atendente = funcionario.getId();
-            Conta conta = new Conta();
-            conta.setAtendente();
+        try {
+            Pedido pedido = (Pedido) session.getAttribute("pedido");
+            if (pedido == null) {
+                throw new IllegalStateException("Pedido not found in session");
+            }
 
+            // Atualizar o pedido na sessão com os dados do formulário
+            for (int i = 0; i < pedido.getProdutos().size(); i++ ) {
+                pedido.getProdutos().get(i).setQuantidade(pedidoAtualizado.getProdutos().get(i).getQuantidade());
+            }
+
+            Funcionario funcionario = (Funcionario) authentication.getPrincipal();
+            Atendente atendente = atendenteService.buscarPorId(funcionario.getId());
+            pedido.setAtendente(atendente);
+
+            if (pedido.getConta().getId() == null) {
+                contaService.salvar(pedido.getConta());
+            }
+
+            pedido.setProgressoPedido(ProgressoPedido.SOLICITADO);
+            pedidoService.salvar(pedido);
+
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-*/
+
         return "redirect:/" + getLayout() + "/pedidos/mesas";
     }
 
@@ -160,3 +178,4 @@ public abstract class AtendentePedidosController {
         }
     }
 }
+
