@@ -62,7 +62,7 @@ public class CaixaContasController {
             return "conta/formulario";
         }
         try {
-            conta.setStatusConta(FINALIZADA);
+
             contaService.atualizar(conta);
         } catch (EntidadeNaoExisteException e) {
             throw new RuntimeException(e);

@@ -4,7 +4,10 @@
 <section class="main p-4" layout:fragment="corpo">
     <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
         <h1>Lista de Contas</h1>
-
+        <a class="btn btn-primary btn-md" th:href="@{/caixa/relatório}" role="button">
+            <i class="fa-solid fa-plus"></i>
+            <span>Gerar Relatorio</span>
+        </a>
     </div>
 
     <div class="container" id="listagem">
@@ -20,7 +23,7 @@
             <table class="table table-striped table-hover table-sm flex-table">
                 <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>#</th>
                     <th>Atendente</th>
                     <th>Mesa</th>
                     <th>Status</th>
@@ -42,7 +45,7 @@
                         <a class="btn btn-secondary btn-sm"
                            th:href="@{'/caixa/contas/' + ${conta.id} + '/editar'}"
                            role="button">
-                            <span class="oi oi-pencil" title="Editar" aria-hidden="true"></span>
+                            <span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
                         </a>
 
 
