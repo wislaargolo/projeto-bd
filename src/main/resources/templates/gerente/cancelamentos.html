@@ -30,7 +30,7 @@
                         <div class="info-section">
                             <p>Status: <span th:text="${entry.value[0].pedido.progressoPedido}"></span></p>
                             <div class="card-actions">
-                                <button class="btn btn-secondary btn-sm" th:attr="data-bs-toggle='collapse', data-bs-target='#details-' + ${entry.key}">
+                                <button class="btn btn-info btn-sm" th:attr="data-bs-toggle='collapse', data-bs-target='#details-' + ${entry.key}">
                                     <i class="oi oi-eye" title="Ver Detalhes"></i>
                                 </button>
                             </div>

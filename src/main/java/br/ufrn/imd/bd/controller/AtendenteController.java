@@ -129,7 +129,7 @@ public abstract class AtendenteController extends TelefoneController {
         return "redirect:/gerente/" + getUrl();
     }
 
-    @GetMapping("/{id}/excluir")
+    @PostMapping("/{id}/excluir")
     public String excluirAtendente(@PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
         try {
             atendenteService.deletar(id);

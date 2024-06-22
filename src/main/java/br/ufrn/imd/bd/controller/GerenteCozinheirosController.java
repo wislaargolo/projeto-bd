@@ -132,7 +132,7 @@ public class GerenteCozinheirosController extends TelefoneController {
         return "redirect:/gerente/cozinheiros";
     }
 
-    @GetMapping("/{id}/excluir")
+    @PostMapping("/{id}/excluir")
     public String excluirCozinheiro(@PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
         try {
             cozinheiroService.deletar(id);
