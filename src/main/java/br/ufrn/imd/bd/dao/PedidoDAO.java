@@ -109,13 +109,12 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
                 stmt.setLong(1, pedido.getId());
                 stmt.setLong(2, pedidoInstancia.getInstanciaProduto().getId());
                 stmt.setInt(3, pedidoInstancia.getQuantidade());
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new SQLException("ERRO >> A inserção de Produto em Pedido falhou, nenhuma linha afetada.");
+                }
             }
 
-
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows == 0) {
-                throw new SQLException("ERRO >> A inserção de Produto em Pedido falhou, nenhuma linha afetada.");
-            }
         }
     }
 

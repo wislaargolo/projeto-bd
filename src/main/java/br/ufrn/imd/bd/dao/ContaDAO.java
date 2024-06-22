@@ -83,9 +83,22 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
         return "SELECT * FROM conta NATURAL JOIN mesa WHERE id_conta = ?";
     }
 
+    public Conta buscarPorMesa(Long idMesa) throws SQLException {
+        String sql = "SELECT * FROM conta NATURAL JOIN mesa WHERE id_mesa = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, idMesa);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapearResultado(rs);
+                }
+            }
+        }
+        return null;
+    }
 
 
-    @Override
+    /*@Override
     public Conta salvar(Connection conn, Conta conta) throws SQLException {
         String sql = String.format("INSERT INTO %s (id_caixa, id_atendente, id_mesa, status, " +
                                    "metodo_pagamento, data_hora_finalizacao) VALUES (?, ?, ?, ?, ?, ?)", getNomeTabela());
@@ -96,7 +109,31 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
             stmt.setLong(3, conta.getMesa().getId());
             stmt.setString(4, conta.getStatusConta().toString());
             stmt.setString(5, conta.getMetodoPagamento() != null ? conta.getMetodoPagamento().toString() : null);
-            stmt.setTimestamp(6, Timestamp.valueOf(conta.getDataFinalizacao()));
+            stmt.setTimestamp(6, conta.getDataFinalizacao() != null ? Timestamp.valueOf(conta.getDataFinalizacao()) : null); //stmt.setTimestamp(6, Timestamp.valueOf(conta.getDataFinalizacao()));
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("ERRO >> A inserção de Conta falhou, nenhuma linha afetada.");
+            }
+
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    conta.setId(generatedKeys.getLong(1));
+                } else {
+                    throw new SQLException("ERRO >> A inserção de Conta falhou, nenhum ID gerado.");
+                }
+            }
+        }
+
+        return conta;
+    }*/
+
+    @Override
+    public Conta salvar(Connection conn, Conta conta) throws SQLException {
+        String sql = String.format("INSERT INTO %s (id_mesa) VALUES (?)", getNomeTabela());
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setLong(1, conta.getMesa().getId());
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
