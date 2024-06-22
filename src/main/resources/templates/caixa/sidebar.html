@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<aside id="sidebar" th:fragment="nav-sidebar">
+    <div class="d-flex">
+        <button class="toggle-btn" type="button">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="sidebar-logo" style="">
+            <!--            <a href="#"></a>-->
+            <img src="../static/images/logo2.svg" th:src="@{/images/logo-side.svg}" style="width: 35px;">
+            <span style="font-family: 'Montserrat', sans-serif; color: white; font-weight: 600;">serviserve</span>
+        </div>
+    </div>
+    <ul class="sidebar-nav">
+        <li class="sidebar-item">
+            <a th:href="@{/caixa/contas}" class="sidebar-link">
+                <i class="fa-solid fa-receipt"></i>
+                <span>Contas</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a th:href="@{/perfil}"  class="sidebar-link">
+                <i class="fa-solid fa-user"></i>
+                <span>Conta</span>
+            </a>
+        </li>
+
+    </ul>
+    <div class="sidebar-footer">
+        <a href="#" class="sidebar-link" th:onclick="|document.getElementById('logoutForm').submit()|">
+            <i class="fa-solid fa-arrow-right-from-bracket fa-flip-horizontal"></i>
+            <span>Sair</span>
+        </a>
+        <form id="logoutForm" th:action="@{/logout}" method="post" style="display: none;">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+        </form>
+    </div>
+</aside>
+
+</html>

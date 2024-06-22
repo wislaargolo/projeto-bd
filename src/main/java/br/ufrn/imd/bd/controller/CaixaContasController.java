@@ -1,9 +1,7 @@
 package br.ufrn.imd.bd.controller;
 
-import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Conta;
-import br.ufrn.imd.bd.model.Cozinheiro;
-import br.ufrn.imd.bd.model.Mesa;
 import br.ufrn.imd.bd.service.ContaService;
 import br.ufrn.imd.bd.service.MesaService;
 import jakarta.validation.Valid;
@@ -16,13 +14,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
 import java.util.List;
 
+import static br.ufrn.imd.bd.model.enums.StatusConta.FINALIZADA;
+
 @Controller
-@RequestMapping("/contas")
-public class ContaController {
+@RequestMapping("/caixa/contas")
+public class CaixaContasController {
 
     @Autowired
     private ContaService contaService;
@@ -44,10 +45,14 @@ public class ContaController {
         return "redirect:/contas";
     }
 
-    @GetMapping("/editar/{id}")
-    public String editarFormConta(Model model, @PathVariable Long id) throws SQLException {
-        model.addAttribute("conta", contaService.buscarPorId(id));
-        model.addAttribute("mesas", mesaService.buscarTodos());
+    @GetMapping("/{id}/editar")
+    public String editarFormConta(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
+        try {
+            model.addAttribute("conta", contaService.buscarPorId(id));
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/caixa/contas";
+        }
         return "conta/formulario";
     }
 
@@ -56,7 +61,12 @@ public class ContaController {
         if (bindingResult.hasErrors()) {
             return "conta/formulario";
         }
-        contaService.atualizar(conta);
-        return "redirect:/contas";
+        try {
+
+            contaService.atualizar(conta);
+        } catch (EntidadeNaoExisteException e) {
+            throw new RuntimeException(e);
+        }
+        return "redirect:/caixa/contas";
     }
 }

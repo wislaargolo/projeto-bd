@@ -34,10 +34,13 @@
                         <a class="btn btn-secondary btn-sm" th:href="@{'/gerente/mesas/' + ${mesa.id} + '/editar'}" role="button">
                             <span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
                         </a>
-                        <button th:id="'btn_gerente' + '_mesas_' + ${mesa.id} + '_excluir'" type="button"
-                                class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#myModal">
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#myModal"
+                                th:data-entity-id="${mesa.id}" th:data-base-path="${'gerente'}">
                             <span class="oi oi-circle-x" title="Exclusão" aria-hidden="true"></span>
                         </button>
+                        <form th:id="'form_' + ${mesa.id}" th:action="@{'/gerente/mesas/' + ${mesa.id} + '/excluir'}" method="post" style="display:none;">
+                            <input type="hidden" name="_method" value="delete"/>
+                        </form>
                     </td>
                 </tr>
                 </tbody>

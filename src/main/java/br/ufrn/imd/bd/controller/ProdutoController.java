@@ -71,9 +71,8 @@ public abstract class ProdutoController {
         return "produto/formulario";
     }
 
-    @GetMapping("/{id}/excluir")
-    public String excluirProduto(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) throws SQLException {
-
+    @PostMapping("/{id}/excluir")
+    public String excluirProduto(@PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
         try {
             produtoService.deletar(id);
         } catch (EntidadeNaoExisteException e) {
@@ -82,4 +81,5 @@ public abstract class ProdutoController {
         }
         return "redirect:/" + getLayout() + "/produtos";
     }
+
 }

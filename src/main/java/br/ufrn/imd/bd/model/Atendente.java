@@ -22,6 +22,10 @@ public class Atendente extends Funcionario {
 
     public Atendente() {}
 
+    public Atendente(Long id) {
+        super.setId(id);
+    }
+
     public TipoAtendente getTipo() {
         return tipo;
     }

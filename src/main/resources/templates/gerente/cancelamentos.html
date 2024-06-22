@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html layout:decorate="~{gerente/layout}" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link th:href="@{/css/cards.css}" rel="stylesheet" />
+</head>
+<body>
+<section class="main p-4" layout:fragment="corpo">
+
+    <div class="header-area container">
+        <h1>Cancelamentos</h1>
+    </div>
+
+    <div class="container" id="listagem">
+        <div th:if="${#lists.isEmpty(cancelamentos)}" class="alert alert-info" role="alert">
+            Nenhum cancelamento encontrado.
+        </div>
+
+        <div th:each="entry : ${cancelamentos}" th:if="${!#lists.isEmpty(cancelamentos)}">
+            <div class="card">
+                <div class="card-header">
+                    <div class="header-left">
+                        Pedido<span th:text="'#' + ${entry.key}"></span> -
+                        <div class="progress-status">
+                            Mesa: <span th:text="${entry.value[0].pedido.conta.mesa.identificacao}"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-and-actions">
+                        <div class="info-section">
+                            <p>Status: <span th:text="${entry.value[0].pedido.progressoPedido}"></span></p>
+                            <div class="card-actions">
+                                <button class="btn btn-info btn-sm" th:attr="data-bs-toggle='collapse', data-bs-target='#details-' + ${entry.key}">
+                                    <i class="oi oi-eye" title="Ver Detalhes"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:id="'details-' + ${entry.key}" class="collapse product-list">
+                        <div th:each="cancelamento : ${entry.value}" class="product-card">
+                                <span class="product-info" th:text="${cancelamento.produto.produto.descricao}">Descrição do Produto</span>
+                                <span class="product-info" th:text="'&#215; ' + ${cancelamento.quantidade}">Quantidade</span>
+                                <span class="product-info" th:text="'Atendente: ' + ${cancelamento.atendente.nome}">Atendente</span>
+                                <span class="product-info" th:text="'Horário: ' + ${#temporals.format(cancelamento.dataRegistro, 'HH:mm:ss')}">Horário</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,157 @@
+.card {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+}
+.card-header {
+    font-size: 1.2em;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+p {
+    margin-bottom: 0;
+}
+
+.card-header .header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    flex-wrap: wrap;
+    justify-content: left;
+}
+
+.header-left {
+    width: 100%;
+}
+
+.card-body {
+    font-size: 0.9em;
+}
+.info-and-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    width: 100%;
+}
+
+.info-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.card-actions .btn {
+    flex: 1 1 auto;
+}
+
+@media (min-width: 634px) {
+    .info-section {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .card-actions {
+        flex-wrap: nowrap;
+        width: auto;
+        justify-content: flex-start;
+    }
+    .card-actions .btn {
+        flex: 1 1 auto;
+    }
+
+
+}
+.product-list {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+.product-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+}
+.product-info {
+    flex: 1 1 100%;
+    text-align: left;
+}
+@media (min-width: 634px) {
+    .product-info {
+        flex: 1 1 20%;
+        text-align: left;
+    }
+
+}
+@media (max-width: 633px) {
+    .product-info {
+        text-align: center;
+    }
+
+    .card-header .header-left{
+        justify-content: center;
+    }
+
+    .info-and-actions {
+        gap: 0;
+    }
+
+    p {
+       margin-bottom: 0.6rem;
+    }
+
+
+}
+.header-area {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+.title-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+@media (min-width: 634px) {
+    .button-group {
+        flex-direction: row;
+        width: auto;
+    }
+}
+.button-group .btn {
+    flex: 1 1 auto;
+}
+.progress-status {
+    font-size: 0.9em;
+    display: ruby;
+}
+.progress-status.cancelled {
+    color: red;
+}

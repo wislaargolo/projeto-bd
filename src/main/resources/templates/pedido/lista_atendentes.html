@@ -1,53 +1,44 @@
 <!DOCTYPE html>
 <html th:with="layout=${layout}" layout:decorate="${layout}" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <style>
-        .table-main {
-            margin-bottom: 0;
-        }
-        .table-secondary {
-            font-size: 0.9em;
-            background-color: white !important;
-            border-top: none;
-        }
-        .table-secondary th, .table-secondary td {
-            border-top: none;
-             border-bottom: none !important;
-              border-collapse: collapse;
-        }
-        .collapse-row {
-            padding: 0 !important;
-        }
-
-
-        .no-hover-effect tr:hover, .no-hover-effect td:hover, .no-hover-effect th:hover {
-        background-color: inherit !important;
-        cursor: default !important;
-    }
-
-
-        .no-hover-effect-collapse {
-            pointer-events: none;
-        }
-        .no-hover-effect-collapse tr:hover, .no-hover-effect-collapse td:hover, .no-hover-effect-collapse th:hover {
-            background-color: inherit !important;
-        }
-    </style>
+    <link th:href="@{/css/cards.css}" rel="stylesheet" />
 </head>
-
 <body>
 <section class="main p-4" layout:fragment="corpo">
-    <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
-        <h1>Lista de Pedidos</h1>
-        <a class="btn btn-primary btn-md" th:href="@{'/gerente/pedidos/novo/' + ${mesa.id}}" role="button">
-            <i class="fa-solid fa-plus"></i>
-            <span>Novo Pedido</span>
-        </a>
+    <div class="header-area container">
+        <div class="title-group">
+            <a th:href="@{'/' + ${#strings.substringBefore(layout, '/')} + '/pedidos/mesas'}" class="btn btn-primary" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                <i class="fa fa-arrow-left" style="font-size: 16px;"></i>
+            </a>
+            <h1 style="margin: 0;">Pedidos</h1>
+        </div>
+        <div class="button-group">
+            <a class="btn btn-primary btn-md" th:href="@{'/gerente/pedidos/novo/' + ${mesa.id}}" role="button">
+                <i class="fa-solid fa-plus"></i>
+                <span>Novo Pedido</span>
+            </a>
+            <div th:if="${!#lists.isEmpty(pedidos)}">
+                <form th:action="@{'/gerente/pedidos/conta/' + ${pedidos[0].conta.id} + '/solicitar'}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-success btn-md" style="width: 100%;">
+                        <i class="fa-solid fa-receipt"></i>
+                        <span>Solicitar Conta</span>
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <div class="container" id="listagem">
+
         <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
             <span th:text="${error}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div th:if="${sucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${sucesso}"></span>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -57,60 +48,51 @@
             Nenhum pedido encontrado.
         </div>
 
-        <div class="table-responsive" th:if="${!#lists.isEmpty(pedidos)}">
-            <table class="table table-striped table-hover table-sm table-main">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Atendente</th>
-                    <th>Horário</th>
-                    <th class="action-column">Ações</th>
-                </tr>
-                </thead>
-                <tbody>
-                <th:block th:each="pedido : ${pedidos}">
-                    <tr>
-                        <td th:text="${pedido.id}"></td>
-                        <td th:text="${pedido.atendente.nome}"></td>
-                        <td th:text="${#temporals.format(pedido.dataRegistro, 'dd/MM/yyyy HH:mm')}"></td>
-                        <td>
-                            <button class="btn btn-secondary btn-sm" th:attr="data-bs-toggle='collapse', data-bs-target='#' + 'products-' + ${pedido.id}">
-                                <i class="fa-solid fa-drumstick-bite" title="Ver Produtos"></i>
-                            </button>
+        <div th:each="pedido : ${pedidos}" th:if="${!#lists.isEmpty(pedidos)}">
+            <div class="card">
+                <div class="card-header">
+                    <div class="header-left">
+                        Pedido<span th:text="'#' + ${pedido.id}"></span> -
+                        <div class="progress-status" th:classappend="${pedido.progressoPedido.name() == 'CANCELADO'} ? ' cancelled'">
+                            Status: <span th:text="${pedido.progressoPedido.name()}"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-and-actions">
+                        <div class="info-section">
+                            <p>Horário: <span th:text="${#temporals.format(pedido.dataRegistro, 'HH:mm:ss')}"></span></p>
+                        </div>
+                        <div class="info-section">
+                            <p id="atendente">Atendente: <span th:text="${pedido.atendente.nome}"></span></p>
+                            <div class="card-actions">
+                                <button class="btn btn-secondary btn-sm" th:attr="data-bs-toggle='collapse', data-bs-target='#' + 'products-' + ${pedido.id}">
+                                    <i class="fa-solid fa-drumstick-bite" title="Ver Produtos"></i>
+                                </button>
+                                <a th:href="@{/gerente/pedidos/(id=${pedido.id})}" class="btn btn-info btn-sm">
+                                    <i class="oi oi-eye" title="Ver Pedido"></i>
+                                </a>
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" th:attr="data-bs-target='#cancelaPedido-' + ${pedido.id}" th:data-id="${pedido.id}" th:data-mesa-id="${mesa.id}" th:if="${pedido.progressoPedido.name() != 'CANCELADO'}">
+                                    <i class="oi oi-circle-x" title="Cancelar" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:id="'products-' + ${pedido.id}" class="collapse product-list">
+                        <div th:if="${pedido.produtos != null and !#lists.isEmpty(pedido.produtos)}">
+                            <div th:each="produto : ${pedido.produtos}" class="product-card">
+                                <span class="product-info" th:text="${produto.instanciaProduto.produto.descricao}">Descrição</span>
+                                <span class="product-info" th:text="'&#215; ' + ${produto.quantidade}">Quantidade</span>
+                                <span class="product-info unit-price" th:text="${#numbers.formatCurrency(produto.instanciaProduto.valor)} + ' /cada'">Valor Unitário</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                            <a th:href="@{/gerente/pedidos/(id=${pedido.id})}" class="btn btn-info btn-sm">
-                                <i class="oi oi-eye" title="Ver Pedido"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr th:id="'products-' + ${pedido.id}"  class="collapse no-hover-effect-collapse" style="padding: 0;">
-                        <td colspan="4" class="no-border" style="padding: 0 .3rem;">
-                            <table class="table table-secondary no-hover-effect">
-                                <thead>
-                                <tr>
-                                    <th>Produto</th>
-                                    <th>Quantidade</th>
-                                    <th>Valor unitário</th>
-                                    <th>Total</th>
-                                </tr>
-                                </thead>
-                                <tbody th:if="${pedido.produtos != null and !#lists.isEmpty(pedido.produtos)}">
-                                <tr th:each="produto : ${pedido.produtos}">
-                                    <td th:text="${produto.instanciaProduto.produto.descricao}"></td>
-                                    <td th:text="${produto.quantidade}"></td>
-                                    <td th:text="${#numbers.formatCurrency(produto.instanciaProduto.valor)}"></td>
-                                    <td th:text="${#numbers.formatCurrency(produto.quantidade * produto.instanciaProduto.valor)}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                </th:block>
-                </tbody>
-            </table>
+            <div th:replace="~{pedido/modal :: cancelaPedido(${layout}, ${pedido.id}, ${mesa.id})}"></div>
         </div>
     </div>
-
 </section>
 </body>
 </html>

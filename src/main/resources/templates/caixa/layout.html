@@ -23,7 +23,7 @@
 <body>
 <div class="wrapper">
     <aside>
-        <nav th:replace="~{gerente/sidebar :: nav-sidebar}">
+        <nav th:replace="~{caixa/sidebar :: nav-sidebar}">
             <span>menu</span>
         </nav>
     </aside>
@@ -58,17 +58,23 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
-    var formId = '';
+    var url = '';
 
-    $('button[data-bs-toggle="modal"]').click(function() {
-        var entityId = $(this).data('entity-id');
-        var basePath = $(this).data('base-path');
-        formId = 'form_' + entityId;
+   $('button[id^="btn_"]').click(function() {
+        var pathParts = $(this).attr('id').split('_');
+        var basePath = pathParts[1];
+        var entity = pathParts[2];
+        var entityId = pathParts[3];
+
+     url = `http://localhost:8080/${basePath}/${entity}/${entityId}/excluir`;
+     console.log("oi");
+
     });
 
     $('#ok_confirm').click(function() {
-        document.getElementById(formId).submit();
+        document.location.href = url;
     });
+
 </script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

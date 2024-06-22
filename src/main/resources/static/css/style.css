@@ -54,8 +54,8 @@ h1 {
     background-color: rgba(108,117,125,0.7);
     border-radius: 50%;
     padding: 10px;
-    width: 45px;
-    height: 45px;
+    width: 35px;
+    height: 35px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -82,16 +82,6 @@ h1 {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     padding: 20px;
     margin-bottom: 20px;
-}
-
-@media (max-width: 768px) {
-    .main .card-item {
-        flex-direction: column;
-        align-items: start;
-    }
-    .main .icon-wrapper {
-        margin-bottom: 10px;
-    }
 }
 
  .main .info-container {

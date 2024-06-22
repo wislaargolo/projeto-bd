@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+</head>
+<body>
+<!-- Fragmento do modal -->
+<div th:fragment="cancelaPedido(layout, pedidoId, mesaId)">
+    <div class="modal fade" th:id="'cancelaPedido-' + ${pedidoId}" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+                    <h4 class="modal-title">Atenção</h4>
+                </div>
+                <div class="modal-body">
+                    Tem certeza que deseja cancelar este pedido?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form th:action="@{'/' + ${#strings.substringBefore(layout, '/')} + '/pedidos/' + ${pedidoId} + '/cancelar'}" method="post">
+                        <input type="hidden" name="mesaId" th:value="${mesaId}"/>
+                        <button type="submit" class="btn btn-danger">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const cancelaPedidoModal = document.getElementById('cancelaPedido-' + [[${pedidoId}]]);
+        cancelaPedidoModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const pedidoId = button.getAttribute('data-id');
+            const mesaId = button.getAttribute('data-mesa-id');
+            const form = cancelaPedidoModal.querySelector('form');
+            form.setAttribute('action', '/' + [[${#strings.substringBefore(layout, '/')}]] + '/pedidos/' + pedidoId + '/cancelar');
+            form.querySelector('input[name="mesaId"]').setAttribute('value', mesaId);
+        });
+    </script>
+</div>
+</body>
+</html>

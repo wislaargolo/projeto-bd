@@ -3,7 +3,9 @@ package br.ufrn.imd.bd.service;
 import br.ufrn.imd.bd.connection.DatabaseConfig;
 import br.ufrn.imd.bd.dao.ContaDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
+import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Conta;
+import br.ufrn.imd.bd.model.Cozinheiro;
 import br.ufrn.imd.bd.model.InstanciaProduto;
 import br.ufrn.imd.bd.model.Mesa;
 import br.ufrn.imd.bd.model.Telefone;
@@ -25,10 +27,24 @@ public class ContaService {
         return contaDAO.buscarTodos();
     }
 
-    public Object buscarPorId(Long id) throws SQLException {
-        return contaDAO.buscarPorChave(id);
+    public Conta buscarPorId(Long id) throws SQLException, EntidadeNaoExisteException {
+
+        Conta conta = contaDAO.buscarPorChave(id);
+
+        if(conta == null) {
+            throw new EntidadeNaoExisteException("Conta não encontrada");
+        }
+        return conta;
+
     }
 
+    public Conta buscarPorMesa(Long id) throws SQLException {
+
+        Conta conta = contaDAO.buscarPorMesa(id);
+
+        return conta;
+
+    }
     public void deletar(Long id) throws SQLException {
         try (Connection conn = DatabaseConfig.getConnection()){
             Conta conta = contaDAO.buscarPorChave(id);
@@ -56,7 +72,12 @@ public class ContaService {
         return conta;
     }
 
-    public void atualizar(Conta conta) throws SQLException {
+    public void atualizar(Conta conta) throws SQLException, EntidadeNaoExisteException {
+        Conta existente = buscarPorId(conta.getId());
+
+        if(conta.getMesa() == null) {
+            conta.setMesa(existente.getMesa());
+        }
 
         if ("ABERTA".equals(conta.getStatusConta().name())) {
             conta.setMetodoPagamento(null);
@@ -66,4 +87,6 @@ public class ContaService {
             contaDAO.atualizar(conn,conta);
         }
     }
+
+
 }

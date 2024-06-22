@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 
@@ -16,6 +17,10 @@ public class ResultSetUtil {
             return null;
         }
         return type.cast(rs.getObject(columnName));
+    }
+
+    public static Double getDouble(ResultSet rs, String columnName) throws SQLException {
+        return hasColumn(rs, columnName) ? rs.getObject(columnName, Double.class) : null;
     }
 
     public static <T> T getEntity(ResultSet rs, AbstractDAO<T, Long> dao, String prefix, String idColumnName) throws SQLException {
@@ -59,12 +64,12 @@ public class ResultSetUtil {
         return value != null && value == 1;
     }
 
-    public static LocalDate getLocalDate(ResultSet rs, String columnName) throws SQLException {
+    public static LocalDateTime getLocalDate(ResultSet rs, String columnName) throws SQLException {
         if (!hasColumn(rs, columnName) || rs.getObject(columnName) == null) {
             return null;
         }
         Timestamp timestamp = rs.getTimestamp(columnName);
-        return timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 }
 

@@ -1,74 +1,95 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Editar Conta</title>
-    <style>
-        .error-message {
-            color: red;
-        }
-    </style>
-</head>
+<html layout:decorate="~{caixa/layout}" xmlns="http://www.w3.org/1999/xhtml">
 <body>
-<h2 th:text="${conta.id == null ? 'Cadastrar Conta' : 'Editar Conta'}"></h2>
-<div th:if="${error}">
-    <p th:text="${error}"></p>
-</div>
 
-<form th:action="${conta.id} == null ?
-                    @{/contas} :
-                    @{/contas/editar}" th:object="${conta}" method="post">
-    <input type="hidden" th:field="*{id}" />
+ <section class="main p-4" layout:fragment="corpo">
+     <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
+         <a th:href="@{/caixa/contas}" class="btn btn-primary" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
+             <i class="fa fa-arrow-left" style="font-size: 16px;"></i>
+         </a>
+         <h1 th:text="${conta.id == null ? 'c' :'Editar Conta'}"></h1>
+     </div>
 
-    <label for="id_mesa">Mesa:</label>
-    <select th:field="*{mesa.id}" id="id_mesa">
-        <option th:each="mesa : ${mesas}"
-                th:value="${mesa.id}" th:text="${mesa.descricao}">Descrição</option>
-    </select>
-    <br/>
+        <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
 
-    <div th:style="${conta.statusConta.name() == 'SOLICITADA' || conta.statusConta.name() == 'FINALIZADA' ? '' : 'display:none;'}" id="metodoPagamentoBlock">
-        <label for="metodo_pagamento">Método de Pagamento:</label>
-        <select th:field="*{metodoPagamento}" id="metodo_pagamento">
-            <option th:each="metodo : ${T(br.ufrn.imd.bd.model.enums.MetodoPagamento).values()}"
-                    th:value="${metodo.name()}" th:text="${metodo}">Metodo</option>
-        </select>
-    </div>
+        <form th:action="${conta.id} == null ? @{/contas} : @{/contas/editar}" th:object="${conta}" method="post">
+            <input type="hidden" th:field="*{id}" />
+
+            <div th:if="${#fields.hasErrors('statusConta')}" class="error-message">
+                <p th:errors="*{statusConta}"></p>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select th:field="*{statusConta}" id="status" class="form-control">
+                    <option th:each="status : ${T(br.ufrn.imd.bd.model.enums.StatusConta).values()}"
+                            th:value="${status}" th:text="${status}">Status</option>
+                </select>
+            </div>
+
+            <div th:style="${conta.statusConta.name() == 'SOLICITADA' || conta.statusConta.name() == 'FINALIZADA' ? '' : 'display:none;'}" id="metodoPagamentoBlock" class="form-group">
+                <label for="metodo_pagamento">Método de Pagamento:</label>
+                <select th:field="*{metodoPagamento}" id="metodo_pagamento" class="form-control">
+                    <option th:each="metodo : ${T(br.ufrn.imd.bd.model.enums.MetodoPagamento).values()}"
+                            th:value="${metodo.name()}" th:text="${metodo}">Metodo</option>
+                </select>
+            </div>
 
 
-    <div th:if="${#fields.hasErrors('statusConta')}" class="error-message">
-        <p th:errors="*{statusConta}"></p>
-    </div>
 
-    <label for="status">Status:</label>
-    <select th:field="*{statusConta}" id="status">
-        <option th:each="status : ${T(br.ufrn.imd.bd.model.enums.StatusConta).values()}"
-                th:value="${status}" th:text="${status}">Status</option>
-    </select>
-    <br/>
+            <button type="submit" class="btn btn-primary">Editar</button>
+        </form>
+        </div>
 
-    <input type="submit" value="Submit" />
-</form>
 
-<script>
+        <script>
 
-    document.addEventListener('DOMContentLoaded', function () {
-        var statusContaSelect = document.getElementById('status');
-        var metodoPagamentoBlock = document.getElementById('metodoPagamentoBlock');
+            document.addEventListener('DOMContentLoaded', function () {
+                var statusContaSelect = document.getElementById('status');
+                var metodoPagamentoBlock = document.getElementById('metodoPagamentoBlock');
 
-        function toggleMetodoPagamento() {
-            var status = statusContaSelect.value;
-            if (status === 'SOLICITADA' || status === 'FINALIZADA') {
-                metodoPagamentoBlock.style.display = '';
-            } else {
-                metodoPagamentoBlock.style.display = 'none';
-            }
-        }
+                function toggleMetodoPagamento() {
+                    var status = statusContaSelect.value;
+                    if (status === 'SOLICITADA' || status === 'FINALIZADA') {
+                        metodoPagamentoBlock.style.display = '';
+                    } else {
+                        metodoPagamentoBlock.style.display = 'none';
+                    }
+                }
 
-        statusContaSelect.addEventListener('change', toggleMetodoPagamento);
-        toggleMetodoPagamento();
+                statusContaSelect.addEventListener('change', toggleMetodoPagamento);
+                toggleMetodoPagamento();
+            });
+        </script>
+    </section>
+
+
+<!-- Consolidated scripts section -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybH7tHv77Jxl8K0T0b5UiROUqtG93Dz3ZZtZXGJ3lCElLk6R6" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js" integrity="sha384-pzjw8f+ua7Kw1TIqQjP6Rn5au/JpA8Wb2Lob8ABSTDjF5BocEked14W4uL8vPBf5" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+    var url = '';
+
+    $('button[id^="btn_"]').click(function() {
+        var pathParts = $(this).attr('id').split('_');
+        var basePath = pathParts[1];
+        var entity = pathParts[2];
+        var entityId = pathParts[3];
+
+        url = `http://localhost:8080/${basePath}/${entity}/${entityId}/excluir`;
+        console.log("oi");
+    });
+
+    $('#ok_confirm').click(function() {
+        document.location.href = url;
     });
 </script>
+
+<!-- Nosso JS -->
+<script th:src="@{/js/script.js}"></script>
 
 </body>
 </html>

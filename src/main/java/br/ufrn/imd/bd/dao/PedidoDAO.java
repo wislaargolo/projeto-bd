@@ -33,10 +33,10 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     public Pedido mapearResultado(ResultSet rs) throws SQLException {
         Pedido pedido = new Pedido();
         pedido.setId(rs.getLong("id_pedido"));
-        pedido.setAtendente(atendenteDAO.mapearResultado(rs, "atendente_pedido_"));
-        pedido.setConta(contaDAO.mapearResultado(rs));
+        pedido.setAtendente(ResultSetUtil.getEntity(rs, atendenteDAO, "atendente_pedido_", "id_funcionario"));
+        pedido.setConta(ResultSetUtil.getEntity(rs, contaDAO, "id_conta"));
         pedido.setProgressoPedido(ProgressoPedido.valueOf(rs.getString("progresso")));
-        pedido.setDataRegistro(rs.getObject("data_hora_registro", LocalDateTime.class));
+        pedido.setDataRegistro(ResultSetUtil.getLocalDate(rs, "data_hora_registro"));
 
         return pedido;
     }
@@ -65,7 +65,7 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
 
     @Override
     protected String getBuscarPorIdQuery() {
-        return  "SELECT * FROM pedido WHERE p.id_pedido = ?";
+        return  "SELECT id_pedido, progresso, data_hora_registro FROM pedido WHERE id_pedido = ?";
     }
 
 
@@ -109,13 +109,12 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
                 stmt.setLong(1, pedido.getId());
                 stmt.setLong(2, pedidoInstancia.getInstanciaProduto().getId());
                 stmt.setInt(3, pedidoInstancia.getQuantidade());
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new SQLException("ERRO >> A inserção de Produto em Pedido falhou, nenhuma linha afetada.");
+                }
             }
 
-
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows == 0) {
-                throw new SQLException("ERRO >> A inserção de Produto em Pedido falhou, nenhuma linha afetada.");
-            }
         }
     }
 
@@ -169,39 +168,6 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
         }
     }
 
-    public List<Pedido> buscarPedidoPorPeriodo(LocalDateTime inicio, LocalDateTime fim) throws SQLException {
-        List<Pedido> pedidos = new ArrayList<>();
-
-        String sql = "SELECT p.*, c.*, m.*, " +
-                "f.nome AS atendente_pedido_nome, " +
-                "f.login AS atendente_pedido_login, " +
-                "a.tipo AS atendente_pedido_tipo, " +
-                "f.id_funcionario AS atendente_pedido_id_funcionario " +
-                "FROM pedido AS p " +
-                "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
-                "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario " +
-                "JOIN conta AS c ON c.id_conta = p.id_conta " +
-                "JOIN mesa AS m ON c.id_mesa = m.id_mesa " +
-                "WHERE p.data_hora_registro >= ? " +
-                "AND p.data_hora_registro <= ? " +
-                "ORDER BY p.progresso = 'SOLICITADO' DESC, p.data_hora_registro DESC";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setObject(1, inicio);
-            stmt.setObject(2, fim);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Pedido pedido = mapearResultado(rs);
-                    pedidos.add(pedido);
-                }
-            }
-        }
-
-        return pedidos;
-    }
     public Pedido buscarPorIdComProdutos(Long id) throws SQLException {
         String sql = "SELECT p.*, ppi.*, ip.*, produto.*, m.*, " +
                 "f.nome AS atendente_pedido_nome, " +
@@ -238,10 +204,10 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
         return pedido;
     }
 
-    public List<Pedido> buscarPedidosPorMesa(LocalDateTime inicio, LocalDateTime fim, Long idMesa) throws SQLException {
+    public List<Pedido> buscarPedidosAbertos(Long idMesa) throws SQLException {
         List<Pedido> pedidos = new ArrayList<>();
 
-        String sql = "SELECT p.*, m.*, c.status, " +
+        StringBuilder sql = new StringBuilder("SELECT p.*, m.*, c.status, " +
                 "f.nome AS atendente_pedido_nome, " +
                 "f.id_funcionario AS atendente_pedido_id_funcionario, " +
                 "f.login AS atendente_pedido_login, " +
@@ -250,17 +216,22 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
                 "JOIN conta AS c ON c.id_mesa = m.id_mesa " +
                 "JOIN pedido AS p ON p.id_conta = c.id_conta " +
                 "JOIN atendente AS a ON p.id_atendente = a.id_funcionario " +
-                "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario " +
-                "WHERE p.data_hora_registro >= ? " +
-                "AND p.data_hora_registro <= ? AND m.id_mesa = ? AND c.status != 'FINALIZADA' " +
-                "ORDER BY p.data_hora_registro DESC";
+                "JOIN funcionario AS f ON a.id_funcionario = f.id_funcionario ");
+
+        if (idMesa != null) {
+            sql.append("WHERE m.id_mesa = ? AND c.status != 'FINALIZADA' ");
+        } else {
+            sql.append("WHERE c.status != 'FINALIZADA' ");
+        }
+
+        sql.append("ORDER BY p.data_hora_registro DESC");
 
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
 
-            stmt.setObject(1, inicio);
-            stmt.setObject(2, fim);
-            stmt.setLong(3, idMesa);
+            if (idMesa != null) {
+                stmt.setLong(1, idMesa);
+            }
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
