@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
 import java.util.List;
+
+import static br.ufrn.imd.bd.model.enums.StatusConta.FINALIZADA;
 
 @Controller
 @RequestMapping("/caixa/contas")
@@ -42,14 +45,14 @@ public class CaixaContasController {
         return "redirect:/contas";
     }
 
-    @GetMapping("/editar/{id}")
-    public String editarFormConta(Model model, @PathVariable Long id) throws SQLException {
+    @GetMapping("/{id}/editar")
+    public String editarFormConta(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
         try {
             model.addAttribute("conta", contaService.buscarPorId(id));
         } catch (EntidadeNaoExisteException e) {
-            throw new RuntimeException(e); // tem que tratar isso direito, veja os outros controllers
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/caixa/contas";
         }
-        model.addAttribute("mesas", mesaService.buscarTodos());
         return "conta/formulario";
     }
 
@@ -59,10 +62,11 @@ public class CaixaContasController {
             return "conta/formulario";
         }
         try {
+            conta.setStatusConta(FINALIZADA);
             contaService.atualizar(conta);
         } catch (EntidadeNaoExisteException e) {
-            throw new RuntimeException(e); // tratar corretamente, veja GerenteMesasController
+            throw new RuntimeException(e);
         }
-        return "redirect:/contas";
+        return "redirect:/caixa/contas";
     }
 }

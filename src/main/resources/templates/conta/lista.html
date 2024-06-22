@@ -38,6 +38,13 @@
                     <td th:text="${conta.metodoPagamento}"></td>
                     <td th:text="${conta.dataFinalizacao}"></td>
                     <td colspan="2">
+                        <!-- Botão de editar -->
+                        <a class="btn btn-secondary btn-sm"
+                           th:href="@{'/caixa/contas/' + ${conta.id} + '/editar'}"
+                           role="button">
+                            <span class="oi oi-pencil" title="Editar" aria-hidden="true"></span>
+                        </a>
+
 
                     </td>
                 </tr>

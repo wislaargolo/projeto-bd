@@ -17,7 +17,7 @@ public class SecurityConfig {
     //comentei so pra testar
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+        /*http
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**").permitAll()
                         .requestMatchers("/gerente/**").hasAnyRole("GERENTE")
@@ -37,10 +37,10 @@ public class SecurityConfig {
                         .permitAll())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                     .accessDeniedHandler(accessDeniedHandler()));
-        return http.build();
+        return http.build();*/
 //        http.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll());
 //
-//        return http.build();
+        return http.build();
     }
 
     @Bean
