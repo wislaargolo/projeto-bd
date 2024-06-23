@@ -43,10 +43,6 @@
     <div class="container mt-4" th:if="${!#lists.isEmpty(pedido.produtos)}">
 
         <form th:action="@{/gerente/pedidos/novo/salvar}" th:object="${pedido}" method="post" class="needs-validation" novalidate>
-
-            <!--<input type="hidden" th:field="*{id}" />
-            <input type="hidden" th:field="*{atendente}" />-->
-
             <div class="table-responsive">
                 <table class="table table-striped table-hover table-sm table-main">
                     <thead>
@@ -67,17 +63,15 @@
                                 <input type="number" th:field="*{produtos[__${iterStat.index}__].quantidade}" class="form-control" min="0" required />
                             </td>
                         </tr>
-
                     </th:block>
                     </tbody>
                 </table>
             </div>
-
-
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-primary">Finalizar pedido</button>
             </div>
         </form>
+
     </div>
     </div>
 </section>

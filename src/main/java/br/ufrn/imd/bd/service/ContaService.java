@@ -38,13 +38,10 @@ public class ContaService {
 
     }
 
-    public Conta buscarPorMesa(Long id) throws SQLException, EntidadeNaoExisteException {
+    public Conta buscarPorMesa(Long id) throws SQLException {
 
-        Conta conta = contaDAO.buscarPorChave(id);
+        Conta conta = contaDAO.buscarPorMesa(id);
 
-        if(conta == null) {
-            throw new EntidadeNaoExisteException("Conta não encontrada");
-        }
         return conta;
 
     }
@@ -89,6 +86,10 @@ public class ContaService {
         try (Connection conn = DatabaseConfig.getConnection()){
             contaDAO.atualizar(conn,conta);
         }
+    }
+
+    public Double obterTotal(Long id) throws SQLException {
+        return contaDAO.obterTotalConta(id);
     }
 
 

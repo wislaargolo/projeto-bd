@@ -81,4 +81,15 @@ public class Pedido {
         this.dataRegistro = dataRegistro;
     }
 
+    @Override
+    public String toString() {
+        return "Pedido{" +
+                "id=" + id +
+                ", atendente=" + atendente +
+                ", conta=" + conta +
+                ", progressoPedido=" + progressoPedido +
+                ", dataRegistro=" + dataRegistro +
+                ", produtos=" + produtos +
+                '}';
+    }
 }

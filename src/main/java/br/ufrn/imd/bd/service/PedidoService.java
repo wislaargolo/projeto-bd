@@ -93,46 +93,15 @@ public class PedidoService {
         return pedido;
     }
 
-    public List<Pedido> buscarPedidosPorTurno() throws SQLException {
-        Map<String, LocalDateTime> turnos = obterTurno();
-        return pedidoDAO.buscarPedidoPorPeriodo(turnos.get("inicioTurno"), turnos.get("fimTurno"));
+    public List<Pedido> buscarPedidosAbertos() throws SQLException {
+        return pedidoDAO.buscarPedidosAbertos(null);
     }
 
     public List<Pedido> buscarPedidosPorMesa(Long idMesa) throws SQLException, EntidadeNaoExisteException {
 
         mesaService.buscarPorId(idMesa);
-
-        Map<String, LocalDateTime> turnos = obterTurno();
-        return pedidoDAO.buscarPedidosPorMesa(turnos.get("inicioTurno"), turnos.get("fimTurno"), idMesa);
+        return pedidoDAO.buscarPedidosAbertos(idMesa);
     }
 
-
-    public Map<String, LocalDateTime> obterTurno() {
-        LocalDateTime inicioTurno;
-        LocalDateTime fimTurno;
-
-        LocalDateTime now = LocalDateTime.now();
-        LocalTime nowTime = now.toLocalTime();
-
-        if (nowTime.isAfter(LocalTime.MIDNIGHT) && nowTime.isBefore(LocalTime.NOON)) {
-            // Turno da manhã: 00:01 até 12:00
-            inicioTurno = now.with(LocalTime.MIN);
-            fimTurno = now.with(LocalTime.NOON);
-        } else if (nowTime.isAfter(LocalTime.NOON) && nowTime.isBefore(LocalTime.of(17, 0))) {
-            // Turno da tarde: 12:01 até 17:00
-            inicioTurno = now.with(LocalTime.NOON).plusSeconds(1);
-            fimTurno = now.with(LocalTime.of(17, 0));
-        } else {
-            // Turno da noite: 17:01 até 23:59
-            inicioTurno = now.with(LocalTime.of(17, 0)).plusSeconds(1);
-            fimTurno = now.with(LocalTime.MAX);
-        }
-
-        Map<String, LocalDateTime> turnos = new HashMap<>();
-        turnos.put("inicioTurno", inicioTurno);
-        turnos.put("fimTurno", fimTurno);
-
-        return turnos;
-    }
 
 }
