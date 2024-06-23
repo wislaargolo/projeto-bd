@@ -1,6 +1,6 @@
 package br.ufrn.imd.bd.service;
 
-import br.ufrn.imd.bd.connection.DatabaseConfig;
+import br.ufrn.imd.bd.connection.DatabaseUtil;
 import br.ufrn.imd.bd.dao.CaixaDAO;
 import br.ufrn.imd.bd.dao.FuncionarioDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
@@ -26,6 +26,10 @@ public class CaixaService {
     @Autowired
     private FuncionarioDAO funcionarioDAO;
 
+    @Autowired
+    private DatabaseUtil databaseUtil;
+
+
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public List<Caixa> buscarTodos() throws SQLException {
@@ -44,7 +48,7 @@ public class CaixaService {
         Connection conn = null;
 
         try {
-            conn = DatabaseConfig.getConnection();
+            conn = databaseUtil.getConnection();
             conn.setAutoCommit(false);
 
             String criptografada = passwordEncoder.encode(caixa.getSenha());
@@ -55,7 +59,7 @@ public class CaixaService {
                 conn.commit();
                 return caixa;
             } catch (SQLException e) {
-                DatabaseConfig.rollback(conn);
+                databaseUtil.rollback(conn);
                 if (e.getErrorCode() == 1062) {
                     reativarSeInativo(caixa);
                     throw new EntidadeJaExisteException("Um funcionário com esse login foi reativado.");
@@ -64,7 +68,7 @@ public class CaixaService {
                 }
             }
         } finally {
-            DatabaseConfig.close(conn);
+            databaseUtil.close(conn);
         }
     }
 
@@ -75,7 +79,7 @@ public class CaixaService {
         Connection conn = null;
 
         try {
-            conn = DatabaseConfig.getConnection();
+            conn = databaseUtil.getConnection();
             conn.setAutoCommit(false);
 
             if(!caixa.getSenha().isEmpty()) {
@@ -87,7 +91,7 @@ public class CaixaService {
                 caixaDAO.atualizar(conn, caixa);
                 conn.commit();
             } catch (SQLException e) {
-                DatabaseConfig.rollback(conn);
+                databaseUtil.rollback(conn);
                 if (e.getErrorCode() == 1062) {
                     reativarSeInativo(caixa);
                     throw new EntidadeJaExisteException("Um funcionário com esse login foi reativado.");
@@ -96,20 +100,20 @@ public class CaixaService {
                 }
             }
         } finally {
-            DatabaseConfig.close(conn);
+            databaseUtil.close(conn);
         }
     }
 
     public void deletar(Long id) throws SQLException, EntidadeNaoExisteException {
 
         buscarPorId(id);
-        try (Connection conn = DatabaseConfig.getConnection()){
+        try (Connection conn = databaseUtil.getConnection()){
             caixaDAO.deletar(conn, id);
         }
     }
 
     private void reativarSeInativo(Caixa caixa) throws SQLException, EntidadeJaExisteException {
-        try (Connection conn = DatabaseConfig.getConnection()) {
+        try (Connection conn = databaseUtil.getConnection()) {
             Map<Funcionario, String> resultado = funcionarioDAO.buscarPorLogin(conn, caixa.getLogin());
 
             Map.Entry<Funcionario, String> entry = resultado.entrySet().iterator().next();

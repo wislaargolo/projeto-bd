@@ -1,6 +1,6 @@
 package br.ufrn.imd.bd.service;
 
-import br.ufrn.imd.bd.connection.DatabaseConfig;
+import br.ufrn.imd.bd.connection.DatabaseUtil;
 import br.ufrn.imd.bd.dao.FuncionarioDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Funcionario;
@@ -19,6 +19,9 @@ public class FuncionarioService implements UserDetailsService  {
 
     @Autowired
     private FuncionarioDAO funcionarioDAO;
+
+    @Autowired
+    private DatabaseUtil databaseUtil;
 
     public List<Funcionario> buscarTodos() throws SQLException {
         return funcionarioDAO.buscarTodos();

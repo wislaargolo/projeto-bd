@@ -1,14 +1,11 @@
 package br.ufrn.imd.bd.service;
 
-import br.ufrn.imd.bd.connection.DatabaseConfig;
+import br.ufrn.imd.bd.connection.DatabaseUtil;
 import br.ufrn.imd.bd.dao.ContaDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Conta;
-import br.ufrn.imd.bd.model.Cozinheiro;
-import br.ufrn.imd.bd.model.InstanciaProduto;
-import br.ufrn.imd.bd.model.Mesa;
-import br.ufrn.imd.bd.model.Telefone;
+
 import br.ufrn.imd.bd.model.enums.StatusConta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +20,9 @@ public class ContaService {
 
     @Autowired
     private ContaDAO contaDAO;
+
+    @Autowired
+    private DatabaseUtil databaseUtil;
 
     public List<Conta> buscarTodos() throws SQLException {
         return contaDAO.buscarTodos();
@@ -47,7 +47,7 @@ public class ContaService {
 
     }
     public void deletar(Long id) throws SQLException {
-        try (Connection conn = DatabaseConfig.getConnection()){
+        try (Connection conn = databaseUtil.getConnection()){
             Conta conta = contaDAO.buscarPorChave(id);
             conta.setStatusConta(StatusConta.CANCELADA);
             contaDAO.atualizar(conn, conta);
@@ -59,15 +59,15 @@ public class ContaService {
         Connection conn = null;
 
         try {
-            conn = DatabaseConfig.getConnection();
+            conn = databaseUtil.getConnection();
             conn.setAutoCommit(false);
             conta = contaDAO.salvar(conn, conta);
             conn.commit();
         } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
+            databaseUtil.rollback(conn);
             throw e;
         } finally {
-            DatabaseConfig.close(conn);
+            databaseUtil.close(conn);
         }
 
         return conta;
@@ -84,7 +84,7 @@ public class ContaService {
             conta.setMetodoPagamento(null);
         }
 
-        try (Connection conn = DatabaseConfig.getConnection()){
+        try (Connection conn = databaseUtil.getConnection()){
             contaDAO.atualizar(conn,conta);
         }
     }

@@ -1,35 +1,44 @@
 package br.ufrn.imd.bd.connection;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import org.springframework.beans.factory.annotation.Value;
 
-public abstract class DatabaseConfig {
-    private static final String URL = "jdbc:mysql://localhost:3306/restaurante";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root12345";
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+import javax.sql.DataSource;
+
+
+@Configuration
+public class DatabaseConfig {
+
+    @Value("${database.driverClassName}")
+    private String driverClassName;
+
+    @Value("${database.url}")
+    private String url;
+
+    @Value("${database.username}")
+    private String username;
+
+    @Value("${database.password}")
+    private String password;
+
+    @Bean
+    public DataSource dataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+
+        return dataSource;
     }
 
-    public static void close(Connection conn) {
-        if(conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    @Bean
+    public DatabaseUtil databaseUtil(DataSource dataSource) {
+        return new DatabaseUtil(dataSource);
     }
 
-    public static void rollback(Connection conn) {
-        if(conn != null) {
-            try {
-                conn.rollback();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
 }

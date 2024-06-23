@@ -116,7 +116,7 @@ public class FuncionarioDAO extends AbstractDAO<Funcionario, Long> {
     }
 
     public Funcionario carregarPorLogin(String login) throws SQLException {
-        try (Connection conn = DatabaseConfig.getConnection()) {
+        try (Connection conn = getConnection()) {
             String sql = "SELECT f.*, " +
                     "EXISTS (SELECT * FROM caixa WHERE id_funcionario = f.id_funcionario) AS is_caixa, " +
                     "EXISTS (SELECT * FROM cozinheiro WHERE id_funcionario = f.id_funcionario) AS is_cozinheiro, " +

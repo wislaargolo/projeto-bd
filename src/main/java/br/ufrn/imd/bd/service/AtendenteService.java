@@ -1,6 +1,6 @@
 package br.ufrn.imd.bd.service;
 
-import br.ufrn.imd.bd.connection.DatabaseConfig;
+import br.ufrn.imd.bd.connection.DatabaseUtil;
 import br.ufrn.imd.bd.dao.AtendenteDAO;
 import br.ufrn.imd.bd.dao.FuncionarioDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
@@ -26,6 +26,9 @@ public class AtendenteService {
     @Autowired
     private FuncionarioDAO funcionarioDAO;
 
+    @Autowired
+    private DatabaseUtil databaseUtil;
+
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public List<Atendente> buscarPorTipo(TipoAtendente tipo) throws SQLException {
@@ -43,7 +46,7 @@ public class AtendenteService {
         Connection conn = null;
 
         try {
-            conn = DatabaseConfig.getConnection();
+            conn = databaseUtil.getConnection();
             conn.setAutoCommit(false);
 
             String criptografada = passwordEncoder.encode(atendente.getSenha());
@@ -54,7 +57,7 @@ public class AtendenteService {
                 conn.commit();
                 return novo;
             } catch (SQLException e) {
-                DatabaseConfig.rollback(conn);
+                databaseUtil.rollback(conn);
                 if (e.getErrorCode() == 1062) {
                     reativarSeInativo(atendente);
                     throw new EntidadeJaExisteException("Um funcionário com esse login foi reativado.");
@@ -63,7 +66,7 @@ public class AtendenteService {
                 }
             }
         } finally {
-            DatabaseConfig.close(conn);
+            databaseUtil.close(conn);
         }
     }
 
@@ -74,7 +77,7 @@ public class AtendenteService {
         Connection conn = null;
 
         try {
-            conn = DatabaseConfig.getConnection();
+            conn = databaseUtil.getConnection();
             conn.setAutoCommit(false);
 
             if(!atendente.getSenha().isEmpty()) {
@@ -86,7 +89,7 @@ public class AtendenteService {
                 atendenteDAO.atualizar(conn, atendente);
                 conn.commit();
             } catch (SQLException e) {
-                DatabaseConfig.rollback(conn);
+                databaseUtil.rollback(conn);
                 if (e.getErrorCode() == 1062) {
                     reativarSeInativo(atendente);
                     throw new EntidadeJaExisteException("Um funcionário com esse login foi reativado.");
@@ -95,19 +98,19 @@ public class AtendenteService {
                 }
             }
         } finally {
-            DatabaseConfig.close(conn);
+            databaseUtil.close(conn);
         }
     }
 
     public void deletar(Long id) throws SQLException, EntidadeNaoExisteException {
         buscarPorId(id);
-        try (Connection conn = DatabaseConfig.getConnection()){
+        try (Connection conn = databaseUtil.getConnection()){
             atendenteDAO.deletar(conn, id);
         }
     }
 
     private void reativarSeInativo(Atendente atendente) throws SQLException, EntidadeJaExisteException {
-        try (Connection conn = DatabaseConfig.getConnection()) {
+        try (Connection conn = databaseUtil.getConnection()) {
             Map<Funcionario, String> resultado = funcionarioDAO.buscarPorLogin(conn, atendente.getLogin());
 
             Map.Entry<Funcionario, String> entry = resultado.entrySet().iterator().next();

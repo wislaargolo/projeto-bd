@@ -1,6 +1,6 @@
 package br.ufrn.imd.bd.service;
 
-import br.ufrn.imd.bd.connection.DatabaseConfig;
+import br.ufrn.imd.bd.connection.DatabaseUtil;
 import br.ufrn.imd.bd.dao.CozinheiroDAO;
 import br.ufrn.imd.bd.dao.FuncionarioDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
@@ -29,6 +29,9 @@ public class CozinheiroService {
     @Autowired
     private FuncionarioDAO funcionarioDAO;
 
+    @Autowired
+    private DatabaseUtil databaseUtil;
+
     public List<Cozinheiro> buscarTodos() throws SQLException {
         return cozinheiroDAO.buscarTodos();
     }
@@ -48,7 +51,7 @@ public class CozinheiroService {
         Connection conn = null;
 
         try {
-            conn = DatabaseConfig.getConnection();
+            conn = databaseUtil.getConnection();
             conn.setAutoCommit(false);
 
             String criptografada = passwordEncoder.encode(cozinheiro.getSenha());
@@ -59,7 +62,7 @@ public class CozinheiroService {
                 conn.commit();
                 return cozinheiro;
             } catch (SQLException e) {
-                DatabaseConfig.rollback(conn);
+                databaseUtil.rollback(conn);
                 if (e.getErrorCode() == 1062) {
                     reativarSeInativo(cozinheiro);
                     throw new EntidadeJaExisteException("Um funcionário com esse login foi reativado.");
@@ -68,7 +71,7 @@ public class CozinheiroService {
                 }
             }
         } finally {
-            DatabaseConfig.close(conn);
+            databaseUtil.close(conn);
         }
     }
 
@@ -79,7 +82,7 @@ public class CozinheiroService {
         Connection conn = null;
 
         try {
-            conn = DatabaseConfig.getConnection();
+            conn = databaseUtil.getConnection();
             conn.setAutoCommit(false);
 
             if(!cozinheiro.getSenha().isEmpty()) {
@@ -91,7 +94,7 @@ public class CozinheiroService {
                 cozinheiroDAO.atualizar(conn, cozinheiro);
                 conn.commit();
             } catch (SQLException e) {
-                DatabaseConfig.rollback(conn);
+                databaseUtil.rollback(conn);
                 if (e.getErrorCode() == 1062) {
                     reativarSeInativo(cozinheiro);
                     throw new EntidadeJaExisteException("Um funcionário com esse login foi reativado.");
@@ -100,20 +103,20 @@ public class CozinheiroService {
                 }
             }
         } finally {
-            DatabaseConfig.close(conn);
+            databaseUtil.close(conn);
         }
     }
 
     public void deletar(Long id) throws SQLException, EntidadeNaoExisteException {
         buscarPorId(id);
-        try (Connection conn = DatabaseConfig.getConnection()){
+        try (Connection conn = databaseUtil.getConnection()){
             cozinheiroDAO.deletar(conn, id);
         }
 
     }
 
     private void reativarSeInativo(Cozinheiro cozinheiro) throws SQLException, EntidadeJaExisteException {
-        try (Connection conn = DatabaseConfig.getConnection()) {
+        try (Connection conn = databaseUtil.getConnection()) {
             Map<Funcionario, String> resultado = funcionarioDAO.buscarPorLogin(conn, cozinheiro.getLogin());
 
             Map.Entry<Funcionario, String> entry = resultado.entrySet().iterator().next();

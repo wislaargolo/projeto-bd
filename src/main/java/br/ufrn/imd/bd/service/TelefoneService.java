@@ -1,6 +1,6 @@
 package br.ufrn.imd.bd.service;
 
-import br.ufrn.imd.bd.connection.DatabaseConfig;
+import br.ufrn.imd.bd.connection.DatabaseUtil;
 import br.ufrn.imd.bd.dao.FuncionarioDAO;
 import br.ufrn.imd.bd.dao.TelefoneDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
@@ -23,6 +23,9 @@ public class TelefoneService {
     @Autowired
     private FuncionarioDAO funcionarioDAO;
 
+    @Autowired
+    private DatabaseUtil databaseUtil;
+
     public List<Telefone> buscarTelefonesPorFuncionarioId(Long id) throws SQLException {
         List<Telefone> telefones = telefoneDAO.buscarPorFuncionarioId(id);
         return telefones;
@@ -39,7 +42,7 @@ public class TelefoneService {
     }
 
     public Telefone salvar(Telefone telefone) throws SQLException, EntidadeJaExisteException, EntidadeNaoExisteException {
-        try (Connection conn = DatabaseConfig.getConnection()){
+        try (Connection conn = databaseUtil.getConnection()){
             telefone = telefoneDAO.salvar(conn, telefone);
             return telefone;
         } catch (SQLException e) {
@@ -54,7 +57,7 @@ public class TelefoneService {
     }
 
     public void atualizar(Telefone telefoneAntigo, Telefone telefoneNovo) throws SQLException, EntidadeJaExisteException, EntidadeNaoExisteException {
-        try (Connection conn = DatabaseConfig.getConnection()){
+        try (Connection conn = databaseUtil.getConnection()){
             telefoneDAO.atualizar(conn, telefoneAntigo, telefoneNovo);
         } catch (SQLException e) {
             if (e.getErrorCode() == 1062) {
@@ -70,7 +73,7 @@ public class TelefoneService {
     public void deletar(String telefone, Long funcionarioId) throws SQLException, EntidadeNaoExisteException {
         TelefoneKey telefoneKey = new TelefoneKey(funcionarioId, telefone);
         buscarPorChave(telefoneKey);
-        try (Connection conn = DatabaseConfig.getConnection()) {
+        try (Connection conn = databaseUtil.getConnection()) {
             telefoneDAO.deletar(conn, new TelefoneKey(funcionarioId, telefone));
         }
     }

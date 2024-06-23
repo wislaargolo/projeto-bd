@@ -1,17 +1,11 @@
 package br.ufrn.imd.bd.service;
 
-import br.ufrn.imd.bd.connection.DatabaseConfig;
-import br.ufrn.imd.bd.dao.ContaDAO;
-import br.ufrn.imd.bd.dao.InstanciaProdutoDAO;
+import br.ufrn.imd.bd.connection.DatabaseUtil;
+
 import br.ufrn.imd.bd.dao.PedidoDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
-import br.ufrn.imd.bd.model.Conta;
-import br.ufrn.imd.bd.model.InstanciaProduto;
-import br.ufrn.imd.bd.model.Mesa;
 import br.ufrn.imd.bd.model.Pedido;
-import br.ufrn.imd.bd.model.enums.ProgressoPedido;
-import br.ufrn.imd.bd.model.enums.StatusConta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +26,9 @@ public class PedidoService {
     @Autowired
     private MesaService mesaService;
 
+    @Autowired
+    private DatabaseUtil databaseUtil;
+
     public List<Pedido> buscarTodos() throws SQLException {
         return pedidoDAO.buscarTodos();
     }
@@ -49,15 +46,15 @@ public class PedidoService {
 
         Connection conn = null;
         try {
-            conn = DatabaseConfig.getConnection();
+            conn = databaseUtil.getConnection();
             conn.setAutoCommit(false);
             pedido = pedidoDAO.salvar(conn, pedido);
             conn.commit();
         } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
+            databaseUtil.rollback(conn);
             throw e;
         } finally {
-            DatabaseConfig.close(conn);
+            databaseUtil.close(conn);
         }
 
         return pedido;
@@ -67,20 +64,20 @@ public class PedidoService {
     public void addProdutoEmPedido(Pedido pedido) throws SQLException {
         Connection conn = null;
         try {
-            conn = DatabaseConfig.getConnection();
+            conn = databaseUtil.getConnection();
             conn.setAutoCommit(false);
             pedidoDAO.salvarInstanciaEmPedido(conn, pedido);
             conn.commit();
         } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
+            databaseUtil.rollback(conn);
             throw e;
         } finally {
-            DatabaseConfig.close(conn);
+            databaseUtil.close(conn);
         }
     }
 
     public void atualizar(Pedido pedido) throws EntidadeJaExisteException, SQLException {
-        try (Connection conn = DatabaseConfig.getConnection()){
+        try (Connection conn = databaseUtil.getConnection()){
             pedidoDAO.atualizar(conn, pedido);
         }
     }
@@ -106,15 +103,15 @@ public class PedidoService {
     public void atualizarProdutos(Pedido pedido) throws SQLException {
         Connection conn = null;
         try {
-            conn = DatabaseConfig.getConnection();
+            conn = databaseUtil.getConnection();
             conn.setAutoCommit(false);
             pedidoDAO.atualizarInstanciaEmPedido(conn, pedido);
             conn.commit();
         } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
+            databaseUtil.rollback(conn);
             throw e;
         } finally {
-            DatabaseConfig.close(conn);
+            databaseUtil.close(conn);
         }
 
     }

@@ -1,5 +1,6 @@
 package br.ufrn.imd.bd.dao;
-import br.ufrn.imd.bd.connection.DatabaseConfig;
+import br.ufrn.imd.bd.connection.DatabaseUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,15 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractDAO<T, ID>{
+
+    @Autowired
+    private DatabaseUtil databaseUtil;
     protected Connection getConnection() throws SQLException {
-        return DatabaseConfig.getConnection();
+        return databaseUtil.getConnection();
     }
     public abstract T mapearResultado(ResultSet rs) throws SQLException;
 
     public T mapearResultado(ResultSet rs, String prefix) throws SQLException {
         return mapearResultado(rs, "");
     }
-
 
     public abstract String getNomeTabela();
 

@@ -1,6 +1,6 @@
 package br.ufrn.imd.bd.service;
 
-import br.ufrn.imd.bd.connection.DatabaseConfig;
+import br.ufrn.imd.bd.connection.DatabaseUtil;
 import br.ufrn.imd.bd.dao.MesaDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
@@ -18,6 +18,9 @@ public class MesaService {
     @Autowired
     private MesaDAO mesaDAO;
 
+    @Autowired
+    private DatabaseUtil databaseUtil;
+
 
     public List<Mesa> buscarTodos() throws SQLException {
         return mesaDAO.buscarTodos();
@@ -33,7 +36,7 @@ public class MesaService {
     }
 
     public Mesa salvar(Mesa mesa) throws SQLException, EntidadeJaExisteException {
-        try (Connection conn = DatabaseConfig.getConnection()) {
+        try (Connection conn = databaseUtil.getConnection()) {
             try {
                 mesa = mesaDAO.salvar(conn, mesa);
                 return mesa;
@@ -52,7 +55,7 @@ public class MesaService {
 
         buscarPorId(mesa.getId());
 
-        try (Connection conn = DatabaseConfig.getConnection()) {
+        try (Connection conn = databaseUtil.getConnection()) {
             try {
                 mesaDAO.atualizar(conn, mesa);
             } catch (SQLException e) {
@@ -70,7 +73,7 @@ public class MesaService {
 
         buscarPorId(id);
 
-        try (Connection conn = DatabaseConfig.getConnection()){
+        try (Connection conn = databaseUtil.getConnection()){
             mesaDAO.deletar(conn, id);
         }
     }

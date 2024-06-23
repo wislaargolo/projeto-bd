@@ -1,6 +1,6 @@
 package br.ufrn.imd.bd.service;
 
-import br.ufrn.imd.bd.connection.DatabaseConfig;
+import br.ufrn.imd.bd.connection.DatabaseUtil;
 import br.ufrn.imd.bd.dao.CancelamentoDAO;
 import br.ufrn.imd.bd.dao.PedidoDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
@@ -33,6 +33,9 @@ public class CancelamentoService {
 
     @Autowired
     private PedidoService pedidoService;
+
+    @Autowired
+    private DatabaseUtil databaseUtil;
 
     public Cancelamento buscarPorId(Long id) throws SQLException, EntidadeNaoExisteException {
 
@@ -70,7 +73,7 @@ public class CancelamentoService {
 
         Connection conn = null;
         try {
-            conn = DatabaseConfig.getConnection();
+            conn = databaseUtil.getConnection();
             conn.setAutoCommit(false);
 
             List<PedidoInstancia> itensDoPedido = pedidoDAO.buscaProdutosPedido(conn, pedido.getId());
@@ -110,10 +113,10 @@ public class CancelamentoService {
             pedidoService.atualizarProdutos(pedido);
             conn.commit();
         } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
+            databaseUtil.rollback(conn);
             throw e;
         } finally {
-            DatabaseConfig.close(conn);
+            databaseUtil.close(conn);
         }
         return pedido;
     }
@@ -126,7 +129,7 @@ public class CancelamentoService {
 
         Connection conn = null;
         try {
-            conn = DatabaseConfig.getConnection();
+            conn = databaseUtil.getConnection();
             conn.setAutoCommit(false);
 
             List<PedidoInstancia> itensDoPedido = pedidoDAO.buscaProdutosPedido(conn, pedido.getId());
@@ -146,10 +149,10 @@ public class CancelamentoService {
 
             conn.commit();
         } catch (SQLException e) {
-            DatabaseConfig.rollback(conn);
+            databaseUtil.rollback(conn);
             throw e;
         } finally {
-            DatabaseConfig.close(conn);
+            databaseUtil.close(conn);
         }
         return pedido;
     }

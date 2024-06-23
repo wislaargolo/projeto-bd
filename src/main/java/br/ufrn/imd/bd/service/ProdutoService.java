@@ -1,6 +1,6 @@
 package br.ufrn.imd.bd.service;
 
-import br.ufrn.imd.bd.connection.DatabaseConfig;
+import br.ufrn.imd.bd.connection.DatabaseUtil;
 import br.ufrn.imd.bd.dao.InstanciaProdutoDAO;
 import br.ufrn.imd.bd.dao.ProdutoDAO;
 import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
@@ -23,6 +23,9 @@ public class ProdutoService {
     @Autowired
     private ProdutoDAO produtoDAO;
 
+    @Autowired
+    private DatabaseUtil databaseUtil;
+
     public List<InstanciaProduto> buscarTodos() throws SQLException {
         return instanciaProdutoDAO.buscarTodos();
     }
@@ -44,7 +47,7 @@ public class ProdutoService {
 
         buscarPorId(id);
 
-        try (Connection conn = DatabaseConfig.getConnection()) {
+        try (Connection conn = databaseUtil.getConnection()) {
             instanciaProdutoDAO.deletar(conn, id);
         }
     }
@@ -52,7 +55,7 @@ public class ProdutoService {
     public InstanciaProduto salvar(InstanciaProduto instanciaProduto) throws SQLException, EntidadeJaExisteException, EntidadeNaoExisteException {
         Connection conn = null;
         try {
-            conn = DatabaseConfig.getConnection();
+            conn = databaseUtil.getConnection();
             conn.setAutoCommit(false);
 
             try {
@@ -61,7 +64,7 @@ public class ProdutoService {
                 conn.commit();
                 return instanciaProduto;
             } catch (SQLException e) {
-                DatabaseConfig.rollback(conn);
+                databaseUtil.rollback(conn);
                 if (e.getErrorCode() == 1062) {
                     reativarSeInativo(instanciaProduto);
                     throw new EntidadeJaExisteException("Um produto inativo com essa descrição foi reativado.");
@@ -70,7 +73,7 @@ public class ProdutoService {
                 }
             }
         } finally {
-            DatabaseConfig.close(conn);
+            databaseUtil.close(conn);
         }
     }
 
@@ -105,7 +108,7 @@ public class ProdutoService {
     }
 
     private void reativarSeInativo(InstanciaProduto instanciaProduto) throws SQLException, EntidadeJaExisteException {
-        try (Connection conn = DatabaseConfig.getConnection()) {
+        try (Connection conn = databaseUtil.getConnection()) {
             InstanciaProduto existente = instanciaProdutoDAO.buscarUltimaInstanciaPorDescricao(conn, instanciaProduto.getProduto().getDescricao());
 
             if (existente != null && existente.getAtivo()) {
