@@ -3,7 +3,6 @@ package br.ufrn.imd.bd.service;
 import br.ufrn.imd.bd.connection.DatabaseUtil;
 import br.ufrn.imd.bd.dao.CancelamentoDAO;
 import br.ufrn.imd.bd.dao.PedidoDAO;
-import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Atendente;
 import br.ufrn.imd.bd.model.Cancelamento;
@@ -66,7 +65,7 @@ public class CancelamentoService {
         return agrupadosPorPedido;
     }
 
-    public Pedido cancelarItemDoPedido(Long pedidoId, Long produtoId) throws SQLException, EntidadeNaoExisteException, EntidadeJaExisteException {
+    public Pedido cancelarItemDoPedido(Long pedidoId, Long produtoId) throws SQLException, EntidadeNaoExisteException {
 
         Pedido pedido = pedidoService.buscarPorIdComProdutos(pedidoId);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -113,8 +112,8 @@ public class CancelamentoService {
                 index++;
             }
             pedido.setProgressoPedido(ProgressoPedido.ALTERADO);
-            pedidoService.atualizar(pedido);
-            pedidoService.atualizarProdutos(pedido);
+            pedidoDAO.atualizar(conn, pedido);
+            pedidoDAO.atualizarInstanciaEmPedido(conn, pedido);
             conn.commit();
         } catch (SQLException e) {
             databaseUtil.rollback(conn);
