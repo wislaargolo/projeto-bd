@@ -169,7 +169,8 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
     }
 
     public Pedido buscarPorIdComProdutos(Long id) throws SQLException {
-        String sql = "SELECT p.*, ppi.*, ip.*, produto.*, m.*, " +
+        String sql = "SELECT p.id_conta, p.id_pedido, p.progresso, " +
+                "ppi.quantidade, ip.*, produto.descricao, m.*, " +
                 "f.nome AS atendente_pedido_nome, " +
                 "a.tipo AS atendente_pedido_tipo, " +
                 "f.id_funcionario AS atendente_pedido_id_funcionario " +
@@ -265,6 +266,27 @@ public class PedidoDAO extends AbstractDAO<Pedido, Long> {
         }
 
         return produtos;
+    }
+
+    public void atualizarInstanciaEmPedido(Connection conn, Pedido pedido) throws SQLException {
+        String deleteSql = "DELETE FROM pedido_possui_instancia WHERE id_pedido = ?";
+        try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
+            deleteStmt.setLong(1, pedido.getId());
+            deleteStmt.executeUpdate();
+        }
+
+        String insertSql = "INSERT INTO pedido_possui_instancia(id_pedido, id_instancia_produto, quantidade) VALUES (?, ?, ?)";
+        try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+            for (PedidoInstancia pedidoInstancia : pedido.getProdutos()) {
+                insertStmt.setLong(1, pedido.getId());
+                insertStmt.setLong(2, pedidoInstancia.getInstanciaProduto().getId());
+                insertStmt.setInt(3, pedidoInstancia.getQuantidade());
+                int affectedRows = insertStmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new SQLException("ERRO >> A inserção de Produto em Pedido falhou, nenhuma linha afetada.");
+                }
+            }
+        }
     }
 
 }

@@ -16,7 +16,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COZINHEIRO"))) {
             response.sendRedirect("/cozinha/pedidos");
         } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_GARCOM"))) {
-            response.sendRedirect("/garcom");
+            response.sendRedirect("/garcom/pedidos/mesas");
         } else {
             response.sendRedirect("/gerente/pedidos/mesas");
         }

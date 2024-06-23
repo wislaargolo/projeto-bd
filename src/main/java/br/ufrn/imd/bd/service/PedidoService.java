@@ -103,5 +103,22 @@ public class PedidoService {
         return pedidoDAO.buscarPedidosAbertos(idMesa);
     }
 
+    public void atualizarProdutos(Pedido pedido) throws SQLException {
+        Connection conn = null;
+        try {
+            conn = DatabaseConfig.getConnection();
+            conn.setAutoCommit(false);
+            pedidoDAO.atualizarInstanciaEmPedido(conn, pedido);
+            conn.commit();
+        } catch (SQLException e) {
+            DatabaseConfig.rollback(conn);
+            throw e;
+        } finally {
+            DatabaseConfig.close(conn);
+        }
+
+    }
+
+
 
 }

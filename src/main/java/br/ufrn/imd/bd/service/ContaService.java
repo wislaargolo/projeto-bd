@@ -88,5 +88,9 @@ public class ContaService {
         }
     }
 
+    public Double obterTotal(Long id) throws SQLException {
+        return contaDAO.obterTotalConta(id);
+    }
+
 
 }

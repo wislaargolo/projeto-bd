@@ -27,6 +27,10 @@ public class ProdutoService {
         return instanciaProdutoDAO.buscarTodos();
     }
 
+    public List<InstanciaProduto> buscarTodosDisponiveis() throws SQLException {
+        return instanciaProdutoDAO.buscarProdutosDisponivei();
+    }
+
     public InstanciaProduto buscarPorId(Long id) throws SQLException, EntidadeNaoExisteException {
 
         InstanciaProduto instanciaProduto = instanciaProdutoDAO.buscarPorChave(id);

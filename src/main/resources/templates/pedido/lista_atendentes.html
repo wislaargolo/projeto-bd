@@ -13,12 +13,12 @@
             <h1 style="margin: 0;">Pedidos</h1>
         </div>
         <div class="button-group">
-            <a class="btn btn-primary btn-md" th:href="@{'/gerente/pedidos/novo/' + ${mesa.id}}" role="button">
+            <a class="btn btn-primary btn-md" th:href="@{'/' + ${#strings.substringBefore(layout, '/')} + '/pedidos/novo/' + ${mesa.id}}" role="button">
                 <i class="fa-solid fa-plus"></i>
                 <span>Novo Pedido</span>
             </a>
             <div th:if="${!#lists.isEmpty(pedidos)}">
-                <form th:action="@{'/gerente/pedidos/conta/' + ${pedidos[0].conta.id} + '/solicitar'}" method="post" style="display: inline;">
+                <form th:action="@{'/' + ${#strings.substringBefore(layout, '/')} + '/pedidos/conta/' + ${pedidos[0].conta.id} + '/solicitar'}" method="post" style="display: inline;">
                     <button type="submit" class="btn btn-success btn-md" style="width: 100%;">
                         <i class="fa-solid fa-receipt"></i>
                         <span>Solicitar Conta</span>
@@ -28,8 +28,19 @@
         </div>
     </div>
 
-    <div class="container" id="listagem">
+    <div class="container mt-2 mb-4">
+        <div th:if="${total != null and total > 0}" class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="alert alert-primary" role="alert">
+                    <strong class="alert-heading">Conta</strong>
+                    <p>Total: <span th:text="${#numbers.formatCurrency(total)}"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
+
+    <div class="container" id="listagem">
         <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
             <span th:text="${error}"></span>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -47,6 +58,7 @@
         <div th:if="${#lists.isEmpty(pedidos)}" class="alert alert-info" role="alert">
             Nenhum pedido encontrado.
         </div>
+
 
         <div th:each="pedido : ${pedidos}" th:if="${!#lists.isEmpty(pedidos)}">
             <div class="card">
@@ -69,7 +81,7 @@
                                 <button class="btn btn-secondary btn-sm" th:attr="data-bs-toggle='collapse', data-bs-target='#' + 'products-' + ${pedido.id}">
                                     <i class="fa-solid fa-drumstick-bite" title="Ver Produtos"></i>
                                 </button>
-                                <a th:href="@{/gerente/pedidos/(id=${pedido.id})}" class="btn btn-info btn-sm">
+                                <a th:if="${pedido.progressoPedido.name() != 'CANCELADO'}" th:href="@{'/' + ${#strings.substringBefore(layout, '/')}  + '/pedidos/cancelar'(id=${pedido.id})}" class="btn btn-info btn-sm">
                                     <i class="oi oi-eye" title="Ver Pedido"></i>
                                 </a>
                                 <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" th:attr="data-bs-target='#cancelaPedido-' + ${pedido.id}" th:data-id="${pedido.id}" th:data-mesa-id="${mesa.id}" th:if="${pedido.progressoPedido.name() != 'CANCELADO'}">
