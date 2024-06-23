@@ -57,15 +57,16 @@ public class CaixaContasController {
     }
 
     @PostMapping("/editar")
-    public String editarConta(@ModelAttribute @Valid Conta conta, BindingResult bindingResult) throws SQLException {
+    public String editarConta(@ModelAttribute @Valid Conta conta, BindingResult bindingResult,
+                              Model model, RedirectAttributes redirectAttributes) throws SQLException {
         if (bindingResult.hasErrors()) {
             return "conta/formulario";
         }
         try {
-
             contaService.atualizar(conta);
         } catch (EntidadeNaoExisteException e) {
-            throw new RuntimeException(e);
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/caixa/contas";
         }
         return "redirect:/caixa/contas";
     }

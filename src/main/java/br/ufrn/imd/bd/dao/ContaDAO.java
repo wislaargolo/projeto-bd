@@ -157,19 +157,27 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
         }
 
         Conta novo = conta[0];
+        LocalDateTime dataHoraFinalizacao = null;
+
+        // Verifica se o status é FINALIZADA para atribuir a data_hora_finalizacao
+        if (novo.getStatusConta() == StatusConta.FINALIZADA) {
+            dataHoraFinalizacao = LocalDateTime.now();
+        }
 
         String sql = String.format(
-                "UPDATE %s SET id_mesa = ?, id_atendente = ?, id_caixa = ?, metodo_pagamento = ?, status = ? WHERE id_conta = ?",
+                "UPDATE %s SET metodo_pagamento = ?, status = ?, data_hora_finalizacao = ? WHERE id_conta = ?",
                 getNomeTabela()
         );
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, novo.getMesa().getId());
-            stmt.setObject(2, novo.getAtendente() != null ? novo.getAtendente().getId() : null);
-            stmt.setObject(3, novo.getCaixa() != null ? novo.getCaixa().getId() : null);
-            stmt.setString(4, novo.getMetodoPagamento() != null ? novo.getMetodoPagamento().toString() : null);
-            stmt.setString(5, novo.getStatusConta().toString());
-            stmt.setLong(6, novo.getId());
+            stmt.setString(1, novo.getMetodoPagamento() != null ? novo.getMetodoPagamento().toString() : null);
+            stmt.setString(2, novo.getStatusConta().toString());
+            if (dataHoraFinalizacao != null) {
+                stmt.setTimestamp(3, Timestamp.valueOf(dataHoraFinalizacao));
+            } else {
+                stmt.setNull(3, java.sql.Types.TIMESTAMP);
+            }
+            stmt.setLong(4, novo.getId());
 
             int linhasAfetadas = stmt.executeUpdate();
             if (linhasAfetadas == 0) {
