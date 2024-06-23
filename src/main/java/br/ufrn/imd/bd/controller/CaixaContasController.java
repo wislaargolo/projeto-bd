@@ -2,6 +2,7 @@ package br.ufrn.imd.bd.controller;
 
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Conta;
+import br.ufrn.imd.bd.model.enums.MetodoPagamento;
 import br.ufrn.imd.bd.service.ContaService;
 import br.ufrn.imd.bd.service.MesaService;
 import jakarta.validation.Valid;
@@ -9,15 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import static br.ufrn.imd.bd.model.enums.StatusConta.FINALIZADA;
 
@@ -69,5 +67,13 @@ public class CaixaContasController {
             return "redirect:/caixa/contas";
         }
         return "redirect:/caixa/contas";
+    }
+
+
+    @GetMapping("/relatorio")
+    public String relatorioGanhoPorMetodoPagamento(Model model) throws SQLException {
+        Map<String, Double> totalGanhoPorMetodo = contaService.getTotalGanhoPorMetodoPagamento();
+        model.addAttribute("totalGanhoPorMetodo", totalGanhoPorMetodo);
+        return "conta/relatorio";
     }
 }

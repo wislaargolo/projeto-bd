@@ -16,6 +16,8 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class ContaDAO extends AbstractDAO<Conta, Long> {
@@ -203,4 +205,29 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
         }
         return null;
     }
+
+    public Map<String, Double> getTotalGanhoPorMetodoPagamento() throws SQLException {
+        Map<String, Double> totalPorMetodo = new HashMap<>();
+        String sql = "SELECT c.metodo_pagamento, SUM(ip.valor * pp.quantidade) AS total_ganho " +
+                "FROM conta c " +
+                "JOIN pedido p ON c.id_conta = p.id_conta " +
+                "JOIN pedido_possui_instancia pp ON p.id_pedido = pp.id_pedido " +
+                "JOIN instancia_produto ip ON pp.id_instancia_produto = ip.id_instancia_produto " +
+                "WHERE DATE(c.data_hora_finalizacao) = CURDATE() " +
+                "GROUP BY c.metodo_pagamento";
+
+        try (Connection conn = getConnection();  // Obter a conexão
+             PreparedStatement stmt = conn.prepareStatement(sql)) {  // Preparar o comando
+            ResultSet rs = stmt.executeQuery();  // Executar a consulta
+
+            while (rs.next()) {
+                String metodoPagamento = rs.getString("metodo_pagamento");
+                double totalGanho = rs.getDouble("total_ganho");
+                totalPorMetodo.put(metodoPagamento, totalGanho);
+            }
+        }
+
+        return totalPorMetodo;
+    }
+
 }

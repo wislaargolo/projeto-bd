@@ -21,6 +21,7 @@
 
             <div class="form-group">
                 <label for="status">Status:</label>
+
                 <select th:field="*{statusConta}" id="status" class="form-control">
                     <option th:each="status : ${T(br.ufrn.imd.bd.model.enums.StatusConta).values()}"
                             th:value="${status}" th:text="${status}">Status</option>

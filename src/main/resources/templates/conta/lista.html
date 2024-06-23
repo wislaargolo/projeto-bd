@@ -4,7 +4,7 @@
 <section class="main p-4" layout:fragment="corpo">
     <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
         <h1>Lista de Contas</h1>
-        <a class="btn btn-primary btn-md" th:href="@{/caixa/relatório}" role="button">
+        <a class="btn btn-primary btn-md" th:href="@{/caixa/contas/relatorio}" role="button">
             <i class="fa-solid fa-plus"></i>
             <span>Gerar Relatorio</span>
         </a>
@@ -29,6 +29,7 @@
                     <th>Status</th>
                     <th>Método de Pagamento</th>
                     <th>Data/Hora Finalização</th>
+                    <th>Total</th>
                     <th class="action-column">Ações</th>
                 </tr>
                 </thead>
@@ -40,6 +41,7 @@
                     <td th:text="${conta.statusConta}"></td>
                     <td th:text="${conta.metodoPagamento}"></td>
                     <td th:text="${conta.dataFinalizacao}"></td>
+                    <td th:text="${#numbers.formatCurrency(conta.total)}"></td>
                     <td colspan="2">
                         <!-- Botão de editar -->
                         <a class="btn btn-secondary btn-sm"

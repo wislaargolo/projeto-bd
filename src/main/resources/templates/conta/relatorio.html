@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html layout:decorate="~{caixa/layout}" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório</title>
+</head>
+<body>
+
+<section class="main p-4" layout:fragment="corpo">
+    <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Relatório</h1>
+        <a class="btn btn-primary btn-md" th:href="@{/caixa/contas}" role="button">
+            Voltar
+        </a>
+    </div>
+
+    <div class="container">
+    <table class="table table-striped table-hover table-sm flex-table">
+        <thead>
+        <tr>
+            <th>Método de Pagamento</th>
+            <th>Total pago</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry : ${totalGanhoPorMetodo}">
+            <td th:text="${entry.key}"></td>
+            <td th:text="${#numbers.formatCurrency(entry.value)}"></td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
+</section>
+
+<!-- Inclusão do modal, se necessário -->
+<div th:replace="~{/modal :: modal}"></div>
+
+</body>
+</html>
