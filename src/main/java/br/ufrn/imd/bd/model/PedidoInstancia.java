@@ -2,6 +2,8 @@ package br.ufrn.imd.bd.model;
 
 import jakarta.validation.constraints.NotNull;
 
+import java.util.Objects;
+
 public class PedidoInstancia {
 
     private InstanciaProduto instanciaProduto;
@@ -30,4 +32,19 @@ public class PedidoInstancia {
     public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
     }
+
+    //coloquei pra poder usar o contains
+    /*@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PedidoInstancia that = (PedidoInstancia) o;
+        return Objects.equals(instanciaProduto, that.instanciaProduto) &&
+                Objects.equals(quantidade, that.quantidade);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(instanciaProduto, quantidade);
+    }*/
 }

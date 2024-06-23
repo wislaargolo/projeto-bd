@@ -10,7 +10,7 @@
     </div>
 
     <div class="container mt-4">
-    <div class="table-responsive" th:if="${!#lists.isEmpty(todosProdutos)}">
+    <!--<div class="table-responsive" th:if="${!#lists.isEmpty(todosProdutos)}">
         <table class="table table-striped table-hover table-sm table-main">
             <thead>
             <tr>
@@ -27,7 +27,13 @@
                     <td th:text="${instancia.produto.descricao}"></td>
                     <td th:text="${#numbers.formatCurrency(instancia.valor)}"></td>
                     <td>
-                        <form th:action="@{'/gerente/pedidos/add/instancia/' + ${instancia.id}}" method="post">
+                        &lt;!&ndash;<form th:action="@{'/gerente/pedidos/add/instancia/' + ${instancia.id}}" method="post">
+                            <button type="submit" class="btn btn-secondary btn-sm">
+                                <span class="oi oi-plus" title="add" aria-hidden="true"></span>
+                            </button>
+                        </form>&ndash;&gt;
+                        <form th:if="${!#lists.contains(pedido.produtos, instancia)}"
+                              th:action="@{'/gerente/pedidos/add/instancia/' + ${instancia.id}}" method="post">
                             <button type="submit" class="btn btn-secondary btn-sm">
                                 <span class="oi oi-plus" title="add" aria-hidden="true"></span>
                             </button>
@@ -38,9 +44,38 @@
             </th:block>
             </tbody>
         </table>
-    </div>
+    </div>-->
+        <div class="table-responsive" th:if="${!#lists.isEmpty(todosProdutos)}">
+            <table class="table table-striped table-hover table-sm table-main">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Descrição</th>
+                    <th>Valor unitário</th>
+                    <th>Adicionar ao pedido</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="instancia : ${todosProdutos}">
+                    <tr>
+                        <td th:text="${instancia.produto.id}"></td>
+                        <td th:text="${instancia.produto.descricao}"></td>
+                        <td th:text="${#numbers.formatCurrency(instancia.valor)}"></td>
+                        <td>
+                            <form th:if="${!pedido.containsProduto(instancia.produto.id)}"
+                                  th:action="@{'/gerente/pedidos/add/instancia/' + ${instancia.id}}" method="post">
+                                <button type="submit" class="btn btn-secondary btn-sm">
+                                    <span class="oi oi-plus" title="add" aria-hidden="true"></span>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
 
-    <div class="container mt-4" th:if="${!#lists.isEmpty(pedido.produtos)}">
+    <!--<div class="container mt-4" th:if="${!#lists.isEmpty(pedido.produtos)}">
 
         <form th:action="@{/gerente/pedidos/novo/salvar}" th:object="${pedido}" method="post" class="needs-validation" novalidate>
             <div class="table-responsive">
@@ -51,6 +86,7 @@
                         <th>Descrição</th>
                         <th>Valor unitário</th>
                         <th>Quantidade</th>
+                        <th>Remover</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -62,6 +98,14 @@
                             <td>
                                 <input type="number" th:field="*{produtos[__${iterStat.index}__].quantidade}" class="form-control" min="0" required />
                             </td>
+                            <td>
+                                &lt;!&ndash;th:if="${!pedido.containsProduto(instancia.produto.id)}"&ndash;&gt;
+                                <form th:action="@{'/gerente/pedidos/rmv/instancia/' + ${instancia.instanciaProduto.id}}" method="post">
+                                    <button type="submit" class="btn btn-secondary btn-sm">
+                                        <span class="oi oi-x" title="remove" aria-hidden="true"></span>
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                     </th:block>
                     </tbody>
@@ -72,7 +116,90 @@
             </div>
         </form>
 
-    </div>
+    </div>-->
+
+        <!--<div class="container mt-4" th:if="${!#lists.isEmpty(pedido.produtos)}">
+            <form id="form01" th:action="@{/gerente/pedidos/novo/salvar}" th:object="${pedido}" method="post" class="needs-validation" novalidate>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-sm table-main">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Descrição</th>
+                            <th>Valor unitário</th>
+                            <th>Quantidade</th>
+                            <th>Remover</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:each="instancia, iterStat: *{produtos}">
+                            <tr>
+                                <td th:text="${instancia.instanciaProduto.produto.id}"></td>
+                                <td th:text="${instancia.instanciaProduto.produto.descricao}"></td>
+                                <td th:text="${#numbers.formatCurrency(instancia.instanciaProduto.valor)}"></td>
+                                <td>
+                                    <input type="number" th:field="*{produtos[__${iterStat.index}__].quantidade}" class="form-control" min="0" required />
+                                </td>
+                                <td>
+                                    <div>
+                                        <form id="form02" th:action="@{'/gerente/pedidos/rmv/instancia/' + ${instancia.instanciaProduto.id}}" method="post">
+                                            <button form="form02" type="submit" class="btn btn-secondary btn-sm">
+                                                <span class="oi oi-x" title="remove" aria-hidden="true"></span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button form="form01" type="submit" class="btn btn-primary">Finalizar pedido</button>
+                </div>
+            </form>
+        </div>-->
+
+        <div class="container mt-4" th:if="${!#lists.isEmpty(pedido.produtos)}">
+            <form th:action="@{/gerente/pedidos/novo/salvar}" th:object="${pedido}" method="post" class="needs-validation" novalidate>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-sm table-main">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Descrição</th>
+                            <th>Valor unitário</th>
+                            <th>Quantidade</th>
+                            <th>Remover</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:each="instancia, iterStat: *{produtos}">
+                            <tr>
+                                <td th:text="${instancia.instanciaProduto.produto.id}"></td>
+                                <td th:text="${instancia.instanciaProduto.produto.descricao}"></td>
+                                <td th:text="${#numbers.formatCurrency(instancia.instanciaProduto.valor)}"></td>
+                                <td>
+                                    <input type="number" th:field="*{produtos[__${iterStat.index}__].quantidade}" class="form-control" min="0" required />
+                                </td>
+                                <td>
+                                    <form th:action="@{'/gerente/pedidos/rmv/instancia/' + ${instancia.instanciaProduto.id}}" method="post">
+                                        <button type="submit" class="btn btn-secondary btn-sm">
+                                            <span class="oi oi-x" title="remove" aria-hidden="true"></span>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Finalizar pedido</button>
+                </div>
+            </form>
+        </div>
+
     </div>
 </section>
 

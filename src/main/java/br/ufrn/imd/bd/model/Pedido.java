@@ -92,4 +92,8 @@ public class Pedido {
                 ", produtos=" + produtos +
                 '}';
     }
+
+    public boolean containsProduto(Long produtoId) {
+        return produtos.stream().anyMatch(pi -> pi.getInstanciaProduto().getProduto().getId().equals(produtoId));
+    }
 }

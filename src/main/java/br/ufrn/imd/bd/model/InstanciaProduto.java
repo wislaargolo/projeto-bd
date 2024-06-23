@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class InstanciaProduto {
 
@@ -63,4 +64,22 @@ public class InstanciaProduto {
     public void setProduto(Produto produto) {
         this.produto = produto;
     }
+
+    //coloquei pra poder usar o contains em PedidoInstacia
+   /* @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InstanciaProduto that = (InstanciaProduto) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(valor, that.valor) &&
+                Objects.equals(isAtivo, that.isAtivo) &&
+                Objects.equals(data, that.data) &&
+                Objects.equals(produto, that.produto);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, valor, isAtivo, data, produto);
+    }*/
 }

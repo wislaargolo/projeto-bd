@@ -99,8 +99,8 @@ public abstract class AtendentePedidosController {
 
             InstanciaProduto instanciaProduto = produtoService.buscarPorId(id);
             PedidoInstancia pedidoInstancia = new PedidoInstancia(instanciaProduto, 1);
-
             pedido.addProduto(pedidoInstancia);
+
             session.setAttribute("pedido", pedido);
             model.addAttribute("pedido", pedido);
             model.addAttribute("todosProdutos", produtoService.buscarTodos());
@@ -111,6 +111,43 @@ public abstract class AtendentePedidosController {
         }
         return "pedido/form_novo_pedido";
     }
+
+    @PostMapping("/rmv/instancia/{id}")
+    public String removeInstanciaEmPedido(@PathVariable Long id,
+                                          Model model,
+                                          RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
+
+        System.out.println("estou aqui no rmv");
+        try {
+            Pedido pedido = (Pedido) session.getAttribute("pedido");
+            if (pedido == null) {
+                throw new IllegalStateException("Pedido not found in session");
+            }
+
+            InstanciaProduto instanciaProd = produtoService.buscarPorId(id);
+            PedidoInstancia aux = null;
+            //pedido.getProdutos().removeIf(item -> item.getInstanciaProduto().equals(instanciaProd));
+            for (PedidoInstancia item : pedido.getProdutos()) {
+                if (item.getInstanciaProduto().getProduto().getId().equals(instanciaProd.getId())) {
+                    System.out.println("entrou no for");
+                    aux = item;
+                }
+            }
+            if (aux != null) pedido.getProdutos().remove(aux);
+
+            System.out.println("estou saindo do rmv");
+
+            session.setAttribute("pedido", pedido);
+            model.addAttribute("pedido", pedido);
+            model.addAttribute("todosProdutos", produtoService.buscarTodos());
+
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/" + getLayout() + "/pedidos/mesas";
+        }
+        return "pedido/form_novo_pedido";
+    }
+
 
     @PostMapping("/novo/salvar")
     public String salvarNovoPedido(Authentication authentication,
