@@ -3,6 +3,7 @@ package br.ufrn.imd.bd.service;
 import br.ufrn.imd.bd.connection.DatabaseUtil;
 import br.ufrn.imd.bd.dao.CancelamentoDAO;
 import br.ufrn.imd.bd.dao.PedidoDAO;
+import br.ufrn.imd.bd.exceptions.EntidadeJaExisteException;
 import br.ufrn.imd.bd.exceptions.EntidadeNaoExisteException;
 import br.ufrn.imd.bd.model.Atendente;
 import br.ufrn.imd.bd.model.Cancelamento;
@@ -65,7 +66,7 @@ public class CancelamentoService {
         return agrupadosPorPedido;
     }
 
-    public Pedido cancelarItemDoPedido(Long pedidoId, Long produtoId) throws SQLException, EntidadeNaoExisteException {
+    public Pedido cancelarItemDoPedido(Long pedidoId, Long produtoId) throws SQLException, EntidadeNaoExisteException, EntidadeJaExisteException {
 
         Pedido pedido = pedidoService.buscarPorIdComProdutos(pedidoId);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -96,6 +97,8 @@ public class CancelamentoService {
             cancelamento.setPedido(pedido);
             cancelamento.setProduto(itemParaCancelar.getInstanciaProduto());
             cancelamento.setAtendente(new Atendente(funcionarioLogado.getId()));
+            cancelamento.setQuantidade(itemParaCancelar.getQuantidade());
+
 
             cancelamentoDAO.salvar(conn, cancelamento);
 
@@ -109,6 +112,8 @@ public class CancelamentoService {
                 }
                 index++;
             }
+            pedido.setProgressoPedido(ProgressoPedido.ALTERADO);
+            pedidoService.atualizar(pedido);
             pedidoService.atualizarProdutos(pedido);
             conn.commit();
         } catch (SQLException e) {
@@ -138,6 +143,7 @@ public class CancelamentoService {
                 cancelamento.setPedido(pedido);
                 cancelamento.setProduto(item.getInstanciaProduto());
                 cancelamento.setAtendente(new Atendente(funcionarioLogado.getId()));
+                cancelamento.setQuantidade(item.getQuantidade());
 
                 cancelamentoDAO.salvar(conn, cancelamento);
             }
