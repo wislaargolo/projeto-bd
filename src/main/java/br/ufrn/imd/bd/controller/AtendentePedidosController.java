@@ -51,7 +51,11 @@ public abstract class AtendentePedidosController {
     public String listarPedidosPorMesa(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) throws SQLException {
         try {
             model.addAttribute("mesa", mesaService.buscarPorId(id));
-            model.addAttribute("pedidos", pedidoService.buscarPedidosPorMesa(id));
+            List<Pedido> pedidos = pedidoService.buscarPedidosPorMesa(id);
+            if(pedidos != null && !pedidos.isEmpty()) {
+                model.addAttribute("total", contaService.obterTotal(pedidos.get(0).getConta().getId()));
+            }
+            model.addAttribute("pedidos",pedidos);
             model.addAttribute("layout", getLayout() + "/layout");
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

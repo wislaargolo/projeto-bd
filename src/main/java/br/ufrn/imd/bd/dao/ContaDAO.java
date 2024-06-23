@@ -46,10 +46,7 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
         conta.setAtendente(ResultSetUtil.getEntity(rs, atendenteDAO, "atendente_", "id_funcionario"));
         conta.setMesa(ResultSetUtil.getEntity(rs, mesaDAO,"id_mesa"));
         conta.setMetodoPagamento(ResultSetUtil.getEnumValue(rs, "metodo_pagamento", MetodoPagamento.class));
-        if(ResultSetUtil.hasColumn(rs, "total"))
-            conta.setTotal(rs.getDouble("total"));
-        else
-            conta.setTotal(obterTotalConta(conta.getId()));
+        conta.setTotal(ResultSetUtil.getDouble(rs, "total"));
 
         return conta;
     }
