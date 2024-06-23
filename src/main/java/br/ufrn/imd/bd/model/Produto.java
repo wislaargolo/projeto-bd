@@ -3,6 +3,8 @@ package br.ufrn.imd.bd.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.Objects;
+
 public class Produto {
 
     private Long id;
@@ -43,4 +45,21 @@ public class Produto {
     public void setDisponivel(Boolean disponivel) {
         this.disponivel = disponivel;
     }
+
+    //coloquei pra poder usar o contains em PedidoInstancia
+    /*@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Produto produto = (Produto) o;
+        return Objects.equals(id, produto.id) &&
+                Objects.equals(descricao, produto.descricao) &&
+                Objects.equals(disponivel, produto.disponivel);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, descricao, disponivel);
+    }*/
+
 }

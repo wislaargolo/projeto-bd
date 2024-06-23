@@ -75,10 +75,13 @@ public abstract class AtendentePedidosController {
                 pedido.getConta().setMesa(mesaService.buscarPorId(id));
             }
 
+            System.out.println(getLayout());
+
             session.setAttribute("pedido", pedido);
             model.addAttribute("pedido", pedido);
-            model.addAttribute("todosProdutos", produtoService.buscarTodos());
+            model.addAttribute("todosProdutos", produtoService.buscarTodosDisponiveis());
             model.addAttribute("mesa", mesaService.buscarPorId(id));
+            model.addAttribute("layout", getLayout() + "/layout");
 
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -99,11 +102,12 @@ public abstract class AtendentePedidosController {
 
             InstanciaProduto instanciaProduto = produtoService.buscarPorId(id);
             PedidoInstancia pedidoInstancia = new PedidoInstancia(instanciaProduto, 1);
-
             pedido.addProduto(pedidoInstancia);
+
             session.setAttribute("pedido", pedido);
             model.addAttribute("pedido", pedido);
             model.addAttribute("todosProdutos", produtoService.buscarTodos());
+            model.addAttribute("layout", getLayout() + "/layout");
 
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -111,6 +115,39 @@ public abstract class AtendentePedidosController {
         }
         return "pedido/form_novo_pedido";
     }
+
+    @GetMapping("/rmv/instancia")
+    public String removeInstanciaEmPedido(@RequestParam("id") Long id,
+                                          Model model,
+                                          RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
+
+        try {
+            Pedido pedido = (Pedido) session.getAttribute("pedido");
+            if (pedido == null) {
+                throw new IllegalStateException("Pedido not found in session");
+            }
+
+            InstanciaProduto instanciaProd = produtoService.buscarPorId(id);
+            PedidoInstancia aux = null;
+            for (PedidoInstancia item : pedido.getProdutos()) {
+                if (item.getInstanciaProduto().getProduto().getId().equals(instanciaProd.getId())) {
+                    aux = item;
+                }
+            }
+            if (aux != null) pedido.getProdutos().remove(aux);
+
+            session.setAttribute("pedido", pedido);
+            model.addAttribute("pedido", pedido);
+            model.addAttribute("todosProdutos", produtoService.buscarTodos());
+            model.addAttribute("layout", getLayout() + "/layout");
+
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/" + getLayout() + "/pedidos/mesas";
+        }
+        return "pedido/form_novo_pedido";
+    }
+
 
     @PostMapping("/novo/salvar")
     public String salvarNovoPedido(Authentication authentication,
@@ -140,6 +177,7 @@ public abstract class AtendentePedidosController {
 
             pedido.setProgressoPedido(ProgressoPedido.SOLICITADO);
             pedidoService.salvar(pedido);
+            model.addAttribute("layout", getLayout() + "/layout");
 
         } catch (EntidadeNaoExisteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -180,6 +218,45 @@ public abstract class AtendentePedidosController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/" + getLayout() + "/pedidos/mesas";
         }
+    }
+
+    @GetMapping("/cancelar")
+    public String mostarCancelarItemDePedido(@RequestParam Long id, Model model, RedirectAttributes redirectAttributes) throws SQLException, EntidadeNaoExisteException {
+
+        try {
+            Pedido pedido = pedidoService.buscarPorIdComProdutos(id);
+            model.addAttribute("pedido", pedido);
+            model.addAttribute("layout", getLayout() + "/layout");
+        } catch (EntidadeNaoExisteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/" + getLayout() + "/pedidos/mesas";
+        }
+
+        return "pedido/cancelar_item";
+    }
+
+    @GetMapping("/removerProduto/{pedidoId}/{produtoId}")
+    public String removerProdutoDoPedido(@PathVariable Long pedidoId, @PathVariable Long produtoId, RedirectAttributes redirectAttributes) {
+        try {
+            Pedido pedido = pedidoService.buscarPorIdComProdutos(pedidoId);
+            InstanciaProduto instanciaProduto = produtoService.buscarPorId(produtoId);
+
+            if (pedido.getProdutos().size() == 1) {
+                cancelamentoService.cancelarPedido(pedidoId);
+                redirectAttributes.addFlashAttribute("sucesso", "Pedido cancelado com sucesso!");
+                return "redirect:/" + getLayout() + "/pedidos/mesas/" + pedido.getConta().getMesa().getId();
+            }
+
+            //pedido.;
+            cancelamentoService.cancelarItemDoPedido(pedidoId, produtoId);
+            redirectAttributes.addFlashAttribute("success", "Produto removido com sucesso");
+
+            return "redirect:/" + getLayout() + "/pedidos/mesas/" + pedido.getConta().getMesa().getId();
+        } catch (EntidadeNaoExisteException | SQLException e) {
+            redirectAttributes.addFlashAttribute("error", "Erro ao remover o produto: " + e.getMessage());
+            return "redirect:/" + getLayout() + "/pedidos/mesas";
+        }
+
     }
 }
 

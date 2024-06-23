@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html th:with="layout=${layout}" layout:decorate="${layout}" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <link th:href="@{/css/cards.css}" rel="stylesheet" />
+</head>
+<body>
+<section class="main p-4" layout:fragment="corpo">
+  <div class="header-area container">
+    <div class="title-group">
+      <a th:href="@{'/' + ${#strings.substringBefore(layout, '/')} + '/pedidos/mesas/' + ${pedido.conta.mesa.id}}" class="btn btn-primary" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
+        <i class="fa fa-arrow-left" style="font-size: 16px;"></i>
+      </a>
+      <h1 style="margin: 0;">Pedidos</h1>
+    </div>
+
+    <div class="container mt-4">
+      <div th:if="${pedido != null}">
+        <div class="card">
+          <div class="card-header">
+            <div class="header-left">
+              Pedido<span th:text="'#' + ${pedido.id}"></span> -
+              <div class="progress-status" th:classappend="${pedido.progressoPedido.name() == 'CANCELADO'} ? ' cancelled'">
+                Status: <span th:text="${pedido.progressoPedido.name()}"></span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="info-and-actions">
+              <div class="info-section">
+                <p>Horário: <span th:text="${#temporals.format(pedido.dataRegistro, 'HH:mm:ss')}"></span></p>
+              </div>
+              <div class="info-section">
+                <p id="atendente">Atendente: <span th:text="${pedido.atendente.nome}"></span></p>
+              </div>
+            </div>
+            <div class="product-list">
+              <div th:if="${pedido.produtos != null and !#lists.isEmpty(pedido.produtos)}">
+                <div th:each="produto : ${pedido.produtos}" class="product-card">
+                  <span class="product-info" th:text="${produto.instanciaProduto.produto.descricao}">Descrição</span>
+                  <span class="product-info" th:text="'&#215; ' + ${produto.quantidade}">Quantidade</span>
+                  <span class="product-info unit-price" th:text="${#numbers.formatCurrency(produto.instanciaProduto.valor)} + ' /cada'">Valor Unitário</span>
+                  <a th:href="@{'/' + ${#strings.substringBefore(layout, '/')} + '/pedidos/removerProduto/' + ${pedido.id} + '/' + ${produto.instanciaProduto.id}}" class="btn btn-danger btn-sm">
+                    <i class="oi oi-circle-x" title="Remover Produto"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div th:replace="~{pedido/modal :: cancelaPedido(${layout}, ${pedido.id}, ${pedido.conta.mesa.id})}"></div>
+    </div>
+
+  </div>
+</section>
+</body>
+</html>
