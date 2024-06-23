@@ -39,7 +39,6 @@
                     <div th:id="'details-' + ${entry.key}" class="collapse product-list">
                         <div th:each="cancelamento : ${entry.value}" class="product-card">
                                 <span class="product-info" th:text="${cancelamento.produto.produto.descricao}">Descrição do Produto</span>
-                                <span class="product-info" th:text="'&#215; ' + ${cancelamento.quantidade}">Quantidade</span>
                                 <span class="product-info" th:text="'Atendente: ' + ${cancelamento.atendente.nome}">Atendente</span>
                                 <span class="product-info" th:text="'Horário: ' + ${#temporals.format(cancelamento.dataRegistro, 'HH:mm:ss')}">Horário</span>
                         </div>

@@ -96,7 +96,6 @@ public class CancelamentoService {
             cancelamento.setPedido(pedido);
             cancelamento.setProduto(itemParaCancelar.getInstanciaProduto());
             cancelamento.setAtendente(new Atendente(funcionarioLogado.getId()));
-            cancelamento.setQuantidade(itemParaCancelar.getQuantidade());
 
             cancelamentoDAO.salvar(conn, cancelamento);
 
@@ -139,7 +138,6 @@ public class CancelamentoService {
                 cancelamento.setPedido(pedido);
                 cancelamento.setProduto(item.getInstanciaProduto());
                 cancelamento.setAtendente(new Atendente(funcionarioLogado.getId()));
-                cancelamento.setQuantidade(item.getQuantidade());
 
                 cancelamentoDAO.salvar(conn, cancelamento);
             }

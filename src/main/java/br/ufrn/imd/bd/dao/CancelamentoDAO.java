@@ -32,7 +32,6 @@ public class CancelamentoDAO extends AbstractDAO<Cancelamento, Long> {
         cancelamento.setAtendente(atendenteDAO.mapearResultado(rs));
         cancelamento.setPedido(pedidoDAO.mapearResultado(rs));
         cancelamento.setProduto(instanciaProdutoDAO.mapearResultado(rs));
-        cancelamento.setQuantidade(rs.getInt("quantidade"));
         cancelamento.setDataRegistro(rs.getObject("data_hora", LocalDateTime.class));
         return cancelamento;
     }
@@ -66,14 +65,13 @@ public class CancelamentoDAO extends AbstractDAO<Cancelamento, Long> {
 
     @Override
     public Cancelamento salvar(Connection conn, Cancelamento cancelamento) throws SQLException {
-        String sql = String.format("INSERT INTO %s (id_pedido, id_instancia_produto, id_atendente, quantidade) " +
-                                    "VALUES (?, ?, ?, ?)", getNomeTabela());
+        String sql = String.format("INSERT INTO %s (id_pedido, id_instancia_produto, id_atendente) " +
+                                    "VALUES (?, ?, ?)", getNomeTabela());
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setLong(1, cancelamento.getPedido().getId());
             stmt.setLong(2, cancelamento.getProduto().getId());
             stmt.setLong(3, cancelamento.getAtendente().getId());
-            stmt.setInt(4, cancelamento.getQuantidade());
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {

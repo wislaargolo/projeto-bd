@@ -14,8 +14,6 @@ public class Cancelamento {
 
     private LocalDateTime dataRegistro;
 
-    private Integer quantidade;
-
     public Long getId() {
         return id;
     }
@@ -56,11 +54,4 @@ public class Cancelamento {
         this.dataRegistro = dataRegistro;
     }
 
-    public Integer getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(Integer quantidade) {
-        this.quantidade = quantidade;
-    }
 }
