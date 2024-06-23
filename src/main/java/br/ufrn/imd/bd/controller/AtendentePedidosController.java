@@ -79,7 +79,7 @@ public abstract class AtendentePedidosController {
 
             session.setAttribute("pedido", pedido);
             model.addAttribute("pedido", pedido);
-            model.addAttribute("todosProdutos", produtoService.buscarTodos());
+            model.addAttribute("todosProdutos", produtoService.buscarTodosDisponiveis());
             model.addAttribute("mesa", mesaService.buscarPorId(id));
             model.addAttribute("layout", getLayout() + "/layout");
 
@@ -116,8 +116,8 @@ public abstract class AtendentePedidosController {
         return "pedido/form_novo_pedido";
     }
 
-    @PostMapping("/rmv/instancia/{id}")
-    public String removeInstanciaEmPedido(@PathVariable Long id,
+    @GetMapping("/rmv/instancia")
+    public String removeInstanciaEmPedido(@RequestParam("id") Long id,
                                           Model model,
                                           RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
 
@@ -247,6 +247,7 @@ public abstract class AtendentePedidosController {
                 return "redirect:/" + getLayout() + "/pedidos/mesas/" + pedido.getConta().getMesa().getId();
             }
 
+            //pedido.;
             cancelamentoService.cancelarItemDoPedido(pedidoId, produtoId);
             redirectAttributes.addFlashAttribute("success", "Produto removido com sucesso");
 

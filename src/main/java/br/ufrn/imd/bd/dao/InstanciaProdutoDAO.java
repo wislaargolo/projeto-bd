@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
@@ -42,6 +44,19 @@ public class InstanciaProdutoDAO extends AbstractDAO<InstanciaProduto, Long> {
     @Override
     protected String getBuscarPorIdQuery() {
         return String.format("SELECT * FROM %s AS ip NATURAL JOIN %s WHERE ip.id_instancia_produto = ?", getNomeTabela(), produtoDAO.getNomeTabela());
+    }
+
+    public List<InstanciaProduto> buscarProdutosDisponivei() throws SQLException {
+        List<InstanciaProduto> resultados = new ArrayList<>();
+        String sql = String.format("SELECT * FROM %s AS ip NATURAL JOIN %s AS pr WHERE ip.is_ativo = true AND pr.disponibilidade = true;", getNomeTabela(), produtoDAO.getNomeTabela());
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                resultados.add(mapearResultado(rs));
+            }
+        }
+        return resultados;
     }
 
     @Override
