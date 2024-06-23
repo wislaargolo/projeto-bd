@@ -46,6 +46,10 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
         conta.setAtendente(ResultSetUtil.getEntity(rs, atendenteDAO, "atendente_", "id_funcionario"));
         conta.setMesa(ResultSetUtil.getEntity(rs, mesaDAO,"id_mesa"));
         conta.setMetodoPagamento(ResultSetUtil.getEnumValue(rs, "metodo_pagamento", MetodoPagamento.class));
+        if(ResultSetUtil.hasColumn(rs, "total"))
+            conta.setTotal(rs.getDouble("total"));
+        else
+            conta.setTotal(obterTotalConta(conta.getId()));
 
         return conta;
     }
@@ -54,27 +58,24 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
     @Override
     protected String getBuscarTodosQuery() {
         return "SELECT conta.id_conta, conta.status, conta.metodo_pagamento, conta.data_hora_finalizacao, " +
-                "atendente.tipo AS atendente_tipo, " +
                 "f_atendente.id_funcionario AS atendente_id_funcionario, " +
                 "f_atendente.nome AS atendente_nome, " +
-                "f_atendente.email AS atendente_email, " +
-                "f_atendente.login AS atendente_login, " +
-                "f_atendente.senha AS atendente_senha, " +
-                "f_atendente.data_cadastro AS atendente_data_cadastro, " +
                 "f_caixa.id_funcionario AS caixa_id_funcionario, " +
                 "f_caixa.nome AS caixa_nome, " +
-                "f_caixa.email AS caixa_email, " +
-                "f_caixa.login AS caixa_login, " +
-                "f_caixa.senha AS caixa_senha, " +
-                "f_caixa.data_cadastro AS caixa_data_cadastro, " +
                 "conta.id_mesa, " +
-                "mesa.identificacao, mesa.is_ativo " +
+                "mesa.identificacao, " +
+                "mesa.is_ativo, " +
+                "SUM(ppi.quantidade * ip.valor) AS total " +
                 "FROM conta " +
                 "LEFT OUTER JOIN atendente ON conta.id_atendente = atendente.id_funcionario " +
-                "LEFT OUTER JOIN funcionario AS f_atendente ON atendente.id_funcionario = f_atendente.id_funcionario " +
+                "LEFT OUTER JOIN funcionario AS f_atendente ON atendente.id_funcionario = f_atendente.id_funcionario\n" +
                 "LEFT OUTER JOIN caixa ON conta.id_caixa = caixa.id_funcionario " +
                 "LEFT OUTER JOIN funcionario AS f_caixa ON caixa.id_funcionario = f_caixa.id_funcionario " +
-                "JOIN mesa ON conta.id_mesa = mesa.id_mesa";
+                "JOIN mesa ON conta.id_mesa = mesa.id_mesa " +
+                "JOIN pedido AS p ON p.id_conta = conta.id_conta " +
+                "JOIN pedido_possui_instancia AS ppi ON ppi.id_pedido = p.id_pedido " +
+                "JOIN instancia_produto AS ip ON ip.id_instancia_produto = ppi.id_instancia_produto " +
+                "GROUP BY conta.id_conta;";
     }
 
 
