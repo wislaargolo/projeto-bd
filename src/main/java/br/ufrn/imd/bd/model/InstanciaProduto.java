@@ -66,7 +66,7 @@ public class InstanciaProduto {
     }
 
     //coloquei pra poder usar o contains em PedidoInstacia
-   /* @Override
+    /*@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

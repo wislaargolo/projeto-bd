@@ -62,6 +62,62 @@ public class CancelamentoService {
         return agrupadosPorPedido;
     }
 
+    public Pedido cancelarItemDoPedido(Long pedidoId, Long produtoId) throws SQLException, EntidadeNaoExisteException {
+
+        Pedido pedido = pedidoService.buscarPorIdComProdutos(pedidoId);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Funcionario funcionarioLogado = (Funcionario) auth.getPrincipal();
+
+        Connection conn = null;
+        try {
+            conn = DatabaseConfig.getConnection();
+            conn.setAutoCommit(false);
+
+            List<PedidoInstancia> itensDoPedido = pedidoDAO.buscaProdutosPedido(conn, pedido.getId());
+            PedidoInstancia itemParaCancelar = null;
+
+            // Encontrar o item que será cancelado
+            for (PedidoInstancia item : itensDoPedido) {
+                if (item.getInstanciaProduto().getProduto().getId().equals(produtoId)) {
+                    itemParaCancelar = item;
+                    break;
+                }
+            }
+
+            if (itemParaCancelar == null) {
+                throw new EntidadeNaoExisteException("O produto especificado não está no pedido.");
+            }
+
+            // Criar um novo cancelamento para o item
+            Cancelamento cancelamento = new Cancelamento();
+            cancelamento.setPedido(pedido);
+            cancelamento.setProduto(itemParaCancelar.getInstanciaProduto());
+            cancelamento.setAtendente(new Atendente(funcionarioLogado.getId()));
+            cancelamento.setQuantidade(itemParaCancelar.getQuantidade());
+
+            cancelamentoDAO.salvar(conn, cancelamento);
+
+            // Remover o item do pedido
+            int index = 0;
+
+            for (PedidoInstancia item : pedido.getProdutos()) {
+                if (item.getInstanciaProduto().getProduto().getId().equals(itemParaCancelar.getInstanciaProduto().getProduto().getId())) {
+                    pedido.getProdutos().remove(index);
+                    break;
+                }
+                index++;
+            }
+            pedidoService.atualizarProdutos(pedido);
+            conn.commit();
+        } catch (SQLException e) {
+            DatabaseConfig.rollback(conn);
+            throw e;
+        } finally {
+            DatabaseConfig.close(conn);
+        }
+        return pedido;
+    }
+
     public Pedido cancelarPedido(Long id) throws SQLException, EntidadeNaoExisteException {
 
         Pedido pedido = pedidoService.buscarPorId(id);
