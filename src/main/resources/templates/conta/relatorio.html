@@ -2,16 +2,17 @@
 <html layout:decorate="~{caixa/layout}" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>serviserve</title>
+    <title>ServiServe</title>
 </head>
 <body>
 
 <section class="main p-4" layout:fragment="corpo">
+
     <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
-        <h1>Relatório</h1>
-        <a class="btn btn-primary btn-md" th:href="@{/caixa/contas}" role="button">
-            Voltar
+        <a th:href="@{/caixa/contas}" class="btn btn-primary" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
+            <i class="fa fa-arrow-left" style="font-size: 16px;"></i>
         </a>
+        <h1> Relatório</h1>
     </div>
 
     <div class="container">
