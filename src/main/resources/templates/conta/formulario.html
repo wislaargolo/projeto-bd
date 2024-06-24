@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html layout:decorate="~{caixa/layout}" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>serviserve</title>
+</head>
 <body>
 
 <section class="main p-4" layout:fragment="corpo">
@@ -10,7 +14,7 @@
         <h1 th:text="${conta.id == null ? 'c' :'Editar Conta'}"></h1>
     </div>
 
-    <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="container">
 
         <form th:action="@{/caixa/contas/editar}" th:object="${conta}" method="post">
             <input type="hidden" th:field="*{id}" />
@@ -38,7 +42,9 @@
 
 
 
-            <button type="submit" class="btn btn-primary">Editar</button>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </div>
         </form>
     </div>
 

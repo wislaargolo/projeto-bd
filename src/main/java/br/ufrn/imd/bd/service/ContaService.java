@@ -46,13 +46,6 @@ public class ContaService {
         return conta;
 
     }
-    public void deletar(Long id) throws SQLException {
-        try (Connection conn = databaseUtil.getConnection()){
-            Conta conta = contaDAO.buscarPorChave(id);
-            conta.setStatusConta(StatusConta.CANCELADA);
-            contaDAO.atualizar(conn, conta);
-        }
-    }
 
     public Conta salvar(Conta conta) throws SQLException {
 
@@ -80,7 +73,7 @@ public class ContaService {
             conta.setMesa(existente.getMesa());
         }
 
-        if ("ABERTA".equals(conta.getStatusConta().name())) {
+        if ("ABERTA".equals(conta.getStatusConta().name()) ||"SOLICITADA".equals(conta.getStatusConta().name())) {
             conta.setMetodoPagamento(null);
         }
 

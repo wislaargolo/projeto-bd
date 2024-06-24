@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html layout:decorate="~{caixa/layout}" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>serviserve</title>
+</head>
 <body>
 <section class="main p-4" layout:fragment="corpo">
     <div class="header-area container" style="display: flex; justify-content: space-between; align-items: center;">
@@ -27,8 +31,6 @@
                     <th>Atendente</th>
                     <th>Mesa</th>
                     <th>Status</th>
-                    <th>Método de Pagamento</th>
-                    <th>Data/Hora Finalização</th>
                     <th>Total</th>
                     <th class="action-column">Ações</th>
                 </tr>
@@ -39,8 +41,6 @@
                     <td th:text="${conta.atendente.nome}"></td>
                     <td th:text="${conta.mesa.identificacao}"></td>
                     <td th:text="${conta.statusConta}"></td>
-                    <td th:text="${conta.metodoPagamento}"></td>
-                    <td th:text="${conta.dataFinalizacao}"></td>
                     <td th:text="${#numbers.formatCurrency(conta.total)}"></td>
                     <td colspan="2">
                         <!-- Botão de editar -->

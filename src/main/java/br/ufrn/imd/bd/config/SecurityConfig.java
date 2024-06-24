@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                     .accessDeniedHandler(accessDeniedHandler()));
         return http.build();
-/*       http.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll());
+       /*http.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll());
 
         return http.build();*/
     }

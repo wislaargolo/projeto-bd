@@ -12,7 +12,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_CAIXA"))) {
-            response.sendRedirect("/caixa");
+            response.sendRedirect("/caixa/contas");
         } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COZINHEIRO"))) {
             response.sendRedirect("/cozinha/pedidos");
         } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_GARCOM"))) {

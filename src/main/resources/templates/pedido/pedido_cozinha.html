@@ -23,7 +23,7 @@
                     <label for="progressoPedido" class="mr-sm-2"><strong>Status:</strong></label>
                     <div class="btn-and-select">
                         <select id="progressoPedido" class="form-control mb-2 mr-sm-2" name="progressoPedido">
-                            <option th:each="status : ${T(br.ufrn.imd.bd.model.enums.ProgressoPedido).listaCozinha()}"
+                            <option th:each="status : ${T(br.ufrn.imd.bd.model.enums.ProgressoPedido).values()}"
                                     th:value="${status}"
                                     th:selected="${status.name() == pedido.progressoPedido.name()}"
                                     th:text="${status}"></option>

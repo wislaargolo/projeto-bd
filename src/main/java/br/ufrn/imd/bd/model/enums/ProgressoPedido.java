@@ -7,17 +7,14 @@ import java.util.stream.Collectors;
 public enum ProgressoPedido {
 
     SOLICITADO,
+    ACEITO,
     PREPARANDO,
     REJEITADO,
     ALTERADO,
     CANCELADO,
-    FINALIZADO;
+    FINALIZADO
 
-    public static List<ProgressoPedido> listaCozinha() {
-        return Arrays.stream(values())
-                .filter(progresso -> progresso != CANCELADO)
-                .collect(Collectors.toList());
-    }
+
 
 }
 

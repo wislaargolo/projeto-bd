@@ -74,6 +74,7 @@ public class ContaDAO extends AbstractDAO<Conta, Long> {
                 "JOIN pedido AS p ON p.id_conta = conta.id_conta " +
                 "JOIN pedido_possui_instancia AS ppi ON ppi.id_pedido = p.id_pedido " +
                 "JOIN instancia_produto AS ip ON ip.id_instancia_produto = ppi.id_instancia_produto " +
+                "WHERE conta.status != 'FINALIZADA'" +
                 "GROUP BY conta.id_conta;";
     }
 

@@ -37,11 +37,6 @@ public class CaixaContasController {
         return "conta/lista";
     }
 
-    @GetMapping("/cancelar/{id}")
-    public String cancelarConta(@PathVariable Long id) throws SQLException {
-        contaService.deletar(id);
-        return "redirect:/contas";
-    }
 
     @GetMapping("/{id}/editar")
     public String editarFormConta(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) throws SQLException {
