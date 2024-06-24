@@ -18,7 +18,7 @@
                             <h5 class="card-title" th:text="${instancia.produto.descricao}"></h5>
                             <p class="card-text" th:text="${#numbers.formatCurrency(instancia.valor)}"></p>
                             <form th:if="${!pedido.containsProduto(instancia.produto.id)}"
-                                  th:action="@{'/' + ${#strings.substringBefore(layout, '/')} + '/pedidos/add/instancia/' + ${instancia.id}}" method="post">
+                                  th:action="@{'/' + ${#strings.substringBefore(layout, '/')} + '/pedidos/add/instancia/' + ${instancia.id}}" method="GET">
                                 <button type="submit" class="btn btn-secondary">
                                     Adicionar
                                 </button>

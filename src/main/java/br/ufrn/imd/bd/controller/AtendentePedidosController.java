@@ -88,7 +88,7 @@ public abstract class AtendentePedidosController {
         return "pedido/form_novo_pedido";
     }
 
-    @PostMapping("/add/instancia/{id}")
+    @GetMapping("/add/instancia/{id}")
     public String addInstanciaEmPedido(@PathVariable Long id,
                                        Model model,
                                        RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
@@ -113,44 +113,6 @@ public abstract class AtendentePedidosController {
         }
         return "pedido/form_novo_pedido";
     }
-
-    /*@PostMapping("/add/instancia/{id}")
-    public String addInstanciaEmPedido(@PathVariable Long id,
-                                       Model model,
-                                       RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
-        try {
-            Pedido pedido = (Pedido) session.getAttribute("pedido");
-            if (pedido == null) {
-                throw new IllegalStateException("Pedido not found in session");
-            }
-
-            InstanciaProduto instanciaProduto = produtoService.buscarPorId(id);
-            PedidoInstancia pedidoInstancia = new PedidoInstancia(instanciaProduto, 1);
-
-            boolean exists = false;
-            for (PedidoInstancia pi : pedido.getProdutos()) {
-                if (pi.getInstanciaProduto().getProduto().getId().equals(instanciaProduto.getProduto().getId())) {
-                    pi.setQuantidade(pi.getQuantidade() + 1); // Incrementa a quantidade se o produto já estiver no pedido
-                    exists = true;
-                    break;
-                }
-            }
-
-            if (!exists) {
-                pedido.addProduto(pedidoInstancia);
-            }
-
-            session.setAttribute("pedido", pedido);
-            model.addAttribute("pedido", pedido);
-            model.addAttribute("todosProdutos", produtoService.buscarTodosDisponiveis());
-            model.addAttribute("layout", getLayout() + "/layout");
-
-        } catch (EntidadeNaoExisteException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/" + getLayout() + "/pedidos/mesas";
-        }
-        return "pedido/form_novo_pedido";
-    }*/
 
     @GetMapping("/rmv/instancia")
     public String removeInstanciaEmPedido(@RequestParam("id") Long id,
@@ -207,12 +169,7 @@ public abstract class AtendentePedidosController {
             Atendente atendente = atendenteService.buscarPorId(funcionario.getId());
             pedido.setAtendente(atendente);
 
-            if (pedido.getConta().getId() == null) {
-                contaService.salvar(pedido.getConta());
-            }
-
-            pedido.setProgressoPedido(ProgressoPedido.SOLICITADO);
-            pedidoService.salvar(pedido);
+            pedidoService.salvarPedido(pedido);
             model.addAttribute("layout", getLayout() + "/layout");
 
         } catch (EntidadeNaoExisteException e) {
