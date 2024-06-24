@@ -38,7 +38,8 @@
                 <tbody>
                 <tr th:each="conta : ${contas}">
                     <td th:text="${conta.id}"></td>
-                    <td th:text="${conta.atendente.nome}"></td>
+                    <td th:text="${conta.atendente != null ? conta.atendente.nome : ''}"></td>
+
                     <td th:text="${conta.mesa.identificacao}"></td>
                     <td th:text="${conta.statusConta}"></td>
                     <td th:text="${#numbers.formatCurrency(conta.total)}"></td>
