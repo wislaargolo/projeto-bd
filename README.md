@@ -1,6 +1,6 @@
 # ServiServe
 
-**ServiServe** é uma aplicação desenvolvida para modernizar e otimizar os processos de gestão de comandas e estoque em restaurantes e bares. O objetivo principal é proporcionar uma experiência mais eficiente e satisfatória tanto para os clientes quanto para os funcionários, substituindo métodos tradicionais por soluções tecnológicas inovadoras.
+**ServiServe** é uma aplicação desenvolvida para modernizar e otimizar os processos de gestão de comandas em restaurantes e bares. O objetivo principal é proporcionar uma experiência mais eficiente tanto para os clientes quanto para os funcionários.
 
 ## Funcionalidades
 
